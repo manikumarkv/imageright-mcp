@@ -115,3 +115,75 @@ def test_resolve_profile(version: str, profile: str | None, approximated: bool) 
 def test_redact_url_leaves_plain_urls_alone() -> None:
     assert redact_url("https://ir.example/api") == "https://ir.example/api"
     assert redact_url(None) is None
+
+
+def test_transport_and_auth_settings(tmp_path: Path) -> None:
+    file = tmp_path / "ir.json"
+    file.write_text(
+        json.dumps(
+            {
+                "extraHeaders": {"X-Tenant-Id": "CORP_TENANT"},
+                "secretEnv": {"password": "CORP_PW"},
+                "samlTokenCommand": ["get-token", "--quiet"],
+                "fileRoots": ["/srv/scans"],
+                "timeoutSeconds": 12.5,
+            }
+        )
+    )
+    config = load_config(
+        {
+            "IMAGERIGHT_CONFIG_FILE": str(file),
+            "CORP_TENANT": "tenant-1",
+            "CORP_PW": "corp-secret-pw",
+            "IMAGERIGHT_MAX_RETRIES": "1",
+            "IMAGERIGHT_REQUIRE_CONFIRM": "false",
+        }
+    )
+    assert config.password == "corp-secret-pw"
+    assert config.extraHeaderValues == {"X-Tenant-Id": "tenant-1"}
+    assert config.maxRetries == 1
+    assert config.requireConfirm is False
+    assert config.timeoutSeconds == 12.5
+    assert config.samlTokenCommand == ["get-token", "--quiet"]
+    view = json.dumps(config.redacted())
+    assert "corp-secret-pw" not in view
+    assert "tenant-1" not in view
+    assert config.redacted()["extraHeaders"] == {"X-Tenant-Id": {"env": "CORP_TENANT", "set": True}}
+    assert set(config.secret_values()) == {"corp-secret-pw", "tenant-1"}
+
+
+def test_defaults_for_new_settings() -> None:
+    config = load_config({})
+    assert config.requireConfirm is True
+    assert config.maxRetries == 2
+    assert config.verifyTls is True
+    assert config.redacted()["jwt"] is None
+
+
+@pytest.mark.parametrize("key", ["jwt", "jwtPrivateKey", "samlToken"])
+def test_config_file_rejects_every_secret(tmp_path: Path, key: str) -> None:
+    file = tmp_path / "ir.json"
+    file.write_text(json.dumps({key: "nope"}))
+    with pytest.raises(ConfigError, match="must not contain secrets"):
+        load_config({"IMAGERIGHT_CONFIG_FILE": str(file)})
+
+
+def test_secret_env_only_names_known_secrets() -> None:
+    with pytest.raises(ConfigError, match="secretEnv"):
+        load_config({"IMAGERIGHT_SECRET_ENV": "apiKey=X"})
+
+
+@pytest.mark.parametrize(
+    ("var", "value"),
+    [("IMAGERIGHT_EXTRA_HEADERS", "X-Tenant"), ("IMAGERIGHT_MAX_RETRIES", "lots")],
+)
+def test_malformed_env_values(var: str, value: str) -> None:
+    with pytest.raises(ConfigError):
+        load_config({var: value})
+
+
+def test_strip_userinfo() -> None:
+    from imageright_mcp.config import strip_userinfo
+
+    assert strip_userinfo("https://u:p@h.example:8443/IR") == "https://h.example:8443/IR"
+    assert strip_userinfo("https://h.example/IR") == "https://h.example/IR"

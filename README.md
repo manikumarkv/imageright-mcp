@@ -67,10 +67,28 @@ Values come from environment variables first, then an optional JSON config file,
 | `dryRun` | `IMAGERIGHT_DRY_RUN` | `false` |
 | `username` | `IMAGERIGHT_USERNAME` | none |
 | `password` | `IMAGERIGHT_PASSWORD` (env only) | none |
+| `jwt` | `IMAGERIGHT_JWT` (env only): a static JWT | none |
+| `jwtPrivateKey` | `IMAGERIGHT_JWT_PRIVATE_KEY` (env only): PEM RSA key for self-signed RS256 JWTs | none |
+| `jwtPrivateKeyFile` | `IMAGERIGHT_JWT_PRIVATE_KEY_FILE`: path to that key instead | none |
+| `jwtSubject` / `jwtIssuer` / `jwtAudience` | `IMAGERIGHT_JWT_SUBJECT` / `_ISSUER` / `_AUDIENCE` (subject defaults to `username`) | none |
+| `jwtTtlSeconds` | `IMAGERIGHT_JWT_TTL_SECONDS` | `300` |
+| `samlToken` | `IMAGERIGHT_SAML_TOKEN` (env only): base64 SAML token | none |
+| `samlTokenCommand` | `IMAGERIGHT_SAML_TOKEN_COMMAND`: command (no shell) that prints a fresh token | none |
+| `extraHeaders` | `IMAGERIGHT_EXTRA_HEADERS` (`Header=ENV_VAR,...`): header -> env var holding its value | none |
+| `secretEnv` | `IMAGERIGHT_SECRET_ENV` (`password=CORP_PW,...`): read a secret from another env var | none |
+| `requireConfirm` | `IMAGERIGHT_REQUIRE_CONFIRM`: destructive calls need `confirm: <previewId>` | `true` |
+| `timeoutSeconds` | `IMAGERIGHT_TIMEOUT_SECONDS` | `30` |
+| `caBundle` | `IMAGERIGHT_CA_BUNDLE`: PEM bundle for internal CAs | none |
+| `verifyTls` | `IMAGERIGHT_VERIFY_TLS` | `true` |
+| `requestIdHeader` | `IMAGERIGHT_REQUEST_ID_HEADER` | `X-Request-Id` |
+| `maxRetries` | `IMAGERIGHT_MAX_RETRIES` (GET/HEAD only; writes are never retried) | `2` |
+| `outputDir` | `IMAGERIGHT_OUTPUT_DIR`: where binary responses are written | system temp dir |
+| `fileRoots` | `IMAGERIGHT_FILE_ROOTS` (`os.pathsep`-separated): folders uploads may be read from | working directory |
 
 Set `IMAGERIGHT_CONFIG_FILE` to the path of a JSON file whose keys are the setting names above. The file may
-**not** hold secrets. Credentials are read from the environment only, are never accepted as tool arguments,
-and are always redacted in output.
+**not** hold secrets; it can only name the environment variables that do (`secretEnv`, `extraHeaders`).
+Credentials are read from the environment only, are never accepted as tool arguments, are held in memory
+only, and are always redacted in output. User info in `restBaseUrl` (`https://user:pw@host`) is ignored.
 
 ## Tools
 

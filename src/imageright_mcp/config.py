@@ -1,6 +1,8 @@
 """Effective configuration: environment > config file > defaults.
 
-Credentials are only ever read from the environment and are never exposed unredacted.
+Credentials are only ever read from the environment and are never exposed unredacted. A config
+file may name *which* environment variable holds a secret (``secretEnv``, ``extraHeaders``) but
+never the secret itself.
 """
 
 from __future__ import annotations
@@ -34,12 +36,36 @@ _SETTINGS: dict[str, str] = {
     "writeMode": "WRITE_MODE",
     "dryRun": "DRY_RUN",
     "username": "USERNAME",
+    "requireConfirm": "REQUIRE_CONFIRM",
+    "jwtSubject": "JWT_SUBJECT",
+    "jwtIssuer": "JWT_ISSUER",
+    "jwtAudience": "JWT_AUDIENCE",
+    "jwtTtlSeconds": "JWT_TTL_SECONDS",
+    "jwtPrivateKeyFile": "JWT_PRIVATE_KEY_FILE",
+    "samlTokenCommand": "SAML_TOKEN_COMMAND",
+    "extraHeaders": "EXTRA_HEADERS",
+    "secretEnv": "SECRET_ENV",
+    "timeoutSeconds": "TIMEOUT_SECONDS",
+    "caBundle": "CA_BUNDLE",
+    "verifyTls": "VERIFY_TLS",
+    "requestIdHeader": "REQUEST_ID_HEADER",
+    "maxRetries": "MAX_RETRIES",
+    "outputDir": "OUTPUT_DIR",
+    "fileRoots": "FILE_ROOTS",
 }
 
-# Secrets are env-only; a config file may not contain them.
+# Secrets are env-only; a config file may not contain them. ``secretEnv`` can rename the
+# variable a secret is read from (e.g. ``{"password": "CORP_IR_PASSWORD"}``).
 _SECRETS: dict[str, str] = {
     "password": "PASSWORD",
+    "jwt": "JWT",
+    "jwtPrivateKey": "JWT_PRIVATE_KEY",
+    "samlToken": "SAML_TOKEN",
 }
+_BOOLS = {"dryRun", "requireConfirm", "verifyTls"}
+_INTS = {"jwtTtlSeconds", "maxRetries"}
+_FLOATS = {"timeoutSeconds"}
+_MAPPINGS = {"extraHeaders", "secretEnv"}
 
 _DEFAULTS: dict[str, Any] = {
     "irVersion": "24.x",
@@ -50,6 +76,22 @@ _DEFAULTS: dict[str, Any] = {
     "writeMode": "dry-run",
     "dryRun": False,
     "username": None,
+    "requireConfirm": True,
+    "jwtSubject": None,
+    "jwtIssuer": None,
+    "jwtAudience": None,
+    "jwtTtlSeconds": 300,
+    "jwtPrivateKeyFile": None,
+    "samlTokenCommand": None,
+    "extraHeaders": {},
+    "secretEnv": {},
+    "timeoutSeconds": 30.0,
+    "caBundle": None,
+    "verifyTls": True,
+    "requestIdHeader": "X-Request-Id",
+    "maxRetries": 2,
+    "outputDir": None,
+    "fileRoots": [],
 }
 
 _KNOWN_PROFILES: dict[tuple[int, int], str] = {(25, 1): "25.1", (24, 2): "24.2", (7, 2): "7.2"}
@@ -77,7 +119,29 @@ class EffectiveConfig(BaseModel):
     writeMode: WriteMode
     dryRun: bool
     username: str | None
+    # A destructive call needs ``confirm: <previewId>`` from a prior dry-run (plan §7.1).
+    requireConfirm: bool
+    jwtSubject: str | None
+    jwtIssuer: str | None
+    jwtAudience: str | None
+    jwtTtlSeconds: int = Field(gt=0, le=3600)
+    jwtPrivateKeyFile: str | None
+    samlTokenCommand: str | list[str] | None
+    # Header name -> name of the environment variable holding its value (tenant ids, API keys).
+    extraHeaders: dict[str, str]
+    secretEnv: dict[str, str]
+    timeoutSeconds: float = Field(gt=0)
+    caBundle: str | None
+    verifyTls: bool
+    requestIdHeader: str
+    maxRetries: int = Field(ge=0, le=5)
+    outputDir: str | None
+    fileRoots: list[str]
     password: str | None = Field(default=None, repr=False)
+    jwt: str | None = Field(default=None, repr=False)
+    jwtPrivateKey: str | None = Field(default=None, repr=False)
+    samlToken: str | None = Field(default=None, repr=False)
+    extraHeaderValues: dict[str, str] = Field(default_factory=dict, repr=False)
     configFile: str | None
     sources: dict[str, Source]
 
@@ -88,11 +152,25 @@ class EffectiveConfig(BaseModel):
 
     def redacted(self) -> dict[str, Any]:
         """Return a JSON-safe view with every secret replaced by a marker."""
-        data = self.model_dump(mode="json", exclude={"password"})
-        data["password"] = REDACTED if self.password else None
+        data = self.model_dump(mode="json", exclude={*_SECRETS, "extraHeaderValues"})
+        for field in _SECRETS:
+            data[field] = REDACTED if getattr(self, field) else None
+        data["extraHeaders"] = {
+            name: {"env": var, "set": name in self.extraHeaderValues}
+            for name, var in self.extraHeaders.items()
+        }
         data["restBaseUrl"] = redact_url(self.restBaseUrl)
         data["soapUrl"] = redact_url(self.soapUrl)
         return data
+
+    def secret_values(self) -> list[str]:
+        """Every secret this config holds, for redaction of previews, errors and logs."""
+        values = [getattr(self, field) for field in _SECRETS]
+        values.extend(self.extraHeaderValues.values())
+        for url in (self.restBaseUrl, self.soapUrl):
+            if url and urlsplit(url).password:
+                values.append(urlsplit(url).password)
+        return [v for v in values if v]
 
 
 def redact_url(url: str | None) -> str | None:
@@ -107,6 +185,17 @@ def redact_url(url: str | None) -> str | None:
         host = f"{host}:{parts.port}"
     netloc = f"{parts.username}:{REDACTED}@{host}"
     return urlunsplit(parts._replace(netloc=netloc))
+
+
+def strip_userinfo(url: str | None) -> str | None:
+    """Drop ``user:password@`` from a URL. Credentials in a URL are not an auth mode, and HTTP
+    libraries log request URLs, so they must never reach the transport."""
+    if not url:
+        return url
+    parts = urlsplit(url)
+    if "@" not in parts.netloc:
+        return url
+    return urlunsplit(parts._replace(netloc=parts.netloc.rsplit("@", 1)[1]))
 
 
 def resolve_profile(ir_version: str) -> ProfileResolution:
@@ -139,15 +228,29 @@ def resolve_profile(ir_version: str) -> ProfileResolution:
 
 
 def _parse_env_value(field: str, raw: str) -> Any:
+    name = ENV_PREFIX + _SETTINGS[field]
     if field == "surfacePreference":
         return [s.strip() for s in raw.split(",") if s.strip()]
-    if field == "dryRun":
+    if field == "fileRoots":
+        return [s.strip() for s in raw.split(os.pathsep) if s.strip()]
+    if field in _BOOLS:
         lowered = raw.strip().lower()
         if lowered in {"1", "true", "yes", "on"}:
             return True
         if lowered in {"0", "false", "no", "off"}:
             return False
-        raise ConfigError(f"{ENV_PREFIX}DRY_RUN must be a boolean, got {raw!r}")
+        raise ConfigError(f"{name} must be a boolean, got {raw!r}")
+    if field in _MAPPINGS:
+        # "Header-Name=ENV_VAR,Other=ENV_VAR2"
+        pairs = [item.partition("=") for item in raw.split(",") if item.strip()]
+        if any(not sep or not key.strip() or not value.strip() for key, sep, value in pairs):
+            raise ConfigError(f"{name} must look like Name=ENV_VAR[,Name=ENV_VAR]")
+        return {key.strip(): value.strip() for key, _, value in pairs}
+    if field in _INTS | _FLOATS:
+        try:
+            return int(raw) if field in _INTS else float(raw)
+        except ValueError:
+            raise ConfigError(f"{name} must be a number, got {raw!r}") from None
     return raw
 
 
@@ -191,10 +294,20 @@ def load_config(env: Mapping[str, str] | None = None) -> EffectiveConfig:
             values[field] = _DEFAULTS[field]
             sources[field] = "default"
 
+    secret_env = values["secretEnv"]
+    if not isinstance(secret_env, dict) or set(secret_env) - set(_SECRETS):
+        raise ConfigError(f"secretEnv may only name these secrets: {', '.join(_SECRETS)}")
     for field, suffix in _SECRETS.items():
-        secret = environ.get(ENV_PREFIX + suffix) or None
+        secret = environ.get(str(secret_env.get(field, ENV_PREFIX + suffix))) or None
         values[field] = secret
         sources[field] = "env" if secret else "default"
+
+    headers = values["extraHeaders"]
+    if not isinstance(headers, dict):
+        raise ConfigError("extraHeaders must map header names to environment variable names")
+    values["extraHeaderValues"] = {
+        name: environ[str(var)] for name, var in headers.items() if environ.get(str(var))
+    }
 
     try:
         return EffectiveConfig(
