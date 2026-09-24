@@ -1,0 +1,72 @@
+# REST-wide annotations (our own words). Keys are "METHOD /path" exactly as published.
+
+# Operations that work without an Authorization header.
+anonymous:
+  - POST /api/authenticate
+  - POST /api/authenticate/credentials
+  - POST /api/authenticate/token
+  - POST /api/validto
+  - POST /api/jwtTokens/validate
+  - GET /api/health
+  - POST /api/users/changepassword
+  - POST /api/users/newpasswordrequest
+
+# Safety classification used by the write policy (plan §7):
+#   read        - no persistent change on the server
+#   write       - creates or modifies data (including locks, which are reversible)
+#   destructive - deletes, merges away or kills data, or is otherwise hard to undo
+# Default rules: GET/HEAD -> read, DELETE -> destructive, PUT/POST -> write, then:
+safety:
+  # POST operations whose last path segment marks a query, not a change.
+  readPostSegments:
+    - find
+    - authenticate
+    - credentials
+    - token
+    - validto
+    - validate
+    - descriptions
+    - searchpages
+    - permissionsbatch
+    - permissionsbatchbyaccount
+    - effectivepermissionsbatch
+    - flowpermissionsbatch
+    - floweffectivepermissionsbatch
+    - authInfos
+    - runtimeInfos
+    - roots
+    - size
+    - taskcount
+    - count
+    - nextavailable
+  # PUT/POST operations whose last path segment removes data for good.
+  destructiveSegments:
+    - delete
+    - cancel
+    - merge
+    - markdeleted
+  # Explicit exceptions to the rules above.
+  overrides:
+    GET /api/pages/{pageId}/lock: write
+    GET /api/pages/{pageId}/unlock: write
+    GET /api/pages/{pageId}/refresh: write
+    GET /api/v2/pages/{pageId}/lock: write
+    GET /api/encryption/attributes/encrypt: write
+    GET /api/encryption/attributes/decrypt: write
+    GET /api/encryption/rotatekey: destructive
+    GET /api/reports/templates/{templateId}: write
+    POST /api/steps/users: read
+    POST /api/users/newpasswordrequest: write
+    POST /api/users/changepassword: write
+
+# Every operation flagged deprecated in the OAS needs a replacement here.
+deprecations:
+  POST /api/files/{fileId}/properties:
+    replacement: POST /api/v2/files/{fileId}/properties
+    note: Use the REST v2 file-properties call; it takes the same input model.
+  POST /api/functionalityrights/permissionsbatch:
+    replacement: POST /api/functionalityrights/permissionsbatchbyaccount
+    note: Use the account-scoped batch call, which names the security account explicitly.
+  POST /api/pages/delete:
+    replacement: POST /api/files/{fileId}/instances/delete
+    note: Use the per-file instances delete, which removes pages and documents together.

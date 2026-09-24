@@ -1,0 +1,381 @@
+{
+  "baseline": "24.2",
+  "diff": {
+    "rest-v1": {
+      "24.2->25.1": {
+        "addedOperations": [
+          "rest.v1.containers.getDeletedContent",
+          "rest.v1.containers.restoreDeletedContent",
+          "rest.v1.containers.restoreDeletedDocFolder",
+          "rest.v1.drawers.getLocationTree",
+          "rest.v1.emailreceiver.getAccountDetails",
+          "rest.v1.emailreceiver.getAccountDetailsByEmail",
+          "rest.v1.emailreceiver.getAccountStatusByEmail",
+          "rest.v1.emailreceiver.getAccountsByConfiguration",
+          "rest.v1.emailreceiver.getConfigurations",
+          "rest.v1.emailreceiver.getErrorEmails",
+          "rest.v1.emailreceiver.getErrorEmailsByEmail",
+          "rest.v1.notes.restoreDeletedNotesCollection",
+          "rest.v1.pages.restoreDeletedPages"
+        ],
+        "addedSchemas": [
+          "BaseDrawerModel",
+          "DeletedContentModel",
+          "EmailAccountDetailsModel",
+          "EmailReceiverAccountModel",
+          "EmailReceiverAccountStatusModel",
+          "EmailReceiverConfigurationModel",
+          "EmailReceiverErroredEmailModel",
+          "LocationTreeNode",
+          "PageRestoreModel",
+          "Problem",
+          "RestoreContentModel",
+          "ServerObjectType"
+        ],
+        "changedEnums": {},
+        "changedParams": {
+          "rest.v1.folders.findFolders": {
+            "added": [
+              "ExcludeHidden (body)"
+            ],
+            "modified": [],
+            "removed": []
+          },
+          "rest.v1.pages.checkReadPermissions": {
+            "added": [
+              "excludeDeleted (query)"
+            ],
+            "modified": [],
+            "removed": []
+          },
+          "rest.v1.tasks.getNextAvailableTask": {
+            "added": [
+              "ExpandAssignedWithGroupsAndRoles (body)"
+            ],
+            "modified": [],
+            "removed": []
+          }
+        },
+        "changedSchemas": {
+          "DrawerModel": "+ObjectClass ~extends",
+          "FolderDataResult": "+HasWorkflowItems +IsHidden",
+          "FolderSearchObject": "+ExcludeHidden",
+          "PageVersionModel": "+CreatedByFullName +CreatedByName",
+          "TaskFilterV2": "+ExpandAssignedWithGroupsAndRoles"
+        },
+        "errorCodes": {
+          "added": [
+            917
+          ],
+          "removed": []
+        },
+        "removedOperations": [],
+        "removedSchemas": []
+      },
+      "7.2->24.2": {
+        "addedOperations": [
+          "rest.v1.files.createFileRelationship",
+          "rest.v1.files.deleteFilesRelationship",
+          "rest.v1.globalconfig.createGlobalConfig",
+          "rest.v1.globalconfig.deleteGlobalConfig",
+          "rest.v1.globalconfig.deleteGlobalConfigSection",
+          "rest.v1.instances.managePermissionsToInstance",
+          "rest.v1.taskhistory.getWorkSummary",
+          "rest.v1.workflow.getIndexingStepParams",
+          "rest.v1.workflow.getRootBuddies",
+          "rest.v1.workflow.getUsersToAssignSteps"
+        ],
+        "addedSchemas": [
+          "AdvancedFolderDataResult",
+          "BatchInstancePermissionModel",
+          "IndexingModalData",
+          "InstancePermissionModel",
+          "ObjectAccessPermission",
+          "PermissionAction",
+          "WorkSummaryFilterModel"
+        ],
+        "changedEnums": {
+          "NoteCategory": "+value CompletedTask",
+          "TaskAgeCalculationAlgorithm": "+value AvailableDate"
+        },
+        "changedParams": {
+          "rest.v1.folders.findFolders": {
+            "added": [],
+            "modified": [
+              "Attributes (body)"
+            ],
+            "removed": []
+          },
+          "rest.v1.tasks.getNextAvailableTask": {
+            "added": [
+              "FileId (body)"
+            ],
+            "modified": [],
+            "removed": []
+          }
+        },
+        "changedSchemas": {
+          "AdvancedTypesMetadataDataResult": "+FolderTypes",
+          "AgencyOneSettings": "+BaseGlobalNavUrl +BaseUrl -Url",
+          "FolderDataResult": "+File +FolderTypeName",
+          "FolderSearchObject": "~Attributes",
+          "PageModel": "+PageExtension",
+          "TaskFilterV2": "+FileId"
+        },
+        "errorCodes": {
+          "added": [
+            326,
+            505,
+            1104,
+            1105,
+            1203
+          ],
+          "removed": [
+            2500
+          ]
+        },
+        "removedOperations": [],
+        "removedSchemas": []
+      },
+      "7.2->25.1": {
+        "addedOperations": [
+          "rest.v1.containers.getDeletedContent",
+          "rest.v1.containers.restoreDeletedContent",
+          "rest.v1.containers.restoreDeletedDocFolder",
+          "rest.v1.drawers.getLocationTree",
+          "rest.v1.emailreceiver.getAccountDetails",
+          "rest.v1.emailreceiver.getAccountDetailsByEmail",
+          "rest.v1.emailreceiver.getAccountStatusByEmail",
+          "rest.v1.emailreceiver.getAccountsByConfiguration",
+          "rest.v1.emailreceiver.getConfigurations",
+          "rest.v1.emailreceiver.getErrorEmails",
+          "rest.v1.emailreceiver.getErrorEmailsByEmail",
+          "rest.v1.files.createFileRelationship",
+          "rest.v1.files.deleteFilesRelationship",
+          "rest.v1.globalconfig.createGlobalConfig",
+          "rest.v1.globalconfig.deleteGlobalConfig",
+          "rest.v1.globalconfig.deleteGlobalConfigSection",
+          "rest.v1.instances.managePermissionsToInstance",
+          "rest.v1.notes.restoreDeletedNotesCollection",
+          "rest.v1.pages.restoreDeletedPages",
+          "rest.v1.taskhistory.getWorkSummary",
+          "rest.v1.workflow.getIndexingStepParams",
+          "rest.v1.workflow.getRootBuddies",
+          "rest.v1.workflow.getUsersToAssignSteps"
+        ],
+        "addedSchemas": [
+          "AdvancedFolderDataResult",
+          "BaseDrawerModel",
+          "BatchInstancePermissionModel",
+          "DeletedContentModel",
+          "EmailAccountDetailsModel",
+          "EmailReceiverAccountModel",
+          "EmailReceiverAccountStatusModel",
+          "EmailReceiverConfigurationModel",
+          "EmailReceiverErroredEmailModel",
+          "IndexingModalData",
+          "InstancePermissionModel",
+          "LocationTreeNode",
+          "ObjectAccessPermission",
+          "PageRestoreModel",
+          "PermissionAction",
+          "Problem",
+          "RestoreContentModel",
+          "ServerObjectType",
+          "WorkSummaryFilterModel"
+        ],
+        "changedEnums": {
+          "NoteCategory": "+value CompletedTask",
+          "TaskAgeCalculationAlgorithm": "+value AvailableDate"
+        },
+        "changedParams": {
+          "rest.v1.folders.findFolders": {
+            "added": [
+              "ExcludeHidden (body)"
+            ],
+            "modified": [
+              "Attributes (body)"
+            ],
+            "removed": []
+          },
+          "rest.v1.pages.checkReadPermissions": {
+            "added": [
+              "excludeDeleted (query)"
+            ],
+            "modified": [],
+            "removed": []
+          },
+          "rest.v1.tasks.getNextAvailableTask": {
+            "added": [
+              "ExpandAssignedWithGroupsAndRoles (body)",
+              "FileId (body)"
+            ],
+            "modified": [],
+            "removed": []
+          }
+        },
+        "changedSchemas": {
+          "AdvancedTypesMetadataDataResult": "+FolderTypes",
+          "AgencyOneSettings": "+BaseGlobalNavUrl +BaseUrl -Url",
+          "DrawerModel": "+ObjectClass ~extends",
+          "FolderDataResult": "+File +FolderTypeName +HasWorkflowItems +IsHidden",
+          "FolderSearchObject": "+ExcludeHidden ~Attributes",
+          "PageModel": "+PageExtension",
+          "PageVersionModel": "+CreatedByFullName +CreatedByName",
+          "TaskFilterV2": "+ExpandAssignedWithGroupsAndRoles +FileId"
+        },
+        "errorCodes": {
+          "added": [
+            326,
+            505,
+            917,
+            1104,
+            1105,
+            1203
+          ],
+          "removed": [
+            2500
+          ]
+        },
+        "removedOperations": [],
+        "removedSchemas": []
+      }
+    },
+    "rest-v2": {
+      "24.2->25.1": {
+        "addedOperations": [
+          "rest.v2.tasks.getTaskCountV2"
+        ],
+        "addedSchemas": [
+          "TaskCountFilterV2"
+        ],
+        "changedEnums": {},
+        "changedParams": {
+          "rest.v2.folders.getFolderByIdV2": {
+            "added": [
+              "excludeHidden (query)"
+            ],
+            "modified": [],
+            "removed": []
+          },
+          "rest.v2.tasks.getPostTasksBatchV2": {
+            "added": [
+              "ExpandAssignedWithGroupsAndRoles (body)"
+            ],
+            "modified": [],
+            "removed": []
+          }
+        },
+        "changedSchemas": {
+          "BatchTaskFilterV2": "+ExpandAssignedWithGroupsAndRoles",
+          "DashboardTaskFilterV2": "+ExpandAssignedWithGroupsAndRoles",
+          "FolderDataResult": "+HasWorkflowItems +IsHidden",
+          "TaskFilterV2": "+ExpandAssignedWithGroupsAndRoles"
+        },
+        "errorCodes": {
+          "added": [
+            917
+          ],
+          "removed": []
+        },
+        "removedOperations": [],
+        "removedSchemas": []
+      },
+      "7.2->24.2": {
+        "addedOperations": [
+          "rest.v2.marks.assignFileMarksToFile"
+        ],
+        "addedSchemas": [],
+        "changedEnums": {
+          "TaskAgeCalculationAlgorithm": "+value AvailableDate"
+        },
+        "changedParams": {
+          "rest.v2.tasks.getPostTasksBatchV2": {
+            "added": [
+              "FileId (body)"
+            ],
+            "modified": [],
+            "removed": []
+          }
+        },
+        "changedSchemas": {
+          "BatchTaskFilterV2": "+FileId",
+          "DashboardTaskFilterV2": "+FileId",
+          "FolderDataResult": "+File +FolderTypeName",
+          "PageModel": "+PageExtension",
+          "TaskFilterV2": "+FileId"
+        },
+        "errorCodes": {
+          "added": [
+            326,
+            505,
+            1104,
+            1105,
+            1203
+          ],
+          "removed": [
+            2500
+          ]
+        },
+        "removedOperations": [],
+        "removedSchemas": []
+      },
+      "7.2->25.1": {
+        "addedOperations": [
+          "rest.v2.marks.assignFileMarksToFile",
+          "rest.v2.tasks.getTaskCountV2"
+        ],
+        "addedSchemas": [
+          "TaskCountFilterV2"
+        ],
+        "changedEnums": {
+          "TaskAgeCalculationAlgorithm": "+value AvailableDate"
+        },
+        "changedParams": {
+          "rest.v2.folders.getFolderByIdV2": {
+            "added": [
+              "excludeHidden (query)"
+            ],
+            "modified": [],
+            "removed": []
+          },
+          "rest.v2.tasks.getPostTasksBatchV2": {
+            "added": [
+              "ExpandAssignedWithGroupsAndRoles (body)",
+              "FileId (body)"
+            ],
+            "modified": [],
+            "removed": []
+          }
+        },
+        "changedSchemas": {
+          "BatchTaskFilterV2": "+ExpandAssignedWithGroupsAndRoles +FileId",
+          "DashboardTaskFilterV2": "+ExpandAssignedWithGroupsAndRoles +FileId",
+          "FolderDataResult": "+File +FolderTypeName +HasWorkflowItems +IsHidden",
+          "PageModel": "+PageExtension",
+          "TaskFilterV2": "+ExpandAssignedWithGroupsAndRoles +FileId"
+        },
+        "errorCodes": {
+          "added": [
+            326,
+            505,
+            917,
+            1104,
+            1105,
+            1203
+          ],
+          "removed": [
+            2500
+          ]
+        },
+        "removedOperations": [],
+        "removedSchemas": []
+      }
+    }
+  },
+  "profiles": [
+    "7.2",
+    "24.2",
+    "25.1"
+  ]
+}

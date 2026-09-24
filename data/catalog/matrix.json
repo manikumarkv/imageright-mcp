@@ -1,0 +1,4015 @@
+{
+  "baseline": "24.2",
+  "capabilities": {
+    "batch.create": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "container.allowedTypes": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "container.content": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "document.copy": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "document.create": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "document.delete": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "document.find": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "document.get": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "document.move": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "document.updateProperties": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "drawer.list": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "file.create": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "file.find": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "file.get": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "file.merge": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "file.tasks": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "file.updateProperties": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "folder.create": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "folder.find": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "folder.get": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "note.list": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "object.attributes": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "object.pathToFile": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "page.create": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "page.get": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "page.list": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "page.lock": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "page.move": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "page.refreshLock": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "page.unlock": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "page.updateContent": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "page.updateDescription": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "pages.delete": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "server.version": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "step.assignableUsers": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "step.get": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "step.links": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "step.list": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "step.priorities": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "task.cancel": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "task.create": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "task.find": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "task.get": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "task.lock": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "task.refreshLock": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "task.release": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "task.route": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "task.unlock": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "task.update": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "user.current": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "user.get": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    },
+    "workflow.list": {
+      "24.2": "available",
+      "25.1": "available",
+      "7.2": "available"
+    }
+  },
+  "deprecations": [
+    {
+      "deprecatedIn": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "note": "Use the REST v2 file-properties call; it takes the same input model.",
+      "operationId": "rest.v1.files.updateFileProperties",
+      "replacement": "rest.v2.files.updateFilePropertiesV2"
+    },
+    {
+      "deprecatedIn": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "note": "Use the account-scoped batch call, which names the security account explicitly.",
+      "operationId": "rest.v1.functionalityrights.getPermissionsBatchAll",
+      "replacement": "rest.v1.functionalityrights.getPermissionsBatch"
+    },
+    {
+      "deprecatedIn": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "note": "Use the per-file instances delete, which removes pages and documents together.",
+      "operationId": "rest.v1.pages.batchDeletePages",
+      "replacement": "rest.v1.instances.batchDeleteInstances"
+    }
+  ],
+  "legend": {
+    "absent": "not published for this profile",
+    "available": "present and identical to the baseline profile",
+    "changed": "present, but parameters or referenced schemas differ from the baseline",
+    "deprecated": "present and flagged deprecated"
+  },
+  "operations": {
+    "rest.v1.accounts.addMemberToGroup": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.assignGroupToGroup": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.assignGroupToRole": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.createGroup": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.createRole": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.findAccountsGroupsByIds": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.getAccount": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.getAccountGroups": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.getAccounts": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.getAccountsByIds": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.getAllAccounts": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.getCurrentUserAccount": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.getCurrentUserGroups": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.getFullAccountsTree": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.getFunctionalityRights": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.getGroups": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.getRootGroups": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.getUsersThatAreNotInAnyGroup": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.mapAccount": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.removeMemberFromGroup": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.unassignGroupFromGroup": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.unassignGroupFromRole": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.accounts.validatePermission": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.attributes.getAttributeByAttId": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.attributes.getAttributeByAttName": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.attributes.getAttributesByObject": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.attributes.getAttributesDefinitions": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.attributes.getAttributesDefinitionsForType": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.attributes.getAttributesDefinitionsFromSteps": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.authentication.authenticate": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.authentication.authenticate2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.authentication.authenticate3": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.authentication.validTo": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.authentication.validateJwtToken": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.batches.createBatch": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.clientactions.createClientActionEvents": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.clientactions.createFileClosedEvents": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.collaborationportal.addPageExport": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.collaborationportal.getInsurLinkConfigurations": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.collaborationportal.getPageExportsByFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.containers.getContainers": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.containers.getDeletedContent": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.containers.getFirstPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema PageModel: -PageExtension"
+        ]
+      }
+    },
+    "rest.v1.containers.getSortedFolders": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "changed"
+      },
+      "changes": {
+        "25.1": [
+          "schema FolderDataResult: +HasWorkflowItems +IsHidden"
+        ],
+        "7.2": [
+          "schema FolderDataResult: -File -FolderTypeName"
+        ]
+      }
+    },
+    "rest.v1.containers.restoreDeletedContent": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.containers.restoreDeletedDocFolder": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.dashboard.getTaskCount": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema TaskAgeCalculationAlgorithm: -value AvailableDate"
+        ]
+      }
+    },
+    "rest.v1.dashboardviews.createView": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.dashboardviews.deleteView": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.dashboardviews.getAllViews": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.dashboardviews.getDefaultView": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.dashboardviews.getView": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.dashboardviews.setDefaultView": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.dashboardviews.updateView": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.datavalidation.getPageContainsValidatedField": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.datavalidation.getValidationFields": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.datavalidation.updateOcrDataAfterValidation": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.datavalidation.updateRemainingOcrDataValidationFields": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documentfilter.areMappingsDefined": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documentfilter.create": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documentfilter.deleteFileType": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documentfilter.deleteMapping": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documentfilter.getMappings": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documentfilter.getMappingsAll": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documentfilter.isMappingDefined": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documentfilter.update": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documents.createDocument": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documents.findDocuments": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "changed"
+      },
+      "changes": {
+        "25.1": [
+          "schema FolderDataResult: +HasWorkflowItems +IsHidden"
+        ],
+        "7.2": [
+          "schema FolderDataResult: -File -FolderTypeName"
+        ]
+      }
+    },
+    "rest.v1.documents.getDocumentById": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "changed"
+      },
+      "changes": {
+        "25.1": [
+          "schema FolderDataResult: +HasWorkflowItems +IsHidden"
+        ],
+        "7.2": [
+          "schema FolderDataResult: -File -FolderTypeName"
+        ]
+      }
+    },
+    "rest.v1.documents.getDocumentHeadById": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documents.getPathToFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documents.moveDocument": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.documents.updateProperties": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.drawers.getDrawerById": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "available"
+      },
+      "changes": {
+        "25.1": [
+          "schema BaseDrawerModel: added",
+          "schema DrawerModel: +ObjectClass ~extends"
+        ]
+      }
+    },
+    "rest.v1.drawers.getDrawers": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "available"
+      },
+      "changes": {
+        "25.1": [
+          "schema BaseDrawerModel: added",
+          "schema DrawerModel: +ObjectClass ~extends"
+        ]
+      }
+    },
+    "rest.v1.drawers.getDrawersByName": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "available"
+      },
+      "changes": {
+        "25.1": [
+          "schema BaseDrawerModel: added",
+          "schema DrawerModel: +ObjectClass ~extends"
+        ]
+      }
+    },
+    "rest.v1.drawers.getDrawersInContainer": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "available"
+      },
+      "changes": {
+        "25.1": [
+          "schema BaseDrawerModel: added",
+          "schema DrawerModel: +ObjectClass ~extends"
+        ]
+      }
+    },
+    "rest.v1.drawers.getDrawersInContainerByName": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "available"
+      },
+      "changes": {
+        "25.1": [
+          "schema BaseDrawerModel: added",
+          "schema DrawerModel: +ObjectClass ~extends"
+        ]
+      }
+    },
+    "rest.v1.drawers.getLocationTree": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.emailreceiver.getAccountDetails": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.emailreceiver.getAccountDetailsByEmail": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.emailreceiver.getAccountStatusByEmail": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.emailreceiver.getAccountsByConfiguration": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.emailreceiver.getConfigurations": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.emailreceiver.getErrorEmails": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.emailreceiver.getErrorEmailsByEmail": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.encryption.decryptAttributes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.encryption.encryptAttributes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.encryption.getSchedule": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.encryption.rotateEncryptionKey": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.files.createFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.files.createFileRelationship": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.files.deleteFilesRelationship": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.files.findFiles": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.files.getFileById": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.files.getFileById2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.files.getRelatedFiles": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.files.mergeFiles": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.files.updateFileProperties": {
+      "availability": {
+        "24.2": "deprecated",
+        "25.1": "deprecated",
+        "7.2": "deprecated"
+      }
+    },
+    "rest.v1.files.writeToFileFromPosition": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.folders.createFolder": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.folders.deleteFolder": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.folders.findFolders": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "changed"
+      },
+      "changes": {
+        "25.1": [
+          "+param ExcludeHidden (body)",
+          "schema FolderDataResult: +HasWorkflowItems +IsHidden",
+          "schema FolderSearchObject: +ExcludeHidden"
+        ],
+        "7.2": [
+          "~param Attributes (body)",
+          "schema FolderDataResult: -File -FolderTypeName",
+          "schema FolderSearchObject: ~Attributes"
+        ]
+      },
+      "paramAvailability": {
+        "ExcludeHidden": [
+          "25.1"
+        ]
+      }
+    },
+    "rest.v1.folders.getFolderById": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "changed"
+      },
+      "changes": {
+        "25.1": [
+          "schema FolderDataResult: +HasWorkflowItems +IsHidden"
+        ],
+        "7.2": [
+          "schema FolderDataResult: -File -FolderTypeName"
+        ]
+      }
+    },
+    "rest.v1.folders.getFolderById2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.folders.getPathToFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.folders.moveFolder": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.folders.updateFolderProperties": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.functionalityrights.getEffectivePermissionsBatch": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.functionalityrights.getPermissionsBatch": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.functionalityrights.getPermissionsBatchAll": {
+      "availability": {
+        "24.2": "deprecated",
+        "25.1": "deprecated",
+        "7.2": "deprecated"
+      }
+    },
+    "rest.v1.functionalityrights.setPermissionsBatch": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.globalconfig.createGlobalConfig": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.globalconfig.deleteGlobalConfig": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.globalconfig.deleteGlobalConfigSection": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.globalconfig.getGlobalConfig": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.health.health": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.instances.batchDeleteInstances": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.instances.createInstances": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.instances.getInstanceChildren": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.instances.getParentPath": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.instances.getPathToObject": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.instances.managePermissionsToInstance": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.instrumentation.getEnterpriseId": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.integration.benefitPointActivites": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.integration.findTasksByClientId": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema TaskAgeCalculationAlgorithm: -value AvailableDate"
+        ]
+      }
+    },
+    "rest.v1.integration.findVapTasks": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema TaskAgeCalculationAlgorithm: -value AvailableDate"
+        ]
+      }
+    },
+    "rest.v1.integration.findVapTasksByClientId": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema TaskAgeCalculationAlgorithm: -value AvailableDate"
+        ]
+      }
+    },
+    "rest.v1.integration.getAgencyOneSettings": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema AgencyOneSettings: +Url -BaseGlobalNavUrl -BaseUrl"
+        ]
+      }
+    },
+    "rest.v1.integration.getAmsRedirectUrl": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.integration.getClientFiles": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.integration.getIntegratedProducts": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.integration.getIntegrationUrl": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.integration.getPolicyFolder": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.integration.getVersion": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.integration.launchBenefitPoint": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.integration.launchSagitta": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.integration.linkBenefitPointActivity": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.integration.unlinkBenefitPointActivity": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.licensing.getConcurrentLoginData": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.licensing.getMessages": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.licensing.login": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.licensing.logout": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.licensing.stillAlive": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.licensing.validateLicense": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.marks.getFileMarkDefinitions": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.marks.getFileMarkDefinitionsByFileTypeId": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.marks.getFileMarkDefinitionsByFileTypeIds": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.notes.addNoteContainer": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema NoteCategory: -value CompletedTask"
+        ]
+      }
+    },
+    "rest.v1.notes.addNoteItem": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema NoteCategory: -value CompletedTask"
+        ]
+      }
+    },
+    "rest.v1.notes.getNotes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema NoteCategory: -value CompletedTask"
+        ]
+      }
+    },
+    "rest.v1.notes.lockNote": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema NoteCategory: -value CompletedTask"
+        ]
+      }
+    },
+    "rest.v1.notes.restoreDeletedNotesCollection": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.notes.setNoteAsDefault": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema NoteCategory: -value CompletedTask"
+        ]
+      }
+    },
+    "rest.v1.notes.unlockNote": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema NoteCategory: -value CompletedTask"
+        ]
+      }
+    },
+    "rest.v1.objecttypes.assignPermissionsForMultipleTypes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.assignPermissionsForType": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.denyPermissionsForMultipleTypes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.denyPermissionsForType": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getAdvancedTypesMetadata": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema AdvancedFolderDataResult: removed",
+          "schema AdvancedTypesMetadataDataResult: -FolderTypes"
+        ]
+      }
+    },
+    "rest.v1.objecttypes.getAllowedTypes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getAllowedTypesAll": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getAllowedTypesForContainer": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getAttributeDefinitionsForType": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getAttributeDefinitionsForTypes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getEffectivePermissionsBatch": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getFileTypeExtensions": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getFileTypeTemplate": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getFileTypeTemplateList": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getObjectType": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getPermissionsBatch": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getSortOptionsForType": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.getTypesForClass": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.objecttypes.removePermissionsForMultipleTypes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrdataforms.getOcrDataPageInfo": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrdatasets.createOcrDataSet": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrdatasets.getOcrDataSetByDocumentId": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrdatasets.getOcrDataSetByPageId": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrfields.createOcrFields": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrfields.getOcrFields": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrfields.setOcrFieldAsEcnrypted": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrfolders.createOcrFolder": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrfolders.getOcrFolders": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrfolders.removeOcrFolder": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrfolders.renameOcrFolder": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrforms.calculateOcrFormsSize": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrforms.createOcrForm": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrforms.deleteOcrForm": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrforms.getOcrForm": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrforms.getOcrFormDoc": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrforms.getOcrForms": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrforms.lockOcrForm": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrforms.markOcrFormAsDeleted": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrforms.moveOcrForm": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrforms.renameOcrForm": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrforms.restoreOcrForm": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrforms.unlockOcrForm": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrformversions.addVersion": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrformversions.changeActiveOcrVersion": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrformversions.getActiveOcrVersion": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrformversions.getLatestOcrVersion": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrformversions.getOcrVersion": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrformversions.getOcrVersions": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.ocrformversions.updateVersion": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.overlays.getDocumentOverlayInfo": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.overlays.getOverlayImage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pages.batchDeletePages": {
+      "availability": {
+        "24.2": "deprecated",
+        "25.1": "deprecated",
+        "7.2": "deprecated"
+      }
+    },
+    "rest.v1.pages.checkReadPermissions": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "available"
+      },
+      "changes": {
+        "25.1": [
+          "+param excludeDeleted (query)"
+        ]
+      },
+      "paramAvailability": {
+        "excludeDeleted": [
+          "25.1"
+        ]
+      }
+    },
+    "rest.v1.pages.createPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema PageModel: -PageExtension"
+        ]
+      }
+    },
+    "rest.v1.pages.getAllPagesFromDocument": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema PageModel: -PageExtension"
+        ]
+      }
+    },
+    "rest.v1.pages.getDocumentHeadById": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pages.getPageById": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema PageModel: -PageExtension"
+        ]
+      }
+    },
+    "rest.v1.pages.getPageById2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema PageModel: -PageExtension"
+        ]
+      }
+    },
+    "rest.v1.pages.getPageDescriptionsForDocs": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pages.getPageImageMetadata": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pages.getPathToFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pages.lockPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pages.lockPage2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pages.movePage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pages.restoreDeletedPages": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.pages.rotatePage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pages.searchPages": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pages.unlockPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pages.updatePageContent": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pages.updatePageProperties": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.pageversions.getPageVersions": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "available"
+      },
+      "changes": {
+        "25.1": [
+          "schema PageVersionModel: +CreatedByFullName +CreatedByName"
+        ]
+      }
+    },
+    "rest.v1.pageversions.promotePageVersion": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.phonecalls.addCallPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema PageModel: -PageExtension"
+        ]
+      }
+    },
+    "rest.v1.phonecalls.getPhoneCallMetadata": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.phonecalls.updateCallPageContent": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema PageModel: -PageExtension"
+        ]
+      }
+    },
+    "rest.v1.redactionrulesets.addRuleSet": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.redactionrulesets.getAllRuleSets": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.redactionrulesets.getRuleSet": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.redactionrulesets.getRulesetsByPageId": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.redactionrulesets.lockRuleSet": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.redactionrulesets.removeRuleSet": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.redactionrulesets.unlockRuleSet": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.redactionrulesets.updateRuleSet": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reportparameters.getGroups": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reportparameters.getProgramSources": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reportparameters.getRoles": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reportparameters.getUsers": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reports.createReport": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reports.deleteAllReportsForUser": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reports.deleteReport": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reports.getMetaDataForReports": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reports.getReportChunk": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reports.getReportChunkCount": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reports.getReportMetaDataForUser": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reports.rerunReport": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reports.returnReportParams": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reporttemplates.createTemplate": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reporttemplates.deleteAllTemplates": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reporttemplates.deleteTemplate": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reporttemplates.getTemplateParameters": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reporttemplates.getTemplates": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reporttemplates.renameTemplate": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reporttemplates.runTemplateReport": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.reporttemplates.saveTemplate": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.servicediscovery.isEventStoreConfigured": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.sla.createSla": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.sla.deleteSla": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.sla.getAllSla": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.sla.getSla": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.sla.updateSla": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskactions.killTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskactions.lockTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskactions.refreshTaskLock": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskactions.releaseTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskactions.releaseTaskByAnchor": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskactions.releaseTaskSplitStep": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskactions.routeTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskactions.unlockTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskattributes.getTaskAttributeById": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskattributes.getTaskAttributeByName": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskattributes.getTaskAttributes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskattributes.setTaskAttributeById": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskattributes.setTaskAttributeByName": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskhistory.getTaskHistory": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.taskhistory.getWorkSummary": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.tasks.createTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.tasks.getNextAvailableTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "changed"
+      },
+      "changes": {
+        "25.1": [
+          "+param ExpandAssignedWithGroupsAndRoles (body)",
+          "schema TaskFilterV2: +ExpandAssignedWithGroupsAndRoles"
+        ],
+        "7.2": [
+          "-param FileId (body)",
+          "schema TaskAgeCalculationAlgorithm: -value AvailableDate",
+          "schema TaskFilterV2: -FileId"
+        ]
+      },
+      "paramAvailability": {
+        "ExpandAssignedWithGroupsAndRoles": [
+          "25.1"
+        ],
+        "FileId": [
+          "24.2",
+          "25.1"
+        ]
+      }
+    },
+    "rest.v1.tasks.getPostTasks": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema TaskAgeCalculationAlgorithm: -value AvailableDate"
+        ]
+      }
+    },
+    "rest.v1.tasks.getPostTasksBatch": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema TaskAgeCalculationAlgorithm: -value AvailableDate"
+        ]
+      }
+    },
+    "rest.v1.tasks.getTasks": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema TaskAgeCalculationAlgorithm: -value AvailableDate"
+        ]
+      }
+    },
+    "rest.v1.tasks.getTasksBatch": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema TaskAgeCalculationAlgorithm: -value AvailableDate"
+        ]
+      }
+    },
+    "rest.v1.tasks.getTasksByFileId": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema TaskAgeCalculationAlgorithm: -value AvailableDate"
+        ]
+      }
+    },
+    "rest.v1.tasks.getTasksByFileIdPost": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema TaskAgeCalculationAlgorithm: -value AvailableDate"
+        ]
+      }
+    },
+    "rest.v1.tasks.setTaskTarget": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.tasks.updateTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.userconfig.createUserConfig": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.userconfig.deleteUserConfig": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.userconfig.getUserConfig": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.assignUserToRole": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.changeUserPassword": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.createUser": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.getCurrentUser": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.getCurrentUserData": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.getEmail": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.getGroupsForUser": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.getUser": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.getUserData": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.getUsers": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.mapUserToVssoAccount": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.setUserAccountDisabled": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.setUserAccountEnabled": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.syncEmail": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.unassignUserFromRole": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.updatePassword": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.users.updateUserData": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.assignPermissionsForMultipleFlows": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.denyPermissionsForMultipleFlows": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getDefaultStepLink": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getEffectivePermissionsBatch": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getFlowById": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getFlowsIds": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getFromPostFlowsAuthorizationInfo": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getFromPostFlowsRuntimeInfo": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getIndexingStepParams": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.workflow.getPermissionsBatch": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getPriorityList": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getRootBuddies": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.workflow.getSplitLinkParameters": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getStepAttributeById": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getStepAttributeByName": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getStepAttributes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getStepById": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getStepByProgName": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getStepLinks": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getSteps": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getStepsLinksByWorkflow": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getUsersToAssign": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.getUsersToAssignSteps": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v1.workflow.getWorkflows": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v1.workflow.removePermissionsForMultipleFlows": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.collaborationportal.addPageExports": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.containers.getContainer": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.containers.getContainers": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.datavalidation.getPageContainsValidatedField": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.datavalidation.getValidationFields": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.datavalidation.getValidationFieldsAll": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.documents.copyDocumentV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.documents.deleteDocument": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.documents.getDocumentByIdV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "changed"
+      },
+      "changes": {
+        "25.1": [
+          "schema FolderDataResult: +HasWorkflowItems +IsHidden"
+        ],
+        "7.2": [
+          "schema FolderDataResult: -File -FolderTypeName"
+        ]
+      }
+    },
+    "rest.v2.documents.moveDocumentV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.files.getFileByIdV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.files.updateFilePropertiesV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.folders.getFolderByIdV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "changed"
+      },
+      "changes": {
+        "25.1": [
+          "+param excludeHidden (query)",
+          "schema FolderDataResult: +HasWorkflowItems +IsHidden"
+        ],
+        "7.2": [
+          "schema FolderDataResult: -File -FolderTypeName"
+        ]
+      },
+      "paramAvailability": {
+        "excludeHidden": [
+          "25.1"
+        ]
+      }
+    },
+    "rest.v2.images.getImageByIdV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.images.getImageList": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.images.getImageStreamV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.images.streamMediaV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.marks.assignFileMarksToFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "rest.v2.marks.assignPageMarksToPages": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.marks.getFileMarkDefinitionsByFileTypeIdV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.marks.getFileMarkDefinitionsV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.marks.getImageDataForFileMark": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.marks.getImageDataForPageMark": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.marks.getMarkedPagesForFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema PageModel: -PageExtension"
+        ]
+      }
+    },
+    "rest.v2.marks.getMarksForFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.marks.getMarksForPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.marks.getPageMarkDefinitions": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.marks.getPageMarkDefinitionsByFileTypeId": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.marks.getPageMarksForFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.marks.removePageMarksFromPages": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.pages.copyPageV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.pages.createPageV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "changed"
+      },
+      "changes": {
+        "7.2": [
+          "schema PageModel: -PageExtension"
+        ]
+      }
+    },
+    "rest.v2.pages.lockPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.pages.mergeToDocument": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.pages.movePageV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.pages.updatePageContentV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "rest.v2.tasks.getPostTasksBatchV2": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "changed",
+        "7.2": "changed"
+      },
+      "changes": {
+        "25.1": [
+          "+param ExpandAssignedWithGroupsAndRoles (body)",
+          "schema BatchTaskFilterV2: +ExpandAssignedWithGroupsAndRoles",
+          "schema DashboardTaskFilterV2: +ExpandAssignedWithGroupsAndRoles",
+          "schema TaskFilterV2: +ExpandAssignedWithGroupsAndRoles"
+        ],
+        "7.2": [
+          "-param FileId (body)",
+          "schema BatchTaskFilterV2: -FileId",
+          "schema DashboardTaskFilterV2: -FileId",
+          "schema TaskAgeCalculationAlgorithm: -value AvailableDate",
+          "schema TaskFilterV2: -FileId"
+        ]
+      },
+      "paramAvailability": {
+        "ExpandAssignedWithGroupsAndRoles": [
+          "25.1"
+        ],
+        "FileId": [
+          "24.2",
+          "25.1"
+        ]
+      }
+    },
+    "rest.v2.tasks.getTaskCountV2": {
+      "availability": {
+        "24.2": "absent",
+        "25.1": "available",
+        "7.2": "absent"
+      }
+    },
+    "soap.AddConvertedPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.AddFileMark": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.AddNote": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.AddPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.AddPageMark": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.AssociateFiles": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.AvailableConnections": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.ChangeUserPassword": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.CreateBatch": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.CreateDocument": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.CreateFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.CreateFolder": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.CreateObject": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.CreateTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.CurrentUser": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.DeleteDocument": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.FindDocuments": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.FindDocumentsEx": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.FindDocumentsLegacy": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.FindFiles": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.FindFilesEx": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.FindFolders": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.FindUserByName": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetAllDocTypes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetAssociatedFiles": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetAttribute": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetAttributeByName": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetAttributeDefs": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetAttributeRule": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetAttributeRules": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetAttributes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetAuthorizedUsersForStep": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetContent": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetDevices": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetDiaryFlow": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetDocumentByRef": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetDocumentType": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetDrawerByRef": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetDrawerType": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetDrawers": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetDrawersByParent": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetFileByRef": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetFileMarkDefs": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetFileMarks": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetFileTemplate": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetFileType": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetFirstPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetFlowByRef": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetFlows": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetFolderByRef": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetFolderType": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetImage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetLinks": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetLocationByRef": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetLocations": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetMapping": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetMultiPageImageFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetMultiPageImageFileEx": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetMultiPageImageFileUsingPages": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetNotes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetObject": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetObjectPathToFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetPageByRef": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetPageMarkDefs": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetPageMarksByFileRef": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetPageMarksByPageRef": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetPagePathToFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetPageVersions": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetPages": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetPages3x": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetParent": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetPermissions": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetSecurityAccount": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetSecurityId": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetStepAttributes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetStepByRef": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetSteps": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetSubTasks": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetTaskByRef": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetTasksEx": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetTasksForCurrentUser": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetTasksForFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetType": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetTypePermissions": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.GetUser": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.InsertPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.IsLoggedIn": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.KillTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.KillTasks": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.LockPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.LockTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.MoveTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.ReleaseSplitTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.ReleaseTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.ReleaseTaskToStep": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.RemoveFileAssociation": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.RemovePageMark": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.RouteTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.SetAttributes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.SetTaskAttribute": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.UnlockAllTasks": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.UnlockPage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.UnlockTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.UpdateDocument": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.UpdateFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.UpdateFileInfo": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.UpdateFolder": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.UpdatePage": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.UpdatePageDescription": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.UpdateTask": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.UserLogin": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.UserLogoff": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    },
+    "soap.Version": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      }
+    }
+  },
+  "profiles": [
+    "7.2",
+    "24.2",
+    "25.1"
+  ]
+}

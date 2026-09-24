@@ -1,0 +1,60 @@
+{
+  "baseline": "24.2",
+  "inputs": {
+    "annotations": {
+      "capabilities.yaml": {
+        "sha256": "72b017c8dac6fcc85cd4e378f44fa32287802afdf4987cf7da68c516f1c121de"
+      },
+      "flows.yaml": {
+        "sha256": "6e212f2e7d3e6fd5b22eca2621cc12a7474c99de81cc795f2d33dcd3890c5e65"
+      },
+      "operations.yaml": {
+        "sha256": "3c9d38966b2fd2c40e338504bcdaa40e6f913430c2c2e56102bc52bed9b20697"
+      },
+      "rest.yaml": {
+        "sha256": "4c402c7addcc3f9900ceea312833e880cf8582679fdf5d5ba7f2bb81ceb5a8fe"
+      },
+      "soap.yaml": {
+        "sha256": "162727e907a04b3682439901225b362481c411957f7d659d0db418f735eb1b36"
+      }
+    },
+    "oas": {
+      "24.2/v1": {
+        "sha256": "a6d403a37b21714000d6fe8d87be8d93c2c74cabf87e4710bcfdc7e2d5ecd22b"
+      },
+      "24.2/v2": {
+        "sha256": "56a8abf275998e393d04587549f5dbe21e1a4f307af6ba56a47ef03451414b38"
+      },
+      "25.1/v1": {
+        "sha256": "bd753830780f77aee9fe1c7f3657ba3a929bdc86404cffd3de80585b5dca0697"
+      },
+      "25.1/v2": {
+        "sha256": "08d6d51de04cbbd219856dca432eb9f34a5d625df1d7c75310574fa71428b53a"
+      },
+      "7.2/v1": {
+        "sha256": "160ec1eb62f915179584786f2bd7c0c03bbd6ad601ea3b2a49a30f2ed353ae00"
+      },
+      "7.2/v2": {
+        "sha256": "5f0d92f115e6db9240a12990140f94d0a059ceaffb98f81f07f261176c063dc2"
+      }
+    },
+    "report": {
+      "file": "report.md",
+      "sha256": "22af8714ad861fd14bc47c51b5ac1fa702b50ce1c87a39ec1b1a5916e5a455ba"
+    },
+    "soap": {
+      "index": {
+        "sha256": "79b463f96b42390fe9768d100c5e2ed466b9e4058bd231f1a82414596601bdc2"
+      },
+      "pages": {
+        "count": 518,
+        "sha256": "e80db1b5673a65baedc2bca89566b234bdb4aa92817d38554975705516806c70"
+      }
+    }
+  },
+  "profiles": [
+    "7.2",
+    "24.2",
+    "25.1"
+  ]
+}

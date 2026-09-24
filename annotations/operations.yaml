@@ -1,0 +1,1147 @@
+# Hand-written notes for the core operations that phase-2 composites rely on (plan §4.3, §9).
+# Everything here is our own wording; scripts/build_catalog.py rejects text that repeats vendor prose.
+#
+# Keys: "METHOD /path" exactly as published for REST, "soap:OperationName" for SOAP.
+# Per operation:
+#   summary      one line, what the call is for
+#   explanation  optional, how it fits into a larger task
+#   safety       optional override of the rule-based level (read | write | destructive)
+#   contentType  optional override of the request content type the OAS declares
+#   multipart    optional extra form parts, for calls whose real wire format is multipart
+#   gotchas      things that trip people up
+#   params       per parameter: meaning (required for every required param) and valueFrom,
+#                a list of {op, field, note?} naming the lookup call that yields the value.
+#                For list outputs, `field` is read from the chosen item.
+
+# ------------------------------------------------------------------ session and health
+
+POST /api/authenticate:
+  summary: Log in with a user name and password and receive an access token.
+  explanation: >-
+    The token goes into the Authorization header of every later REST call as
+    "AccessToken <token>". Pair it with POST /api/validto to learn when it expires.
+  params:
+    UserName:
+      meaning: ImageRight login name of the account the server acts as.
+    Password:
+      meaning: Password for that account. Never pass it through tool arguments; the client reads it from configuration.
+
+GET /api/health:
+  summary: Check whether the application server answers at all; needs no login.
+
+GET /api/integration/version:
+  summary: Report the product version the server runs (major, minor, build, revision).
+  explanation: >-
+    Compare this with the configured version profile before relying on version-specific calls.
+
+GET /api/accounts/current:
+  summary: Return the account record of the user the current token belongs to.
+
+# ------------------------------------------------------------------ locating things
+
+GET /api/drawers:
+  summary: List every drawer the caller can see.
+  explanation: Drawers are the top-level cabinets that hold files. Use the result to pick where a file lives.
+
+GET /api/drawers/{name}:
+  summary: Look up drawers whose name matches the given text.
+  gotchas:
+    - The route shape is identical to GET /api/drawers/{drawerId}; a purely numeric name may be read as an id.
+  params:
+    name:
+      meaning: Drawer name to look for.
+
+GET /api/objecttypes/{standardObjectClass}:
+  summary: List all configured types of one object class, such as every document type.
+  explanation: >-
+    Type ids are needed when creating files, folders and documents. Use this for a global list and
+    GET /api/containers/{objectId}/allowedtypes to see what a specific parent accepts.
+  params:
+    standardObjectClass:
+      meaning: Which class of type to list, e.g. File, Folder, Document or Drawer.
+
+GET /api/containers/{objectId}/allowedtypes:
+  summary: List the child types a given drawer, file or folder is allowed to contain.
+  explanation: >-
+    The file type's template restricts which folder and document types can be placed inside it.
+    Pick DocumentTypeId or FolderTypeId from this list to avoid template errors.
+  params:
+    objectId:
+      meaning: Id of the container (drawer, file or folder) you plan to add something to.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+        - op: POST /api/folders/find
+          field: Id
+        - op: GET /api/drawers
+          field: Id
+
+GET /api/objecttypes/{objectTypeId}/attributes:
+  summary: List the attribute definitions attached to one object type.
+  explanation: Tells you which attributes (and which are mandatory) a new file, folder or document of that type needs.
+  params:
+    objectTypeId:
+      meaning: Id of the file, folder or document type.
+      valueFrom:
+        - op: GET /api/objecttypes/{standardObjectClass}
+          field: Id
+        - op: GET /api/containers/{objectId}/allowedtypes
+          field: Id
+
+POST /api/files/find:
+  summary: Search for files by file number, name, type, parent, marks, dates or attribute values.
+  explanation: All criteria are optional, but an empty search can be slow on large systems; always narrow it.
+  gotchas:
+    - When an attribute criterion carries both an id and a name, the id is used.
+  params:
+    FileNumberPart1:
+      meaning: First part of the file number (often the policy or client number).
+    ParentId:
+      meaning: Restrict the search to files under this drawer.
+      valueFrom:
+        - op: GET /api/drawers
+          field: Id
+    FileTypeIds:
+      meaning: Only return files of these file types.
+      valueFrom:
+        - op: GET /api/objecttypes/{standardObjectClass}
+          field: Id
+          note: call with standardObjectClass=File
+
+GET /api/files/{fileId}:
+  summary: Read one file's properties and attributes.
+  params:
+    fileId:
+      meaning: Id of the file.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+    updateDateLastOpened:
+      meaning: When true, the read also stamps the file as just opened; leave false for plain lookups.
+
+GET /api/v2/files/{fileId}:
+  summary: Read one file's properties and attributes (REST v2 route).
+  params:
+    fileId:
+      meaning: Id of the file.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+
+POST /api/folders/find:
+  summary: Search for folders inside one file by description, type, parent, dates or attributes.
+  params:
+    FileId:
+      meaning: File to search in. The search is always scoped to a single file.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+    FolderTypeIds:
+      meaning: Only return folders of these folder types.
+      valueFrom:
+        - op: GET /api/containers/{objectId}/allowedtypes
+          field: Id
+
+GET /api/folders/{folderId}:
+  summary: Read one folder's properties and attributes.
+  params:
+    folderId:
+      meaning: Id of the folder.
+      valueFrom:
+        - op: POST /api/folders/find
+          field: Id
+
+GET /api/v2/folders/{folderId}:
+  summary: Read one folder's properties (REST v2 route); 25.1 can also skip hidden content.
+  params:
+    folderId:
+      meaning: Id of the folder.
+      valueFrom:
+        - op: POST /api/folders/find
+          field: Id
+    excludeHidden:
+      meaning: Only on 25.1 servers. When true, hidden items are left out of the result.
+
+POST /api/documents/find:
+  summary: Search for documents inside one file by description, type, dates, deleted state or attributes.
+  params:
+    FileId:
+      meaning: File to search in. Required by the server even though every other criterion is optional.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+    ParentId:
+      meaning: Narrow the search to one folder (or the file itself) inside that file.
+      valueFrom:
+        - op: POST /api/folders/find
+          field: Id
+    DocumentTypeIds:
+      meaning: Only return documents of these types.
+      valueFrom:
+        - op: GET /api/objecttypes/{standardObjectClass}
+          field: Id
+          note: call with standardObjectClass=Document
+
+GET /api/documents/{docId}:
+  summary: Read one document's properties, attributes, page count and parent file/folder.
+  params:
+    docId:
+      meaning: Id of the document.
+      valueFrom:
+        - op: POST /api/documents/find
+          field: Id
+
+GET /api/v2/documents/{docId}:
+  summary: Read one document's properties (REST v2 route).
+  params:
+    docId:
+      meaning: Id of the document.
+      valueFrom:
+        - op: POST /api/documents/find
+          field: Id
+
+GET /api/containers/{containerId}:
+  summary: List the folders and documents below a file or folder, optionally the whole subtree.
+  params:
+    containerId:
+      meaning: Id of the file or folder whose contents you want.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+        - op: POST /api/folders/find
+          field: Id
+    recursive:
+      meaning: true walks the entire subtree; false returns only direct children.
+
+GET /api/documents/{docId}/pathToFile:
+  summary: Return the chain of ancestor ids from a document up to its file.
+  params:
+    docId:
+      meaning: Id of the document.
+      valueFrom:
+        - op: POST /api/documents/find
+          field: Id
+
+GET /api/documents/{docId}/pages:
+  summary: List the pages of a document in order.
+  params:
+    docId:
+      meaning: Id of the document.
+      valueFrom:
+        - op: POST /api/documents/find
+          field: Id
+
+# ------------------------------------------------------------------ creating content
+
+POST /api/files:
+  summary: Create a new file (the folder-like record for a client, policy or claim) inside a drawer.
+  explanation: Check first with POST /api/files/find; a duplicate file number is rejected.
+  params:
+    FileTypeId:
+      meaning: Type of file to create; decides the template, number format and allowed children.
+      valueFrom:
+        - op: GET /api/objecttypes/{standardObjectClass}
+          field: Id
+          note: call with standardObjectClass=File
+        - op: GET /api/containers/{objectId}/allowedtypes
+          field: Id
+          note: call with the target drawer id
+    ParentId:
+      meaning: Drawer the new file goes into.
+      valueFrom:
+        - op: GET /api/drawers
+          field: Id
+        - op: GET /api/drawers/{name}
+          field: Id
+    IsTemporary:
+      meaning: Marks the file as temporary. Normally false.
+    CreatedByApplication:
+      meaning: Free-text name of the program creating the file, recorded for auditing.
+    FileNumberPart1:
+      meaning: First part of the file number; must match the file type's number format.
+
+POST /api/folders:
+  summary: Create a folder inside a file or another folder.
+  params:
+    FolderTypeId:
+      meaning: Type of folder; must be allowed by the parent's template.
+      valueFrom:
+        - op: GET /api/containers/{objectId}/allowedtypes
+          field: Id
+    ParentId:
+      meaning: File or folder that will contain the new folder.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+        - op: POST /api/folders/find
+          field: Id
+    Description:
+      meaning: Label shown for the folder.
+
+POST /api/documents:
+  summary: Create an empty document inside a file or folder; pages are added afterwards.
+  explanation: >-
+    A document is a container for pages. Create it, create a batch, then upload each page
+    with POST /api/pages (flow F3).
+  params:
+    ParentId:
+      meaning: File or folder that will hold the document.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+        - op: POST /api/folders/find
+          field: Id
+    DocumentTypeId:
+      meaning: Document type; the parent's template must allow it.
+      valueFrom:
+        - op: GET /api/containers/{objectId}/allowedtypes
+          field: Id
+          note: call with the parent id, then pick by Name
+    Description:
+      meaning: Label shown for the document.
+    DocumentDate:
+      meaning: Business date of the document (for example the date on a letter), not the upload time.
+    Attributes:
+      meaning: Attribute values for the new document; mandatory ones depend on the type.
+      valueFrom:
+        - op: GET /api/objecttypes/{objectTypeId}/attributes
+          field: Name
+
+POST /api/batches:
+  summary: Open a capture batch; every uploaded page should reference one.
+  explanation: Batches group pages for capture reporting. Create one per ingest run and reuse its id for each page.
+  params:
+    Application:
+      meaning: Which kind of client is capturing, e.g. WebSdk, Webservice or Imports.
+
+POST /api/pages:
+  summary: Add one page (one image file) to a document.
+  contentType: multipart/form-data
+  explanation: >-
+    Send a multipart form with two parts: the page settings as JSON and the image bytes.
+    Call it once per page, in order.
+  multipart:
+    - name: PageCreateData
+      type: application/json
+      required: true
+      meaning: JSON object with the DocId, BatchId and Description fields listed below.
+    - name: image0
+      type: file
+      required: true
+      meaning: The image file for the page (TIFF, PDF, JPEG, ...), sent with a file name that carries the extension.
+  gotchas:
+    - The OAS describes the body as plain JSON, but the server expects multipart form data.
+    - The part names must be exactly PageCreateData and image0.
+    - Always pass a real batch id from POST /api/batches; an invented id leaves broken batch reporting data.
+  params:
+    DocId:
+      meaning: Document that receives the page.
+      valueFrom:
+        - op: POST /api/documents
+          field: null
+          note: the id returned when the document was created
+        - op: POST /api/documents/find
+          field: Id
+    BatchId:
+      meaning: Capture batch the page belongs to.
+      valueFrom:
+        - op: POST /api/batches
+          field: null
+          note: the id returned by batch creation
+    Description:
+      meaning: Optional label for the page.
+
+POST /api/v2/pages:
+  summary: Add one page to a document (REST v2), optionally at a given position.
+  contentType: multipart/form-data
+  multipart:
+    - name: PageCreateData
+      type: application/json
+      required: true
+      meaning: JSON object with the DocId, BatchId and Description fields listed below.
+    - name: Image
+      type: file
+      required: true
+      meaning: The image file for the page.
+    - name: Annotation
+      type: file
+      required: false
+      meaning: Optional annotation layer for the page.
+  gotchas:
+    - The image part is called Image here, not image0 as in REST v1.
+    - Always pass a real batch id from POST /api/batches.
+  params:
+    DocId:
+      meaning: Document that receives the page.
+      valueFrom:
+        - op: POST /api/documents
+          field: null
+          note: the id returned when the document was created
+    BatchId:
+      meaning: Capture batch the page belongs to.
+      valueFrom:
+        - op: POST /api/batches
+          field: null
+    targetPageId:
+      meaning: Existing page to insert next to; omit to append.
+      valueFrom:
+        - op: GET /api/documents/{docId}/pages
+          field: Id
+    before:
+      meaning: With targetPageId, true inserts in front of that page instead of after it.
+
+# ------------------------------------------------------------------ changing pages
+
+GET /api/pages/{pageId}/lock:
+  summary: Take an exclusive edit lock on a page.
+  safety: write
+  explanation: >-
+    The lock is only held for a short time (about 30 seconds). Refresh it roughly every
+    10 seconds with GET /api/pages/{pageId}/refresh while you work, and unlock when done.
+  gotchas:
+    - Although this is a GET, it changes server state.
+  params:
+    pageId:
+      meaning: Page to lock.
+      valueFrom:
+        - op: GET /api/documents/{docId}/pages
+          field: Id
+
+GET /api/pages/{pageId}/refresh:
+  summary: Extend a page lock you already hold.
+  safety: write
+  params:
+    pageId:
+      meaning: Page whose lock should be kept alive.
+
+GET /api/pages/{pageId}/unlock:
+  summary: Release a page lock.
+  safety: write
+  params:
+    pageId:
+      meaning: Page to unlock.
+
+GET /api/v2/pages/{pageId}/lock:
+  summary: Take an exclusive edit lock on a page (REST v2 route).
+  safety: write
+  params:
+    pageId:
+      meaning: Page to lock.
+      valueFrom:
+        - op: GET /api/documents/{docId}/pages
+          field: Id
+
+POST /api/pages/{pageId}/content:
+  summary: Replace the images of an existing page, creating a new page version.
+  contentType: multipart/form-data
+  multipart:
+    - name: PageUpdateData
+      type: application/json
+      required: true
+      meaning: JSON object naming the document the page belongs to; do not list the images here.
+    - name: image0
+      type: file
+      required: true
+      meaning: First image of the new version; add image1, image2, ... for more.
+  gotchas:
+    - Lock the page first; without a live lock the server rejects the update.
+  params:
+    pageId:
+      meaning: Page to update.
+      valueFrom:
+        - op: GET /api/documents/{docId}/pages
+          field: Id
+
+POST /api/v2/pages/{pageId}/content:
+  summary: Replace the image and annotation of an existing page (REST v2).
+  contentType: multipart/form-data
+  multipart:
+    - name: PageUpdateData
+      type: application/json
+      required: true
+      meaning: JSON object naming the document the page belongs to.
+    - name: image
+      type: file
+      required: false
+      meaning: New image for the page.
+    - name: annotation
+      type: file
+      required: false
+      meaning: New annotation layer for the page.
+  gotchas:
+    - Lock the page first.
+  params:
+    pageId:
+      meaning: Page to update.
+      valueFrom:
+        - op: GET /api/documents/{docId}/pages
+          field: Id
+
+# ------------------------------------------------------------------ moving, merging, deleting
+
+POST /api/documents/move:
+  summary: Move one or more documents of the same file to another file or folder.
+  explanation: The response maps old ids to new ids when content crosses files, and lists documents that failed.
+  gotchas:
+    - All documents in one call must come from the same source file.
+  params:
+    DocumentIds:
+      meaning: Documents to move.
+      valueFrom:
+        - op: POST /api/documents/find
+          field: Id
+    TargetParentId:
+      meaning: File or folder that receives the documents.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+        - op: POST /api/folders/find
+          field: Id
+    TargetTypeConversionId:
+      meaning: Optional new document type; leave empty to keep the current type.
+
+POST /api/v2/documents/move:
+  summary: Move documents to another container (REST v2), optionally creating a folder path on the way.
+  params:
+    DocumentIds:
+      meaning: Documents to move.
+      valueFrom:
+        - op: POST /api/documents/find
+          field: Id
+    TargetId:
+      meaning: File or folder that receives the documents.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+        - op: POST /api/folders/find
+          field: Id
+
+POST /api/v2/documents/copy:
+  summary: Copy documents into another container (REST v2), as a link or a physical copy.
+  params:
+    DocumentIds:
+      meaning: Documents to copy.
+      valueFrom:
+        - op: POST /api/documents/find
+          field: Id
+    TargetId:
+      meaning: File or folder that receives the copies.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+        - op: POST /api/folders/find
+          field: Id
+    CopyOption:
+      meaning: Logical (a reference), or a physical copy with or without annotations.
+
+POST /api/pages/move:
+  summary: Move pages to another document, optionally to a specific position.
+  explanation: Moving within one file keeps page ids; moving across files returns a map from old to new ids.
+  params:
+    PageIds:
+      meaning: Pages to move.
+      valueFrom:
+        - op: GET /api/documents/{docId}/pages
+          field: Id
+    TargetDocumentId:
+      meaning: Document that receives the pages.
+      valueFrom:
+        - op: POST /api/documents/find
+          field: Id
+    TargetPageId:
+      meaning: Page in the target document to position against; omit to place at the start.
+
+POST /api/files/{sourceFileId}/merge:
+  summary: Merge one file into another; the source file's content ends up in the target.
+  safety: destructive
+  gotchas:
+    - The request body is just the target file id as a bare JSON number.
+  params:
+    sourceFileId:
+      meaning: File whose content is merged away.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+    targetFileId:
+      meaning: File that survives and receives the content.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+
+POST /api/files/{fileId}/instances/delete:
+  summary: Delete a set of pages and/or documents from one file in a single all-or-nothing call.
+  safety: destructive
+  explanation: Replaces the deprecated POST /api/pages/delete. If any item fails, nothing is deleted.
+  params:
+    fileId:
+      meaning: File that owns every page and document listed.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+    Pages:
+      meaning: Pages to delete, each given with its page id and document id.
+      valueFrom:
+        - op: GET /api/documents/{docId}/pages
+          field: Id
+    Containers:
+      meaning: Ids of documents to delete.
+      valueFrom:
+        - op: POST /api/documents/find
+          field: Id
+
+DELETE /api/v2/documents/{documentId}:
+  summary: Delete one document (REST v2).
+  params:
+    documentId:
+      meaning: Document to delete.
+      valueFrom:
+        - op: POST /api/documents/find
+          field: Id
+    force:
+      meaning: true also deletes a document that still has workflow tasks attached.
+
+POST /api/v2/files/{fileId}/properties:
+  summary: Change a file's name, number, type, drawer or attributes.
+  explanation: This is the supported replacement for the deprecated v1 file-properties call.
+  params:
+    fileId:
+      meaning: File to change.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+    DrawerId:
+      meaning: New drawer, when moving the file.
+      valueFrom:
+        - op: GET /api/drawers
+          field: Id
+    AttributesToRemove:
+      meaning: Ids of attributes to clear.
+
+POST /api/documents/{docId}/properties:
+  summary: Change a document's description, dates, type or attributes.
+  params:
+    docId:
+      meaning: Document to change.
+      valueFrom:
+        - op: POST /api/documents/find
+          field: Id
+    DocTypeId:
+      meaning: New document type; must be allowed by the parent's template.
+      valueFrom:
+        - op: GET /api/containers/{objectId}/allowedtypes
+          field: Id
+
+# ------------------------------------------------------------------ workflow lookups
+
+GET /api/workflows:
+  summary: List the workflows the caller has rights on.
+  explanation: First step of task creation; find the workflow by Name or FlowProgName and keep its Id.
+  params:
+    includeBuddies:
+      meaning: Also return the buddy (delegate) accounts configured for each workflow.
+
+GET /api/workflows/{flowId}/steps:
+  summary: List the steps of one workflow that the caller has rights on.
+  params:
+    flowId:
+      meaning: Workflow whose steps you want.
+      valueFrom:
+        - op: GET /api/workflows
+          field: Id
+    flag:
+      meaning: Which steps to include (Production, Debug, Deleted, Both), optionally combined with LoadDetails for round-robin settings.
+
+GET /api/workflows/{flowProgName}/{stepProgName}:
+  summary: Fetch a step directly by the programmatic names of its workflow and step.
+  explanation: A shortcut that avoids listing workflows and steps when the programmatic names are known.
+  params:
+    flowProgName:
+      meaning: Programmatic (code) name of the workflow, not its display name.
+      valueFrom:
+        - op: GET /api/workflows
+          field: FlowProgName
+    stepProgName:
+      meaning: Programmatic name of the step inside that workflow.
+      valueFrom:
+        - op: GET /api/workflows/{flowId}/steps
+          field: ProgName
+
+GET /api/steps/{stepId}:
+  summary: Read one workflow step by id.
+  params:
+    stepId:
+      meaning: Id of the step.
+      valueFrom:
+        - op: GET /api/workflows/{flowId}/steps
+          field: Id
+
+GET /api/steps/{stepId}/users:
+  summary: List the users a task on this step may be assigned to.
+  params:
+    stepId:
+      meaning: Step the task will sit on.
+      valueFrom:
+        - op: GET /api/workflows/{flowId}/steps
+          field: Id
+
+GET /api/steps/{stepId}/priorities:
+  summary: List the priority values the caller may give a task on this step.
+  params:
+    stepId:
+      meaning: Step the task will sit on.
+      valueFrom:
+        - op: GET /api/workflows/{flowId}/steps
+          field: Id
+
+GET /api/steps/{stepId}/attributes:
+  summary: List the task attributes defined on a step, including which ones are mandatory.
+  explanation: Set mandatory attributes before releasing a task, or the release fails.
+  params:
+    stepId:
+      meaning: Step whose attribute rules you want.
+      valueFrom:
+        - op: GET /api/workflows/{flowId}/steps
+          field: Id
+
+GET /api/steps/{srcStepId}/links:
+  summary: List the links leaving a step, i.e. where a task on it can be sent next.
+  params:
+    srcStepId:
+      meaning: Step the task is on now.
+      valueFrom:
+        - op: POST /api/tasks/{taskId}/lock
+          field: StepId
+        - op: GET /api/workflows/{flowId}/steps
+          field: Id
+    targetStepId:
+      meaning: Only return the link to this destination step.
+
+# ------------------------------------------------------------------ tasks
+
+POST /api/tasks:
+  summary: Create a workflow task that points at a file, folder, document or page.
+  explanation: >-
+    Resolve the workflow, the step and optionally the assignee first (flow F1). Using the
+    diary step id creates a diary entry instead of a task.
+  params:
+    ObjectId:
+      meaning: The file, folder or document the task is about.
+      valueFrom:
+        - op: POST /api/files/find
+          field: Id
+        - op: POST /api/folders/find
+          field: Id
+        - op: POST /api/documents/find
+          field: Id
+    StepId:
+      meaning: Workflow step the new task starts on.
+      valueFrom:
+        - op: GET /api/workflows/{flowId}/steps
+          field: Id
+        - op: GET /api/workflows/{flowProgName}/{stepProgName}
+          field: Id
+    Priority:
+      meaning: Task priority; must be one of the values the step allows.
+      valueFrom:
+        - op: GET /api/steps/{stepId}/priorities
+          field: null
+    AvailableDate:
+      meaning: When the task becomes workable. Use the current time for immediate work.
+    UserId:
+      meaning: Optional user to assign the task to.
+      valueFrom:
+        - op: GET /api/steps/{stepId}/users
+          field: Id
+    PageNumber:
+      meaning: Optional page the task should point at.
+      valueFrom:
+        - op: GET /api/documents/{docId}/pages
+          field: Id
+    Attributes:
+      meaning: Task attribute values, given as id and value pairs.
+      valueFrom:
+        - op: GET /api/steps/{stepId}/attributes
+          field: Id
+  gotchas:
+    - The SOAP counterpart's page field carries a page id even though it is called a page number; confirm what PageNumber expects on a test server before relying on it.
+
+GET /api/tasks:
+  summary: Search tasks with filters passed as query parameters, one page of results at a time.
+  params:
+    Flows:
+      meaning: Only tasks in these workflows.
+      valueFrom:
+        - op: GET /api/workflows
+          field: Id
+    Steps:
+      meaning: Only tasks on these steps.
+      valueFrom:
+        - op: GET /api/workflows/{flowId}/steps
+          field: Id
+    AssignedTo:
+      meaning: Only tasks assigned to these user ids; an empty entry selects unassigned tasks.
+      valueFrom:
+        - op: GET /api/steps/{stepId}/users
+          field: Id
+    skip:
+      meaning: Number of results to skip, for paging.
+    top:
+      meaning: Maximum number of results to return.
+
+POST /api/tasks/find:
+  summary: Search tasks with the filter in the request body instead of the query string.
+  explanation: Same filter fields as GET /api/tasks; easier when the filter lists are long.
+  params:
+    Flows:
+      meaning: Only tasks in these workflows.
+      valueFrom:
+        - op: GET /api/workflows
+          field: Id
+    Steps:
+      meaning: Only tasks on these steps.
+      valueFrom:
+        - op: GET /api/workflows/{flowId}/steps
+          field: Id
+
+POST /api/tasks/{taskId}/lock:
+  summary: Lock a task so only you can act on it, and get its current state back.
+  explanation: Every task action (route, release, attribute change) needs the lock. Unlock when finished.
+  params:
+    taskId:
+      meaning: Task to lock.
+      valueFrom:
+        - op: POST /api/tasks/find
+          field: Items.Id
+        - op: GET /api/tasks
+          field: Items.Id
+    stepId:
+      meaning: Optional step the task is expected to be on; the lock fails if it has moved.
+
+POST /api/tasks/{taskId}/refresh:
+  summary: Extend a task lock you already hold.
+  params:
+    taskId:
+      meaning: Locked task.
+
+POST /api/tasks/{taskId}/unlock:
+  summary: Release a task lock you hold.
+  params:
+    taskId:
+      meaning: Locked task.
+
+POST /api/tasks/{taskId}/route:
+  summary: Send a locked task to a chosen step, optionally assigning it to a user.
+  params:
+    taskId:
+      meaning: Task to route; you must hold its lock.
+    stepId:
+      meaning: Destination step.
+      valueFrom:
+        - op: GET /api/steps/{srcStepId}/links
+          field: TargetStepId
+        - op: GET /api/workflows/{flowId}/steps
+          field: Id
+    userId:
+      meaning: Optional user who gets the task on the new step.
+      valueFrom:
+        - op: GET /api/steps/{stepId}/users
+          field: Id
+    commit:
+      meaning: false performs a trial run without saving; default true.
+
+POST /api/tasks/{taskId}/release:
+  summary: Finish the current step for a locked task and let the workflow move it along its link.
+  gotchas:
+    - Mandatory step attributes must be set first, or the release is refused.
+  params:
+    taskId:
+      meaning: Task to release; you must hold its lock.
+    destStepId:
+      meaning: For steps with several outgoing links, which one to follow.
+      valueFrom:
+        - op: GET /api/steps/{srcStepId}/links
+          field: TargetStepId
+
+POST /api/tasks/{taskId}/cancel:
+  summary: Kill a task so it leaves the workflow.
+  safety: destructive
+  params:
+    taskId:
+      meaning: Task to kill; you must hold its lock.
+
+POST /api/tasks/{taskId}/attributes/{attrId}:
+  summary: Set the value of one task attribute by attribute id.
+  gotchas:
+    - The body is the bare JSON value (number, boolean, string or ISO date), not an object.
+  params:
+    taskId:
+      meaning: Task to change; you must hold its lock.
+    attrId:
+      meaning: Attribute to set.
+      valueFrom:
+        - op: GET /api/steps/{stepId}/attributes
+          field: Id
+    value:
+      meaning: New value, typed to match the attribute.
+
+POST /api/v2/tasks/batch/find:
+  summary: Page through tasks in batches (REST v2), with richer task records than v1.
+
+# ------------------------------------------------------------------ notes
+
+GET /api/objects/{objectId}/notes/{category}:
+  summary: Read the note collections of a file, folder or task.
+  params:
+    objectId:
+      meaning: File, folder or task whose notes you want.
+    category:
+      meaning: Which notes, e.g. Regular or Task.
+
+POST /api/objects/{objectId}/notes/{category}:
+  summary: Create the (empty) note collection for an object when it has none yet.
+  params:
+    objectId:
+      meaning: File, folder or task that gets a note collection.
+    category:
+      meaning: Kind of note collection to create.
+
+POST /api/objects/{objectId}/notes/{category}/lock:
+  summary: Lock an object's notes before adding to them.
+  params:
+    objectId:
+      meaning: Object whose notes you will change.
+    category:
+      meaning: Note category being edited.
+    version:
+      meaning: Version of the note collection you last read; a stale version is rejected.
+      valueFrom:
+        - op: GET /api/objects/{objectId}/notes/{category}
+          field: Version
+
+POST /api/objects/{objectId}/notes/{category}/unlock:
+  summary: Release the notes lock.
+  params:
+    objectId:
+      meaning: Object whose notes were locked.
+    category:
+      meaning: Note category that was locked.
+
+POST /api/objects/{objectId}/notes:
+  summary: Append a note entry to an object's locked note collection.
+  params:
+    objectId:
+      meaning: Object that receives the note.
+    Text:
+      meaning: The note text.
+
+# ------------------------------------------------------------------ SOAP (flow F8)
+
+soap:AvailableConnections:
+  summary: List the database connection names a client can log in to; needs no session.
+
+soap:UserLogin:
+  summary: Open a SOAP session and receive the first security token.
+  gotchas:
+    - User name, password and connection name are all case-sensitive.
+    - Every later call returns a fresh token; always send the most recent one.
+  params:
+    username:
+      meaning: ImageRight login name.
+    password:
+      meaning: Password for that login, read from configuration only.
+    connName:
+      meaning: Connection name, as listed by AvailableConnections.
+      valueFrom:
+        - op: soap:AvailableConnections
+          field: null
+
+soap:UserLogoff:
+  summary: Close the SOAP session tied to the token.
+
+soap:CreateBatch:
+  summary: Open a capture batch for SOAP page uploads.
+  params:
+    applicationId:
+      meaning: Numeric id of the capturing application; it must exist on the server.
+
+soap:CreateDocument:
+  summary: Create a document inside a file or folder over SOAP.
+  gotchas:
+    - The published schema also takes a batch id, which the research report's signature omits.
+  params:
+    containerId:
+      meaning: File or folder that will hold the document.
+      valueFrom:
+        - op: soap:FindFilesEx
+          field: Id.RefId
+    data:
+      meaning: Description, name and document type (by id or programmatic name) of the new document.
+      valueFrom:
+        - op: soap:GetFileTemplate
+          field: DocumentTypes.Id.RefId
+    batchId:
+      meaning: Capture batch to associate with the document.
+      valueFrom:
+        - op: soap:CreateBatch
+          field: null
+
+soap:GetDocumentByRef:
+  summary: Read a document over SOAP, optionally with its pages.
+  params:
+    docRef:
+      meaning: Reference to the document (its numeric id goes in RefId).
+    getContent:
+      meaning: true includes the page list.
+    includeDeleted:
+      meaning: true also returns deleted content.
+
+soap:AddPage:
+  summary: Append one page with its images to a document over SOAP.
+  params:
+    documentRef:
+      meaning: Document receiving the page.
+      valueFrom:
+        - op: soap:CreateDocument
+          field: null
+    imageList:
+      meaning: Images of the page, each with base64 data and a file extension.
+    batchId:
+      meaning: Capture batch from CreateBatch.
+      valueFrom:
+        - op: soap:CreateBatch
+          field: null
+    archiveImmediately:
+      meaning: true archives the page right away instead of leaving it to background processing.
+
+soap:LockPage:
+  summary: Lock a page over SOAP before replacing its images.
+  params:
+    pageRef:
+      meaning: Page to lock.
+
+soap:UnlockPage:
+  summary: Release a SOAP page lock; do it even when the update failed.
+  params:
+    pageRef:
+      meaning: Page to unlock.
+
+soap:UpdatePage:
+  summary: Replace a locked page's images over SOAP, creating a new version.
+  params:
+    pageRef:
+      meaning: Page to update; lock it first.
+    archiveImmediately:
+      meaning: true archives the new version right away.
+
+soap:GetFlows:
+  summary: List workflows over SOAP.
+  params:
+    requestFilter:
+      meaning: Optional filter; omit it to get every workflow the caller can see.
+
+soap:GetSteps:
+  summary: List the steps of one workflow over SOAP.
+  params:
+    flowRef:
+      meaning: Workflow whose steps you want.
+      valueFrom:
+        - op: soap:GetFlows
+          field: Id
+    requestFlag:
+      meaning: Which steps to include; Both returns production and debug steps.
+
+soap:GetAuthorizedUsersForStep:
+  summary: List the users who hold a given permission on a step, for choosing an assignee.
+  params:
+    stepRef:
+      meaning: Step the task will sit on.
+      valueFrom:
+        - op: soap:GetSteps
+          field: Id
+    stepPermission:
+      meaning: Permission the users must have; All returns everyone with any right.
+
+soap:CreateTask:
+  summary: Create a workflow task (or a diary entry) on an object over SOAP.
+  gotchas:
+    - Passing no step reference creates a diary entry instead of a task.
+    - The page field inside the creation data holds a page id, despite its name.
+  params:
+    objId:
+      meaning: File, folder or document the task is about.
+      valueFrom:
+        - op: soap:FindFilesEx
+          field: Id.RefId
+    stepRef:
+      meaning: Step the task starts on; leave empty for a diary entry.
+      valueFrom:
+        - op: soap:GetSteps
+          field: Id
+    createData:
+      meaning: Priority, availability date, optional assignee, deadline and description of the task.
+      valueFrom:
+        - op: soap:GetAuthorizedUsersForStep
+          field: User.SecurityAccount.Id
+          note: for the assignee field
+
+soap:GetTaskByRef:
+  summary: Read a task over SOAP.
+  params:
+    taskRef:
+      meaning: Task reference, e.g. the one CreateTask returned.
+      valueFrom:
+        - op: soap:CreateTask
+          field: null
+
+soap:LockTask:
+  summary: Lock a task over SOAP before acting on it.
+  params:
+    taskRef:
+      meaning: Task to lock.
+
+soap:UnlockTask:
+  summary: Release a SOAP task lock.
+  params:
+    taskRef:
+      meaning: Task to unlock.
+
+soap:RouteTask:
+  summary: Send a locked task to another step over SOAP.
+  params:
+    taskRef:
+      meaning: Task to route; lock it first.
+    stepRef:
+      meaning: Destination step.
+      valueFrom:
+        - op: soap:GetSteps
+          field: Id
+    newAvailableDate:
+      meaning: When the task becomes workable on the new step.
+    commit:
+      meaning: false performs a trial run without saving.
+
+soap:ReleaseTask:
+  summary: Finish the current step of a locked task over SOAP.
+  gotchas:
+    - Missing mandatory attributes block the release; attributes missing on the next step put the task in an error state there.
+  params:
+    taskRef:
+      meaning: Task to release; lock it first.
+    commit:
+      meaning: false performs a trial run without saving.
+
+soap:FindFilesEx:
+  summary: Search files over SOAP with structured search conditions.
+  params:
+    searchConditions:
+      meaning: Condition lists (file, folder, document, ...) combined by an operator.
+    getContent:
+      meaning: true also returns each file's folders and documents.
+    includeDeleted:
+      meaning: true also returns deleted files.
+
+soap:GetFileTemplate:
+  summary: Show which folder and document types a file type allows.
+  params:
+    fileTypeId:
+      meaning: Id of the file type.

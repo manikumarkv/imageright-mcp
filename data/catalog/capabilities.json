@@ -1,0 +1,2072 @@
+{
+  "baseline": "24.2",
+  "capabilities": {
+    "batch.create": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "batch.create",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.batches.createBatch",
+          "paramMap": {
+            "application": "Application"
+          },
+          "verified": false
+        },
+        "soap": {
+          "derived": {
+            "applicationId": "Numeric application code; the name-to-code mapping is not published yet."
+          },
+          "operationId": "soap.CreateBatch",
+          "paramMap": {},
+          "verified": false
+        }
+      },
+      "params": {
+        "application": {
+          "meaning": "Name of the capturing application.",
+          "required": true,
+          "type": "string"
+        }
+      },
+      "safety": "write",
+      "summary": "Open a capture batch to group newly added documents and pages."
+    },
+    "container.allowedTypes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "container.allowedTypes",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.objecttypes.getAllowedTypesForContainer",
+          "paramMap": {
+            "containerId": "objectId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "containerId": {
+          "meaning": "Id of the prospective parent.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "List the object types the parent's template allows as children."
+    },
+    "container.content": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "container.content",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.containers.getContainers",
+          "paramMap": {
+            "containerId": "containerId",
+            "recursive": "recursive"
+          },
+          "verified": false
+        },
+        "rest-v2": {
+          "operationId": "rest.v2.containers.getContainer",
+          "paramMap": {
+            "containerId": "containerId",
+            "recursive": "recursive"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "includeDeleted": false
+          },
+          "note": "SOAP always returns one level; recursive is ignored on this surface.",
+          "operationId": "soap.GetContent",
+          "paramMap": {
+            "containerId": "objectId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "containerId": {
+          "meaning": "Id of the object whose children to list.",
+          "required": true,
+          "type": "int64"
+        },
+        "recursive": {
+          "meaning": "Walk the whole subtree instead of one level.",
+          "required": false,
+          "type": "boolean"
+        }
+      },
+      "safety": "read",
+      "summary": "List what sits directly (or recursively) under a drawer, file, folder or document."
+    },
+    "document.copy": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "document.copy",
+      "implementations": {
+        "rest-v2": {
+          "operationId": "rest.v2.documents.copyDocumentV2",
+          "paramMap": {
+            "documentIds": "DocumentIds",
+            "targetId": "TargetId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "documentIds": {
+          "meaning": "Documents to copy.",
+          "required": true,
+          "type": "int64[]"
+        },
+        "targetId": {
+          "meaning": "File or folder that receives the copies.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Copy documents, pages included, to another file or folder."
+    },
+    "document.create": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "document.create",
+      "implementations": {
+        "rest-v1": {
+          "note": "REST requires DocumentDate; the router fills in the current time when it is omitted.",
+          "operationId": "rest.v1.documents.createDocument",
+          "paramMap": {
+            "description": "Description",
+            "documentDate": "DocumentDate",
+            "documentTypeId": "DocumentTypeId",
+            "parentId": "ParentId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "note": "SOAP requires batchId; the router creates a batch first (batch.create) when none is given.",
+          "operationId": "soap.CreateDocument",
+          "paramMap": {
+            "batchId": "batchId",
+            "description": "data.Description",
+            "documentTypeId": "data.ObjTypeId",
+            "parentId": "containerId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "batchId": {
+          "meaning": "Capture batch to record the document under.",
+          "required": false,
+          "type": "int64"
+        },
+        "description": {
+          "meaning": "Label shown for the document.",
+          "required": true,
+          "type": "string"
+        },
+        "documentDate": {
+          "meaning": "Business date of the document; defaults to now.",
+          "required": false,
+          "type": "date-time"
+        },
+        "documentTypeId": {
+          "meaning": "Document type; must be allowed under the parent.",
+          "required": true,
+          "type": "int64"
+        },
+        "parentId": {
+          "meaning": "File or folder that will hold the document.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Create an empty document of a given type; add pages to it afterwards."
+    },
+    "document.delete": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "document.delete",
+      "implementations": {
+        "rest-v2": {
+          "operationId": "rest.v2.documents.deleteDocument",
+          "paramMap": {
+            "documentId": "documentId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "killTasks": false
+          },
+          "note": "With killTasks false the call fails if open tasks point at the document.",
+          "operationId": "soap.DeleteDocument",
+          "paramMap": {
+            "documentId": "docId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "documentId": {
+          "meaning": "Document to delete.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "destructive",
+      "summary": "Delete a document and its pages."
+    },
+    "document.find": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "document.find",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.documents.findDocuments",
+          "paramMap": {
+            "description": "Description",
+            "fileId": "FileId",
+            "parentId": "ParentId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "derived": {
+            "searchConditions": "One equality condition per supplied filter, all joined with AND."
+          },
+          "fixed": {
+            "includeDeleted": false,
+            "includePageData": false
+          },
+          "operationId": "soap.FindDocumentsEx",
+          "paramMap": {},
+          "verified": false
+        }
+      },
+      "params": {
+        "description": {
+          "meaning": "Document description to match.",
+          "required": false,
+          "type": "string"
+        },
+        "fileId": {
+          "meaning": "File to search in.",
+          "required": false,
+          "type": "int64"
+        },
+        "parentId": {
+          "meaning": "Folder or file directly above the documents.",
+          "required": false,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Search for documents by parent, type, description or dates."
+    },
+    "document.get": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "document.get",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.documents.getDocumentById",
+          "paramMap": {
+            "documentId": "docId"
+          },
+          "verified": false
+        },
+        "rest-v2": {
+          "operationId": "rest.v2.documents.getDocumentByIdV2",
+          "paramMap": {
+            "documentId": "docId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "getContent": false,
+            "includeDeleted": false
+          },
+          "operationId": "soap.GetDocumentByRef",
+          "paramMap": {
+            "documentId": "docRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "documentId": {
+          "meaning": "Numeric id of the document.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Fetch one document's properties by id."
+    },
+    "document.move": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "document.move",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.documents.moveDocument",
+          "paramMap": {
+            "documentIds": "DocumentIds",
+            "targetId": "TargetParentId"
+          },
+          "verified": false
+        },
+        "rest-v2": {
+          "operationId": "rest.v2.documents.moveDocumentV2",
+          "paramMap": {
+            "documentIds": "DocumentIds",
+            "targetId": "TargetId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "documentIds": {
+          "meaning": "Documents to move.",
+          "required": true,
+          "type": "int64[]"
+        },
+        "targetId": {
+          "meaning": "File or folder that receives them.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Move documents to another file or folder."
+    },
+    "document.updateProperties": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "document.updateProperties",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.documents.updateProperties",
+          "paramMap": {
+            "description": "Description",
+            "documentId": "docId",
+            "documentTypeId": "DocTypeId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "derived": {
+            "updateRequests": "One DocumentUpdateRequest for documentId carrying only the supplied changes."
+          },
+          "operationId": "soap.UpdateDocument",
+          "paramMap": {},
+          "verified": false
+        }
+      },
+      "params": {
+        "description": {
+          "meaning": "New description.",
+          "required": false,
+          "type": "string"
+        },
+        "documentId": {
+          "meaning": "Document to update.",
+          "required": true,
+          "type": "int64"
+        },
+        "documentTypeId": {
+          "meaning": "New document type.",
+          "required": false,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Change a document's description, dates, type or attributes."
+    },
+    "drawer.list": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "drawer.list",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.drawers.getDrawers",
+          "paramMap": {},
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "includeDeleted": false
+          },
+          "operationId": "soap.GetDrawers",
+          "paramMap": {},
+          "verified": false
+        }
+      },
+      "params": {},
+      "safety": "read",
+      "summary": "List the drawers (top-level storage areas) the caller can see."
+    },
+    "file.create": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "file.create",
+      "implementations": {
+        "rest-v1": {
+          "fixed": {
+            "CreatedByApplication": "imageright-mcp",
+            "IsTemporary": false
+          },
+          "operationId": "rest.v1.files.createFile",
+          "paramMap": {
+            "drawerId": "ParentId",
+            "fileNumber1": "FileNumberPart1",
+            "fileNumber2": "FileNumberPart2",
+            "fileNumber3": "FileNumberPart3",
+            "fileTypeId": "FileTypeId",
+            "name": "Name"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "fileData.TemporaryFile": false
+          },
+          "operationId": "soap.CreateFile",
+          "paramMap": {
+            "drawerId": "drawerContainerId",
+            "fileNumber1": "fileData.FileNumber1",
+            "fileNumber2": "fileData.FileNumber2",
+            "fileNumber3": "fileData.FileNumber3",
+            "fileTypeId": "fileData.ObjTypeId",
+            "name": "fileData.Name"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "drawerId": {
+          "meaning": "Drawer that will hold the file.",
+          "required": true,
+          "type": "int64"
+        },
+        "fileNumber1": {
+          "meaning": "First part of the file number.",
+          "required": false,
+          "type": "string"
+        },
+        "fileNumber2": {
+          "meaning": "Second part of the file number.",
+          "required": false,
+          "type": "string"
+        },
+        "fileNumber3": {
+          "meaning": "Third part of the file number.",
+          "required": false,
+          "type": "string"
+        },
+        "fileTypeId": {
+          "meaning": "File type (template) to create.",
+          "required": true,
+          "type": "int64"
+        },
+        "name": {
+          "meaning": "Display name of the new file.",
+          "required": false,
+          "type": "string"
+        }
+      },
+      "safety": "write",
+      "summary": "Create a new file of a given type inside a drawer."
+    },
+    "file.find": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "file.find",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.files.findFiles",
+          "paramMap": {
+            "fileName": "FileName",
+            "fileNumber1": "FileNumberPart1",
+            "fileNumber2": "FileNumberPart2",
+            "fileNumber3": "FileNumberPart3",
+            "parentId": "ParentId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "derived": {
+            "searchConditions": "One equality condition per supplied filter, all joined with AND."
+          },
+          "fixed": {
+            "getContent": false,
+            "includeDeleted": false
+          },
+          "operationId": "soap.FindFilesEx",
+          "paramMap": {},
+          "verified": false
+        }
+      },
+      "params": {
+        "fileName": {
+          "meaning": "File name to match.",
+          "required": false,
+          "type": "string"
+        },
+        "fileNumber1": {
+          "meaning": "First part of the file number.",
+          "required": false,
+          "type": "string"
+        },
+        "fileNumber2": {
+          "meaning": "Second part of the file number.",
+          "required": false,
+          "type": "string"
+        },
+        "fileNumber3": {
+          "meaning": "Third part of the file number.",
+          "required": false,
+          "type": "string"
+        },
+        "parentId": {
+          "meaning": "Restrict the search to one drawer.",
+          "required": false,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Search for files by number parts, name, type or parent."
+    },
+    "file.get": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "file.get",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.files.getFileById",
+          "paramMap": {
+            "fileId": "fileId"
+          },
+          "verified": false
+        },
+        "rest-v2": {
+          "operationId": "rest.v2.files.getFileByIdV2",
+          "paramMap": {
+            "fileId": "fileId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "getContent": false,
+            "includeDeleted": false
+          },
+          "operationId": "soap.GetFileByRef",
+          "paramMap": {
+            "fileId": "fileRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "fileId": {
+          "meaning": "Numeric id of the file.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Fetch one file's properties by id."
+    },
+    "file.merge": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "file.merge",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.files.mergeFiles",
+          "paramMap": {
+            "sourceFileId": "sourceFileId",
+            "targetFileId": "targetFileId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "sourceFileId": {
+          "meaning": "File that is merged away.",
+          "required": true,
+          "type": "int64"
+        },
+        "targetFileId": {
+          "meaning": "File that receives the content.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "destructive",
+      "summary": "Merge one file into another; the source file's content moves and the source goes away."
+    },
+    "file.tasks": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "file.tasks",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.tasks.getTasksByFileIdPost",
+          "paramMap": {
+            "fileId": "fileId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "limit": 0
+          },
+          "note": "A limit of 0 is assumed to mean no limit; confirm against a test server.",
+          "operationId": "soap.GetTasksForFile",
+          "paramMap": {
+            "fileId": "fileRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "fileId": {
+          "meaning": "File whose tasks to list.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "List workflow tasks attached to a file."
+    },
+    "file.updateProperties": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "file.updateProperties",
+      "implementations": {
+        "rest-v2": {
+          "operationId": "rest.v2.files.updateFilePropertiesV2",
+          "paramMap": {
+            "drawerId": "DrawerId",
+            "fileId": "fileId",
+            "name": "Name"
+          },
+          "verified": false
+        },
+        "soap": {
+          "derived": {
+            "updateRequests": "One FileUpdateRequest for fileId carrying only the supplied changes."
+          },
+          "operationId": "soap.UpdateFile",
+          "paramMap": {},
+          "verified": false
+        }
+      },
+      "params": {
+        "drawerId": {
+          "meaning": "Drawer to move the file into.",
+          "required": false,
+          "type": "int64"
+        },
+        "fileId": {
+          "meaning": "File to update.",
+          "required": true,
+          "type": "int64"
+        },
+        "name": {
+          "meaning": "New display name.",
+          "required": false,
+          "type": "string"
+        }
+      },
+      "safety": "write",
+      "summary": "Change a file's name, number, type, drawer or attributes."
+    },
+    "folder.create": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "folder.create",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.folders.createFolder",
+          "paramMap": {
+            "description": "Description",
+            "folderTypeId": "FolderTypeId",
+            "parentId": "ParentId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.CreateFolder",
+          "paramMap": {
+            "description": "data.Description",
+            "folderTypeId": "data.ObjTypeId",
+            "parentId": "containerId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "description": {
+          "meaning": "Label shown for the folder.",
+          "required": true,
+          "type": "string"
+        },
+        "folderTypeId": {
+          "meaning": "Folder type to create.",
+          "required": true,
+          "type": "int64"
+        },
+        "parentId": {
+          "meaning": "File or folder that will hold the new folder.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Create a folder of a given type inside a file or another folder."
+    },
+    "folder.find": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "folder.find",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.folders.findFolders",
+          "paramMap": {
+            "description": "Description",
+            "fileId": "FileId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "includeDeleted": false
+          },
+          "note": "SOAP cannot filter by description; the router filters the result instead.",
+          "operationId": "soap.FindFolders",
+          "paramMap": {
+            "fileId": "parentFile.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "description": {
+          "meaning": "Folder description to match.",
+          "required": false,
+          "type": "string"
+        },
+        "fileId": {
+          "meaning": "File to search in.",
+          "required": false,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Search for folders inside a file by type or description."
+    },
+    "folder.get": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "folder.get",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.folders.getFolderById",
+          "paramMap": {
+            "folderId": "folderId"
+          },
+          "verified": false
+        },
+        "rest-v2": {
+          "operationId": "rest.v2.folders.getFolderByIdV2",
+          "paramMap": {
+            "folderId": "folderId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "getContent": false,
+            "includeDeleted": false
+          },
+          "operationId": "soap.GetFolderByRef",
+          "paramMap": {
+            "folderId": "folderRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "folderId": {
+          "meaning": "Numeric id of the folder.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Fetch one folder's properties by id."
+    },
+    "note.list": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "note.list",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.notes.getNotes",
+          "paramMap": {
+            "category": "category",
+            "objectId": "objectId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "category": {
+          "meaning": "Note category to read.",
+          "required": true,
+          "type": "string"
+        },
+        "objectId": {
+          "meaning": "Object whose notes to read.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Read the notes of one category attached to an object."
+    },
+    "object.attributes": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "object.attributes",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.attributes.getAttributesByObject",
+          "paramMap": {
+            "objectId": "objId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.GetAttributes",
+          "paramMap": {
+            "objectId": "objectId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "objectId": {
+          "meaning": "Id of the file, folder, document or page.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Read all attribute values stored on an object."
+    },
+    "object.pathToFile": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "object.pathToFile",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.documents.getPathToFile",
+          "paramMap": {
+            "documentId": "docId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.GetObjectPathToFile",
+          "paramMap": {
+            "documentId": "objectRef"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "documentId": {
+          "meaning": "Id of the document to trace upward.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Return the chain of containers from a document up to its file."
+    },
+    "page.create": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "page.create",
+      "implementations": {
+        "rest-v1": {
+          "derived": {
+            "PageCreateData": "JSON part holding DocId, BatchId and Description."
+          },
+          "operationId": "rest.v1.pages.createPage",
+          "paramMap": {
+            "batchId": "BatchId",
+            "description": "Description",
+            "documentId": "DocId",
+            "imagePath": "image0"
+          },
+          "verified": false
+        },
+        "rest-v2": {
+          "derived": {
+            "PageCreateData": "JSON part holding DocId, BatchId and Description."
+          },
+          "operationId": "rest.v2.pages.createPageV2",
+          "paramMap": {
+            "batchId": "BatchId",
+            "description": "Description",
+            "documentId": "DocId",
+            "imagePath": "Image"
+          },
+          "verified": false
+        },
+        "soap": {
+          "derived": {
+            "imageList": "One base64 image read from imagePath."
+          },
+          "fixed": {
+            "archiveImmediately": false
+          },
+          "note": "SOAP requires batchId; the router creates a batch first (batch.create) when none is given.",
+          "operationId": "soap.AddPage",
+          "paramMap": {
+            "batchId": "batchId",
+            "description": "description",
+            "documentId": "documentRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "batchId": {
+          "meaning": "Capture batch to record the page under.",
+          "required": false,
+          "type": "int64"
+        },
+        "description": {
+          "meaning": "Label shown for the page.",
+          "required": false,
+          "type": "string"
+        },
+        "documentId": {
+          "meaning": "Document that receives the page.",
+          "required": true,
+          "type": "int64"
+        },
+        "imagePath": {
+          "meaning": "Image file on disk, inside the allowed upload root.",
+          "required": true,
+          "type": "path"
+        }
+      },
+      "safety": "write",
+      "summary": "Add a page with its image to a document."
+    },
+    "page.get": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "page.get",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.pages.getPageById",
+          "paramMap": {
+            "pageId": "pageId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.GetPageByRef",
+          "paramMap": {
+            "pageId": "pageRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "pageId": {
+          "meaning": "Numeric id of the page.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Fetch one page's properties by id."
+    },
+    "page.list": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "page.list",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.pages.getAllPagesFromDocument",
+          "paramMap": {
+            "documentId": "docId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "includeDeleted": false
+          },
+          "operationId": "soap.GetPages",
+          "paramMap": {
+            "documentId": "documentRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "documentId": {
+          "meaning": "Document whose pages to list.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "List the pages of a document in order."
+    },
+    "page.lock": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "page.lock",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.pages.lockPage",
+          "paramMap": {
+            "pageId": "pageId"
+          },
+          "verified": false
+        },
+        "rest-v2": {
+          "operationId": "rest.v2.pages.lockPage",
+          "paramMap": {
+            "pageId": "pageId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.LockPage",
+          "paramMap": {
+            "pageId": "pageRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "pageId": {
+          "meaning": "Page to lock.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Take a short edit lock on a page before changing it."
+    },
+    "page.move": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "page.move",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.pages.movePage",
+          "paramMap": {
+            "pageIds": "PageIds",
+            "targetDocumentId": "TargetDocumentId"
+          },
+          "verified": false
+        },
+        "rest-v2": {
+          "operationId": "rest.v2.pages.movePageV2",
+          "paramMap": {
+            "pageIds": "PageIds",
+            "targetDocumentId": "TargetId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "pageIds": {
+          "meaning": "Pages to move.",
+          "required": true,
+          "type": "int64[]"
+        },
+        "targetDocumentId": {
+          "meaning": "Document that receives them.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Move pages to another document."
+    },
+    "page.refreshLock": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "page.refreshLock",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.pages.lockPage2",
+          "paramMap": {
+            "pageId": "pageId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "pageId": {
+          "meaning": "Locked page.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Extend a page lock you already hold."
+    },
+    "page.unlock": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "page.unlock",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.pages.unlockPage",
+          "paramMap": {
+            "pageId": "pageId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.UnlockPage",
+          "paramMap": {
+            "pageId": "pageRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "pageId": {
+          "meaning": "Locked page.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Release a page lock you hold."
+    },
+    "page.updateContent": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "page.updateContent",
+      "implementations": {
+        "rest-v1": {
+          "derived": {
+            "PageUpdateData": "JSON part describing the new version."
+          },
+          "operationId": "rest.v1.pages.updatePageContent",
+          "paramMap": {
+            "imagePath": "image0",
+            "pageId": "pageId"
+          },
+          "verified": false
+        },
+        "rest-v2": {
+          "derived": {
+            "PageUpdateData": "JSON part describing the new version."
+          },
+          "operationId": "rest.v2.pages.updatePageContentV2",
+          "paramMap": {
+            "imagePath": "image",
+            "pageId": "pageId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "derived": {
+            "images": "One base64 image read from imagePath."
+          },
+          "fixed": {
+            "archiveImmediately": false
+          },
+          "operationId": "soap.UpdatePage",
+          "paramMap": {
+            "pageId": "pageRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "imagePath": {
+          "meaning": "New image file on disk, inside the allowed upload root.",
+          "required": true,
+          "type": "path"
+        },
+        "pageId": {
+          "meaning": "Page to update; lock it first.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Replace a page's image with a new version."
+    },
+    "page.updateDescription": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "page.updateDescription",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.pages.updatePageProperties",
+          "paramMap": {
+            "description": "Description",
+            "pageId": "pageId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.UpdatePageDescription",
+          "paramMap": {
+            "description": "newDescription",
+            "pageId": "pageReference.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "description": {
+          "meaning": "New label.",
+          "required": true,
+          "type": "string"
+        },
+        "pageId": {
+          "meaning": "Page to relabel.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Change the label shown for a page."
+    },
+    "pages.delete": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "pages.delete",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.instances.batchDeleteInstances",
+          "paramMap": {
+            "containerIds": "Containers",
+            "fileId": "fileId",
+            "pageIds": "Pages"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "containerIds": {
+          "meaning": "Documents or folders to delete.",
+          "required": false,
+          "type": "int64[]"
+        },
+        "fileId": {
+          "meaning": "File that owns everything being deleted.",
+          "required": true,
+          "type": "int64"
+        },
+        "pageIds": {
+          "meaning": "Pages to delete.",
+          "required": false,
+          "type": "int64[]"
+        }
+      },
+      "safety": "destructive",
+      "summary": "Delete pages and/or documents that belong to one file."
+    },
+    "server.version": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "server.version",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.integration.getVersion",
+          "paramMap": {},
+          "verified": false
+        },
+        "soap": {
+          "note": "SOAP reports the web-service build, which can differ from the product release.",
+          "operationId": "soap.Version",
+          "paramMap": {},
+          "verified": false
+        }
+      },
+      "params": {},
+      "safety": "read",
+      "summary": "Report the product version of the connected server."
+    },
+    "step.assignableUsers": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "step.assignableUsers",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.workflow.getUsersToAssign",
+          "paramMap": {
+            "stepId": "stepId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "stepPermission": "AssignmentAllowed"
+          },
+          "operationId": "soap.GetAuthorizedUsersForStep",
+          "paramMap": {
+            "stepId": "stepRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "stepId": {
+          "meaning": "Step the task will sit on.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "List users who may be given tasks on a step."
+    },
+    "step.get": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "step.get",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.workflow.getStepById",
+          "paramMap": {
+            "stepId": "stepId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "requestFlag": "Production"
+          },
+          "operationId": "soap.GetStepByRef",
+          "paramMap": {
+            "stepId": "stepRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "stepId": {
+          "meaning": "Numeric id of the step.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Fetch one workflow step by id."
+    },
+    "step.links": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "step.links",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.workflow.getStepLinks",
+          "paramMap": {
+            "stepId": "srcStepId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.GetLinks",
+          "paramMap": {
+            "stepId": "stepRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "stepId": {
+          "meaning": "Step the routes start from.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "List the routes leading out of a step."
+    },
+    "step.list": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "step.list",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.workflow.getSteps",
+          "paramMap": {
+            "workflowId": "flowId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "requestFlag": "Production"
+          },
+          "operationId": "soap.GetSteps",
+          "paramMap": {
+            "workflowId": "flowRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "workflowId": {
+          "meaning": "Workflow whose steps to list.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "List the steps of one workflow."
+    },
+    "step.priorities": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "step.priorities",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.workflow.getPriorityList",
+          "paramMap": {
+            "stepId": "stepId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "stepId": {
+          "meaning": "Step to inspect.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "List the task priorities a step accepts."
+    },
+    "task.cancel": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "task.cancel",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.taskactions.killTask",
+          "paramMap": {
+            "taskId": "taskId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.KillTask",
+          "paramMap": {
+            "taskId": "taskRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "taskId": {
+          "meaning": "Task to end.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "destructive",
+      "summary": "End a task for good without completing it."
+    },
+    "task.create": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "task.create",
+      "implementations": {
+        "rest-v1": {
+          "note": "Despite its name, PageNumber carries a page id.",
+          "operationId": "rest.v1.tasks.createTask",
+          "paramMap": {
+            "availableDate": "AvailableDate",
+            "description": "Description",
+            "objectId": "ObjectId",
+            "pageId": "PageNumber",
+            "priority": "Priority",
+            "stepId": "StepId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "note": "Despite its name, Pagenumber carries a page id. A null stepRef creates a diary entry.",
+          "operationId": "soap.CreateTask",
+          "paramMap": {
+            "availableDate": "createData.Available",
+            "description": "createData.Description",
+            "objectId": "objId",
+            "pageId": "createData.Pagenumber",
+            "priority": "createData.Priority",
+            "stepId": "stepRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "availableDate": {
+          "meaning": "When the task becomes workable.",
+          "required": true,
+          "type": "date-time"
+        },
+        "description": {
+          "meaning": "Free-text task description.",
+          "required": false,
+          "type": "string"
+        },
+        "objectId": {
+          "meaning": "Object the task is about.",
+          "required": true,
+          "type": "int64"
+        },
+        "pageId": {
+          "meaning": "Page the task points at (an id, not a position).",
+          "required": false,
+          "type": "int64"
+        },
+        "priority": {
+          "meaning": "Priority; must be one the step accepts.",
+          "required": true,
+          "type": "int64"
+        },
+        "stepId": {
+          "meaning": "Step the task starts on.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Put a new task on a workflow step for a file, folder, document or page."
+    },
+    "task.find": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "task.find",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.tasks.getPostTasks",
+          "paramMap": {
+            "stepIds": "Steps",
+            "workflowIds": "Flows"
+          },
+          "verified": false
+        },
+        "soap": {
+          "derived": {
+            "searchConditions": "One condition per supplied filter, all joined with AND."
+          },
+          "operationId": "soap.GetTasksEx",
+          "paramMap": {},
+          "verified": false
+        }
+      },
+      "params": {
+        "stepIds": {
+          "meaning": "Only tasks on these steps.",
+          "required": false,
+          "type": "int64[]"
+        },
+        "workflowIds": {
+          "meaning": "Only tasks in these workflows.",
+          "required": false,
+          "type": "int64[]"
+        }
+      },
+      "safety": "read",
+      "summary": "Search workflow tasks by workflow, step, assignee or date window."
+    },
+    "task.get": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "task.get",
+      "implementations": {
+        "soap": {
+          "note": "REST has no single-task read; use task.find with a Tasks filter there.",
+          "operationId": "soap.GetTaskByRef",
+          "paramMap": {
+            "taskId": "taskRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "taskId": {
+          "meaning": "Numeric id of the task.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Fetch one task by id."
+    },
+    "task.lock": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "task.lock",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.taskactions.lockTask",
+          "paramMap": {
+            "taskId": "taskId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.LockTask",
+          "paramMap": {
+            "taskId": "taskRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "taskId": {
+          "meaning": "Task to lock.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Lock a task so only the caller can work or route it."
+    },
+    "task.refreshLock": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "task.refreshLock",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.taskactions.refreshTaskLock",
+          "paramMap": {
+            "taskId": "taskId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "taskId": {
+          "meaning": "Locked task.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Extend a task lock you already hold."
+    },
+    "task.release": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "task.release",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.taskactions.releaseTask",
+          "paramMap": {
+            "taskId": "taskId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "commit": true
+          },
+          "operationId": "soap.ReleaseTask",
+          "paramMap": {
+            "taskId": "taskRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "taskId": {
+          "meaning": "Locked task to release.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Finish work on a locked task and let the workflow move it along its default route."
+    },
+    "task.route": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "task.route",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.taskactions.routeTask",
+          "paramMap": {
+            "availableDate": "availableDate",
+            "stepId": "stepId",
+            "taskId": "taskId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "fixed": {
+            "commit": true
+          },
+          "note": "SOAP requires a date; the router sends the current time when availableDate is omitted.",
+          "operationId": "soap.RouteTask",
+          "paramMap": {
+            "availableDate": "newAvailableDate",
+            "stepId": "stepRef.RefId",
+            "taskId": "taskRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "availableDate": {
+          "meaning": "When the task becomes workable at the destination.",
+          "required": false,
+          "type": "date-time"
+        },
+        "stepId": {
+          "meaning": "Destination step.",
+          "required": true,
+          "type": "int64"
+        },
+        "taskId": {
+          "meaning": "Locked task to move.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Send a locked task to a chosen step."
+    },
+    "task.unlock": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "task.unlock",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.taskactions.unlockTask",
+          "paramMap": {
+            "taskId": "taskId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.UnlockTask",
+          "paramMap": {
+            "taskId": "taskRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "taskId": {
+          "meaning": "Locked task.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Give up a task lock without moving the task."
+    },
+    "task.update": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "task.update",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.tasks.updateTask",
+          "paramMap": {
+            "description": "Description",
+            "priority": "Priority",
+            "taskId": "taskId"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.UpdateTask",
+          "paramMap": {
+            "description": "parameters.Description",
+            "priority": "parameters.Priority",
+            "taskId": "taskRef.RefId"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "description": {
+          "meaning": "New description.",
+          "required": false,
+          "type": "string"
+        },
+        "priority": {
+          "meaning": "New priority.",
+          "required": false,
+          "type": "int64"
+        },
+        "taskId": {
+          "meaning": "Task to update; lock it first.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "write",
+      "summary": "Change a task's description, priority, availability date or assignee."
+    },
+    "user.current": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "user.current",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.users.getCurrentUser",
+          "paramMap": {},
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.CurrentUser",
+          "paramMap": {},
+          "verified": false
+        }
+      },
+      "params": {},
+      "safety": "read",
+      "summary": "Return the account the current credentials belong to."
+    },
+    "user.get": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "user.get",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.users.getUser",
+          "paramMap": {
+            "userId": "userid"
+          },
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.GetUser",
+          "paramMap": {
+            "userId": "id.Id"
+          },
+          "verified": false
+        }
+      },
+      "params": {
+        "userId": {
+          "meaning": "Numeric id of the user account.",
+          "required": true,
+          "type": "int64"
+        }
+      },
+      "safety": "read",
+      "summary": "Look up one user account by its numeric id."
+    },
+    "workflow.list": {
+      "availability": {
+        "24.2": "available",
+        "25.1": "available",
+        "7.2": "available"
+      },
+      "id": "workflow.list",
+      "implementations": {
+        "rest-v1": {
+          "operationId": "rest.v1.workflow.getWorkflows",
+          "paramMap": {},
+          "verified": false
+        },
+        "soap": {
+          "operationId": "soap.GetFlows",
+          "paramMap": {},
+          "verified": false
+        }
+      },
+      "params": {},
+      "safety": "read",
+      "summary": "List the workflows the caller can see."
+    }
+  },
+  "profiles": [
+    "7.2",
+    "24.2",
+    "25.1"
+  ]
+}

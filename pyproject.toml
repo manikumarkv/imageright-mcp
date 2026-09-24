@@ -30,7 +30,9 @@ dev = [
   "mypy>=1.11",
   "pytest>=8",
   "pytest-asyncio>=0.24",
+  "pyyaml>=6",
   "ruff>=0.6",
+  "types-PyYAML>=6",
 ]
 
 [project.scripts]
@@ -46,7 +48,7 @@ packages = ["src/imageright_mcp"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-src = ["src", "tests"]
+src = ["src", "tests", "scripts"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "ASYNC", "PT"]
@@ -55,7 +57,7 @@ select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "ASYNC", "PT"]
 python_version = "3.11"
 strict = true
 plugins = ["pydantic.mypy"]
-files = ["src", "tests"]
+files = ["src", "tests", "scripts"]
 
 [tool.pydantic-mypy]
 init_forbid_extra = true

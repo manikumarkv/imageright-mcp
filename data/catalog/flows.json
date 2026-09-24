@@ -1,0 +1,1364 @@
+{
+  "baseline": "24.2",
+  "flows": {
+    "F1": {
+      "id": "F1",
+      "inputs": [
+        {
+          "meaning": "Display name of the workflow.",
+          "name": "workflowName",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Display name of the step the task should start on.",
+          "name": "stepName",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "File, folder or document the task is about (see flow F7 to find it).",
+          "name": "targetObjectId",
+          "required": true,
+          "type": "int64"
+        },
+        {
+          "meaning": "Desired priority; must be in the list step 4 returns.",
+          "name": "priority",
+          "required": true,
+          "type": "int64"
+        },
+        {
+          "meaning": "When the task becomes workable; use now for immediate work.",
+          "name": "availableDate",
+          "required": true,
+          "type": "date-time"
+        },
+        {
+          "meaning": "Optional user to assign the task to.",
+          "name": "assigneeName",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "meaning": "Optional task description.",
+          "name": "description",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "notes": [
+        "Using the diary step instead of a regular step creates a diary entry rather than a task."
+      ],
+      "outputs": {
+        "stepId": {
+          "from": "$step2.Id",
+          "type": "int64"
+        },
+        "taskId": {
+          "from": "$step6.Id",
+          "type": "int64"
+        }
+      },
+      "purpose": "Turn a workflow name, a step name and a target object into ids, check who may receive the task and which priorities are allowed, then create the task.",
+      "steps": [
+        {
+          "inputsFrom": [],
+          "n": 1,
+          "onError": "No match means the workflow does not exist or the caller has no rights on it.",
+          "operationId": "rest.v1.workflow.getWorkflows",
+          "output": {
+            "select": "the item whose Name equals $input.workflowName",
+            "type": "WorkflowData[]"
+          },
+          "params": {},
+          "purpose": "Find the workflow.",
+          "safety": "read"
+        },
+        {
+          "alternatives": [
+            "rest.v1.workflow.getStepByProgName"
+          ],
+          "inputsFrom": [
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 2,
+          "operationId": "rest.v1.workflow.getSteps",
+          "output": {
+            "select": "the item whose Name equals $input.stepName",
+            "type": "StepData[]"
+          },
+          "params": {
+            "flag": "Production",
+            "flowId": "$step1.Id"
+          },
+          "purpose": "Find the starting step inside that workflow.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step2.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 3,
+          "operationId": "rest.v1.workflow.getUsersToAssign",
+          "optional": "only when an assignee is wanted",
+          "output": {
+            "select": "the item whose Name or FriendlyName equals $input.assigneeName",
+            "type": "UserAccount2[]"
+          },
+          "params": {
+            "stepId": "$step2.Id"
+          },
+          "purpose": "Resolve the assignee among the users the step allows.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step2.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 4,
+          "operationId": "rest.v1.workflow.getPriorityList",
+          "output": {
+            "type": "int32[]"
+          },
+          "params": {
+            "stepId": "$step2.Id"
+          },
+          "purpose": "Check that the requested priority is permitted on this step.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step2.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 5,
+          "operationId": "rest.v1.workflow.getStepAttributes",
+          "optional": "when the step has attribute rules",
+          "output": {
+            "type": "StepAttributeModel[]"
+          },
+          "params": {
+            "stepId": "$step2.Id"
+          },
+          "purpose": "See whether the step defines mandatory task attributes that must be supplied.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.availableDate",
+              "type": "date-time"
+            },
+            {
+              "ref": "$input.description",
+              "type": "string"
+            },
+            {
+              "ref": "$input.priority",
+              "type": "int64"
+            },
+            {
+              "ref": "$input.targetObjectId",
+              "type": "int64"
+            },
+            {
+              "ref": "$step2.Id",
+              "type": "int64"
+            },
+            {
+              "ref": "$step3.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 6,
+          "onError": "Priority or assignee outside the step's lists are the usual causes of a rejection.",
+          "operationId": "rest.v1.tasks.createTask",
+          "output": {
+            "type": "TaskModel"
+          },
+          "params": {
+            "AvailableDate": "$input.availableDate",
+            "Description": "$input.description",
+            "ObjectId": "$input.targetObjectId",
+            "Priority": "$input.priority",
+            "StepId": "$step2.Id",
+            "UserId": "$step3.Id"
+          },
+          "purpose": "Create the task.",
+          "safety": "write"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Create a workflow task from names",
+      "versionCaveats": []
+    },
+    "F2": {
+      "id": "F2",
+      "inputs": [
+        {
+          "meaning": "Task to act on (see flow F7 to find it).",
+          "name": "taskId",
+          "required": true,
+          "type": "int64"
+        },
+        {
+          "meaning": "Name or label of the step to send the task to.",
+          "name": "targetStepName",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Optional user who gets the task on the new step.",
+          "name": "assigneeId",
+          "required": false,
+          "type": "int64"
+        }
+      ],
+      "notes": [
+        "For long work, call POST /api/tasks/{taskId}/refresh to keep the lock alive.",
+        "A route or release commits by default; commit=false is a trial run."
+      ],
+      "outputs": {
+        "task": {
+          "from": "$step1.Id",
+          "type": "int64"
+        }
+      },
+      "purpose": "Lock a task, pick the next step from its outgoing links, route it there, and unlock.",
+      "steps": [
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.taskId",
+              "type": "int64"
+            }
+          ],
+          "n": 1,
+          "onError": "If another user holds the lock, stop and report who (LockedBy).",
+          "operationId": "rest.v1.taskactions.lockTask",
+          "output": {
+            "type": "TaskModel"
+          },
+          "params": {
+            "returnTask": true,
+            "taskId": "$input.taskId"
+          },
+          "purpose": "Take the lock and read the task's current step.",
+          "safety": "write"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step1.StepId",
+              "type": "int64"
+            }
+          ],
+          "n": 2,
+          "operationId": "rest.v1.workflow.getStepLinks",
+          "output": {
+            "select": "the link whose Label or target step matches $input.targetStepName",
+            "type": "LinkModel[]"
+          },
+          "params": {
+            "srcStepId": "$step1.StepId"
+          },
+          "purpose": "List where the task may go from its current step.",
+          "safety": "read"
+        },
+        {
+          "alternatives": [
+            "rest.v1.taskactions.releaseTask",
+            "rest.v1.taskactions.killTask",
+            "rest.v1.taskattributes.setTaskAttributeById"
+          ],
+          "inputsFrom": [
+            {
+              "ref": "$input.assigneeId",
+              "type": "int64"
+            },
+            {
+              "ref": "$input.taskId",
+              "type": "int64"
+            },
+            {
+              "ref": "$step2.TargetStepId",
+              "type": "int64"
+            }
+          ],
+          "n": 3,
+          "operationId": "rest.v1.taskactions.routeTask",
+          "output": {
+            "type": null
+          },
+          "params": {
+            "commit": true,
+            "stepId": "$step2.TargetStepId",
+            "taskId": "$input.taskId",
+            "userId": "$input.assigneeId"
+          },
+          "purpose": "Send the task to the chosen step.",
+          "safety": "write"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.taskId",
+              "type": "int64"
+            }
+          ],
+          "n": 4,
+          "operationId": "rest.v1.taskactions.unlockTask",
+          "output": {
+            "type": null
+          },
+          "params": {
+            "taskId": "$input.taskId"
+          },
+          "purpose": "Release the lock, also when step 3 failed.",
+          "safety": "write"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Act on a task under a lock",
+      "versionCaveats": []
+    },
+    "F3": {
+      "id": "F3",
+      "inputs": [
+        {
+          "meaning": "First part of the number of the file that receives the document.",
+          "name": "fileNumber",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Name of the document type to create.",
+          "name": "documentTypeName",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Label for the new document.",
+          "name": "description",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Business date of the document.",
+          "name": "documentDate",
+          "required": true,
+          "type": "date"
+        },
+        {
+          "default": "WebSdk",
+          "meaning": "Capturing application recorded on the batch.",
+          "name": "application",
+          "required": true,
+          "type": "ApiApplicationId"
+        },
+        {
+          "meaning": "Page images in order, one file per page (splitting a PDF is phase 2).",
+          "name": "pageFiles",
+          "required": true,
+          "type": "file[]"
+        }
+      ],
+      "notes": [
+        "To place the document in a folder, find the folder with POST /api/folders/find and use it as ParentId.",
+        "If a page upload fails midway, the document holds the pages uploaded so far; phase 2 decides on cleanup."
+      ],
+      "outputs": {
+        "batchId": {
+          "from": "$step4.value",
+          "type": "int64"
+        },
+        "documentId": {
+          "from": "$step3.value",
+          "type": "int64"
+        },
+        "pageId": {
+          "from": "$step5.Id",
+          "type": "int64"
+        }
+      },
+      "purpose": "Locate the file, check which document types it accepts, create the document, open a capture batch and upload each page image.",
+      "steps": [
+        {
+          "alternatives": [
+            "rest.v1.files.createFile"
+          ],
+          "inputsFrom": [
+            {
+              "ref": "$input.fileNumber",
+              "type": "string"
+            }
+          ],
+          "n": 1,
+          "operationId": "rest.v1.files.findFiles",
+          "output": {
+            "select": "the single match; zero or several matches need a human decision",
+            "type": "FileDataResult[]"
+          },
+          "params": {
+            "FileNumberPart1": "$input.fileNumber"
+          },
+          "purpose": "Find the file by its number.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 2,
+          "operationId": "rest.v1.objecttypes.getAllowedTypesForContainer",
+          "output": {
+            "select": "the item whose Name equals $input.documentTypeName",
+            "type": "ObjectTypeDataResult[]"
+          },
+          "params": {
+            "objectId": "$step1.Id"
+          },
+          "purpose": "List the document types this file's template permits.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.description",
+              "type": "string"
+            },
+            {
+              "ref": "$input.documentDate",
+              "type": "date"
+            },
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            },
+            {
+              "ref": "$step2.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 3,
+          "operationId": "rest.v1.documents.createDocument",
+          "output": {
+            "type": "int64"
+          },
+          "params": {
+            "Description": "$input.description",
+            "DocumentDate": "$input.documentDate",
+            "DocumentTypeId": "$step2.Id",
+            "ParentId": "$step1.Id"
+          },
+          "purpose": "Create the empty document.",
+          "safety": "write"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.application",
+              "type": "ApiApplicationId"
+            }
+          ],
+          "n": 4,
+          "operationId": "rest.v1.batches.createBatch",
+          "output": {
+            "type": "int64"
+          },
+          "params": {
+            "Application": "$input.application"
+          },
+          "purpose": "Open a real capture batch for the pages.",
+          "safety": "write"
+        },
+        {
+          "alternatives": [
+            "rest.v2.pages.createPageV2"
+          ],
+          "inputsFrom": [
+            {
+              "ref": "$input.pageFiles",
+              "type": "file[]"
+            },
+            {
+              "ref": "$step3.value",
+              "type": "int64"
+            },
+            {
+              "ref": "$step4.value",
+              "type": "int64"
+            }
+          ],
+          "n": 5,
+          "operationId": "rest.v1.pages.createPage",
+          "output": {
+            "type": "PageModel"
+          },
+          "params": {
+            "BatchId": "$step4.value",
+            "DocId": "$step3.value",
+            "PageCreateData": {
+              "batchId": "$step4.value",
+              "docId": "$step3.value"
+            },
+            "image0": "$input.pageFiles"
+          },
+          "purpose": "Upload one page.",
+          "repeat": "once per entry of $input.pageFiles, in order",
+          "safety": "write"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Ingest a document page by page",
+      "versionCaveats": []
+    },
+    "F4": {
+      "id": "F4",
+      "inputs": [
+        {
+          "meaning": "Page to update.",
+          "name": "pageId",
+          "required": true,
+          "type": "int64"
+        },
+        {
+          "meaning": "Document the page belongs to (PageModel.DocumentId).",
+          "name": "documentId",
+          "required": true,
+          "type": "int64"
+        },
+        {
+          "meaning": "New image for the page.",
+          "name": "imageFile",
+          "required": true,
+          "type": "file"
+        }
+      ],
+      "notes": [
+        "The lock only lasts about 30 seconds; refresh it every 10 seconds with GET /api/pages/{pageId}/refresh during slow uploads.",
+        "The REST v2 content call names its parts image and annotation instead of image0."
+      ],
+      "outputs": {},
+      "purpose": "Lock a page, upload new image content as a new version, and unlock.",
+      "steps": [
+        {
+          "alternatives": [
+            "rest.v2.pages.lockPage"
+          ],
+          "inputsFrom": [
+            {
+              "ref": "$input.pageId",
+              "type": "int64"
+            }
+          ],
+          "n": 1,
+          "operationId": "rest.v1.pages.lockPage",
+          "output": {
+            "type": null
+          },
+          "params": {
+            "pageId": "$input.pageId"
+          },
+          "purpose": "Take the page lock.",
+          "safety": "write"
+        },
+        {
+          "alternatives": [
+            "rest.v2.pages.updatePageContentV2"
+          ],
+          "inputsFrom": [
+            {
+              "ref": "$input.documentId",
+              "type": "int64"
+            },
+            {
+              "ref": "$input.imageFile",
+              "type": "file"
+            },
+            {
+              "ref": "$input.pageId",
+              "type": "int64"
+            }
+          ],
+          "n": 2,
+          "operationId": "rest.v1.pages.updatePageContent",
+          "output": {
+            "type": "int64"
+          },
+          "params": {
+            "PageUpdateData": {
+              "documentId": "$input.documentId"
+            },
+            "image0": "$input.imageFile",
+            "pageId": "$input.pageId"
+          },
+          "purpose": "Upload the new image.",
+          "safety": "write"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.pageId",
+              "type": "int64"
+            }
+          ],
+          "n": 3,
+          "operationId": "rest.v1.pages.unlockPage",
+          "output": {
+            "type": null
+          },
+          "params": {
+            "pageId": "$input.pageId"
+          },
+          "purpose": "Release the lock, also when step 2 failed.",
+          "safety": "write"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Replace a page's image under a lock",
+      "versionCaveats": []
+    },
+    "F5": {
+      "id": "F5",
+      "inputs": [
+        {
+          "meaning": "File to take the documents from.",
+          "name": "sourceFileId",
+          "required": true,
+          "type": "int64"
+        },
+        {
+          "meaning": "File or folder that receives them.",
+          "name": "targetContainerId",
+          "required": true,
+          "type": "int64"
+        }
+      ],
+      "notes": [
+        "Folders move with POST /api/folders/move and pages with POST /api/pages/move or the v2 page move, copy and merge calls.",
+        "Merging two whole files is POST /api/files/{sourceFileId}/merge, which cannot be undone.",
+        "Deleting pages or documents in bulk is POST /api/files/{fileId}/instances/delete (all or nothing)."
+      ],
+      "outputs": {
+        "documentIdMap": {
+          "from": "$step2.DocumentIdMap",
+          "type": "map<string,int64>"
+        },
+        "pageIdMap": {
+          "from": "$step2.PageIdMap",
+          "type": "map<string,int64>"
+        }
+      },
+      "purpose": "List the documents of a source file and move them into a target file in one call.",
+      "steps": [
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.sourceFileId",
+              "type": "int64"
+            }
+          ],
+          "n": 1,
+          "operationId": "rest.v1.documents.findDocuments",
+          "output": {
+            "select": "all items",
+            "type": "DocumentDataResult[]"
+          },
+          "params": {
+            "Deleted": false,
+            "FileId": "$input.sourceFileId"
+          },
+          "purpose": "Collect the documents of the source file.",
+          "safety": "read"
+        },
+        {
+          "alternatives": [
+            "rest.v2.documents.moveDocumentV2",
+            "rest.v2.documents.copyDocumentV2"
+          ],
+          "inputsFrom": [
+            {
+              "ref": "$input.targetContainerId",
+              "type": "int64"
+            },
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 2,
+          "onError": "Check FailedDocumentMoves in the result; the call can partly succeed.",
+          "operationId": "rest.v1.documents.moveDocument",
+          "output": {
+            "type": "DocumentMoveResult"
+          },
+          "params": {
+            "DocumentIds": "$step1.Id",
+            "TargetParentId": "$input.targetContainerId"
+          },
+          "purpose": "Move them.",
+          "safety": "write"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Move all documents from one file to another",
+      "versionCaveats": []
+    },
+    "F6": {
+      "id": "F6",
+      "inputs": [
+        {
+          "meaning": "File, folder or task that gets the note.",
+          "name": "objectId",
+          "required": true,
+          "type": "int64"
+        },
+        {
+          "default": "Regular",
+          "meaning": "Kind of note collection.",
+          "name": "category",
+          "required": true,
+          "type": "NoteCategory"
+        },
+        {
+          "meaning": "The note text.",
+          "name": "text",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "notes": [
+        "When step 2 ran, lock with the Version it returned instead of step 1's."
+      ],
+      "outputs": {
+        "noteItemId": {
+          "from": "$step4.ItemId",
+          "type": "int64"
+        }
+      },
+      "purpose": "Make sure the note collection exists, lock it at its current version, append a note, and unlock.",
+      "steps": [
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.category",
+              "type": "NoteCategory"
+            },
+            {
+              "ref": "$input.objectId",
+              "type": "int64"
+            }
+          ],
+          "n": 1,
+          "operationId": "rest.v1.notes.getNotes",
+          "output": {
+            "select": "the first item",
+            "type": "NotesContainer[]"
+          },
+          "params": {
+            "category": "$input.category",
+            "objectId": "$input.objectId"
+          },
+          "purpose": "Read the collection to learn its version (an Id of -1 means there is none yet).",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.category",
+              "type": "NoteCategory"
+            },
+            {
+              "ref": "$input.objectId",
+              "type": "int64"
+            }
+          ],
+          "n": 2,
+          "operationId": "rest.v1.notes.addNoteContainer",
+          "optional": "only when step 1 returned Id -1",
+          "output": {
+            "type": "NotesContainer"
+          },
+          "params": {
+            "category": "$input.category",
+            "objectId": "$input.objectId"
+          },
+          "purpose": "Create the collection when step 1 found none.",
+          "safety": "write"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.category",
+              "type": "NoteCategory"
+            },
+            {
+              "ref": "$input.objectId",
+              "type": "int64"
+            },
+            {
+              "ref": "$step1.Version",
+              "type": "int32"
+            }
+          ],
+          "n": 3,
+          "operationId": "rest.v1.notes.lockNote",
+          "output": {
+            "type": null
+          },
+          "params": {
+            "category": "$input.category",
+            "objectId": "$input.objectId",
+            "version": "$step1.Version"
+          },
+          "purpose": "Lock the collection at the version just read.",
+          "safety": "write"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.category",
+              "type": "NoteCategory"
+            },
+            {
+              "ref": "$input.objectId",
+              "type": "int64"
+            },
+            {
+              "ref": "$input.text",
+              "type": "string"
+            }
+          ],
+          "n": 4,
+          "operationId": "rest.v1.notes.addNoteItem",
+          "output": {
+            "type": "NoteItem"
+          },
+          "params": {
+            "Category": "$input.category",
+            "Text": "$input.text",
+            "objectId": "$input.objectId"
+          },
+          "purpose": "Append the note.",
+          "safety": "write"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.category",
+              "type": "NoteCategory"
+            },
+            {
+              "ref": "$input.objectId",
+              "type": "int64"
+            }
+          ],
+          "n": 5,
+          "operationId": "rest.v1.notes.unlockNote",
+          "output": {
+            "type": null
+          },
+          "params": {
+            "category": "$input.category",
+            "objectId": "$input.objectId"
+          },
+          "purpose": "Release the lock, also when step 4 failed.",
+          "safety": "write"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Add a note to a file, folder or task",
+      "versionCaveats": []
+    },
+    "F7": {
+      "id": "F7",
+      "inputs": [
+        {
+          "meaning": "First part of the file number.",
+          "name": "fileNumber",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Optional document types to narrow the search.",
+          "name": "documentTypeIds",
+          "required": false,
+          "type": "int64[]"
+        }
+      ],
+      "notes": [
+        "Tasks are found with GET /api/tasks or POST /api/tasks/find and then handled with F2.",
+        "To walk upwards from any object, use the pathToFile calls."
+      ],
+      "outputs": {
+        "documentId": {
+          "from": "$step2.Id",
+          "type": "int64"
+        },
+        "fileId": {
+          "from": "$step1.Id",
+          "type": "int64"
+        },
+        "pageId": {
+          "from": "$step3.Id",
+          "type": "int64"
+        }
+      },
+      "purpose": "Resolve a file number to a file, its documents and their pages, producing ids for the other flows.",
+      "steps": [
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.fileNumber",
+              "type": "string"
+            }
+          ],
+          "n": 1,
+          "operationId": "rest.v1.files.findFiles",
+          "output": {
+            "select": "the single match",
+            "type": "FileDataResult[]"
+          },
+          "params": {
+            "FileNumberPart1": "$input.fileNumber"
+          },
+          "purpose": "Find the file.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.documentTypeIds",
+              "type": "int64[]"
+            },
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 2,
+          "operationId": "rest.v1.documents.findDocuments",
+          "output": {
+            "select": "the document(s) of interest",
+            "type": "DocumentDataResult[]"
+          },
+          "params": {
+            "DocumentTypeIds": "$input.documentTypeIds",
+            "FileId": "$step1.Id"
+          },
+          "purpose": "Find documents in it.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step2.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 3,
+          "operationId": "rest.v1.pages.getAllPagesFromDocument",
+          "output": {
+            "type": "PageModel[]"
+          },
+          "params": {
+            "docId": "$step2.Id"
+          },
+          "purpose": "List the pages of a chosen document.",
+          "safety": "read"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Find content, then act on it",
+      "versionCaveats": []
+    },
+    "F8": {
+      "id": "F8",
+      "inputs": [
+        {
+          "meaning": "Login name (case-sensitive), from configuration.",
+          "name": "username",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Password (case-sensitive), from configuration only.",
+          "name": "password",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Connection name (case-sensitive).",
+          "name": "connection",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Display name of the workflow.",
+          "name": "workflowName",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Display name of the step.",
+          "name": "stepName",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "File, folder or document the task is about.",
+          "name": "targetObjectId",
+          "required": true,
+          "type": "long"
+        },
+        {
+          "meaning": "Task priority.",
+          "name": "priority",
+          "required": true,
+          "type": "long"
+        },
+        {
+          "meaning": "When the task becomes workable.",
+          "name": "availableDate",
+          "required": true,
+          "type": "dateTime"
+        }
+      ],
+      "notes": [
+        "Every response carries a new security token; each call must send the token from the previous response.",
+        "Acting on the task follows LockTask, then RouteTask, ReleaseTask, ReleaseTaskToStep, SetTaskAttribute, UpdateTask or KillTask, then UnlockTask."
+      ],
+      "outputs": {
+        "task": {
+          "from": "$step6.value",
+          "type": "Task"
+        },
+        "taskRef": {
+          "from": "$step5.value",
+          "type": "TaskRef"
+        }
+      },
+      "purpose": "The SOAP version of F1: open a session, resolve workflow, step and assignee, create the task, read it back and close the session.",
+      "steps": [
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.connection",
+              "type": "string"
+            },
+            {
+              "ref": "$input.password",
+              "type": "string"
+            },
+            {
+              "ref": "$input.username",
+              "type": "string"
+            }
+          ],
+          "n": 1,
+          "operationId": "soap.UserLogin",
+          "output": {
+            "type": "string"
+          },
+          "params": {
+            "connName": "$input.connection",
+            "password": "$input.password",
+            "username": "$input.username"
+          },
+          "purpose": "Open the session; the result is the first security token.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [],
+          "n": 2,
+          "operationId": "soap.GetFlows",
+          "output": {
+            "select": "the item whose Name equals $input.workflowName",
+            "type": "ArrayOfWorkflow"
+          },
+          "params": {},
+          "purpose": "Find the workflow.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step2.Id",
+              "type": "WorkflowRef"
+            }
+          ],
+          "n": 3,
+          "operationId": "soap.GetSteps",
+          "output": {
+            "select": "the item whose Name equals $input.stepName",
+            "type": "ArrayOfStep"
+          },
+          "params": {
+            "flowRef": "$step2.Id",
+            "requestFlag": "Both"
+          },
+          "purpose": "Find the step in it.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step3.Id",
+              "type": "StepRef"
+            }
+          ],
+          "n": 4,
+          "operationId": "soap.GetAuthorizedUsersForStep",
+          "optional": "only when an assignee is wanted",
+          "output": {
+            "type": "ArrayOfAuthorizedStepUser"
+          },
+          "params": {
+            "stepPermission": "All",
+            "stepRef": "$step3.Id"
+          },
+          "purpose": "Pick an assignee among the users allowed on the step.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.availableDate",
+              "type": "dateTime"
+            },
+            {
+              "ref": "$input.priority",
+              "type": "long"
+            },
+            {
+              "ref": "$input.targetObjectId",
+              "type": "long"
+            },
+            {
+              "ref": "$step3.Id",
+              "type": "StepRef"
+            },
+            {
+              "ref": "$step4.User.SecurityAccount.Id",
+              "type": "SecurityID"
+            }
+          ],
+          "n": 5,
+          "operationId": "soap.CreateTask",
+          "output": {
+            "type": "TaskRef"
+          },
+          "params": {
+            "createData.AssignedTo": "$step4.User.SecurityAccount.Id",
+            "createData.Available": "$input.availableDate",
+            "createData.Priority": "$input.priority",
+            "objId": "$input.targetObjectId",
+            "stepRef": "$step3.Id"
+          },
+          "purpose": "Create the task.",
+          "safety": "write"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step5.value",
+              "type": "TaskRef"
+            }
+          ],
+          "n": 6,
+          "operationId": "soap.GetTaskByRef",
+          "output": {
+            "type": "Task"
+          },
+          "params": {
+            "taskRef": "$step5.value"
+          },
+          "purpose": "Read the new task back.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [],
+          "n": 7,
+          "operationId": "soap.UserLogoff",
+          "output": {
+            "type": "boolean"
+          },
+          "params": {},
+          "purpose": "Close the session.",
+          "safety": "read"
+        }
+      ],
+      "surface": "soap",
+      "title": "Create a task over SOAP",
+      "versionCaveats": []
+    },
+    "F8b": {
+      "id": "F8b",
+      "inputs": [
+        {
+          "meaning": "Login name (case-sensitive), from configuration.",
+          "name": "username",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Password (case-sensitive), from configuration only.",
+          "name": "password",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Connection name (case-sensitive).",
+          "name": "connection",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Document that receives the pages.",
+          "name": "documentRef",
+          "required": true,
+          "type": "DocumentRef"
+        },
+        {
+          "meaning": "Numeric id of the capturing application.",
+          "name": "applicationId",
+          "required": true,
+          "type": "int"
+        },
+        {
+          "meaning": "One image list per page, in order.",
+          "name": "pageImages",
+          "required": true,
+          "type": "ImageList[]"
+        }
+      ],
+      "notes": [
+        "AddConvertedPage accepts a batch id of -1 to create a batch on the fly; whether phase 2 needs it is still open."
+      ],
+      "outputs": {
+        "batchId": {
+          "from": "$step2.value",
+          "type": "long"
+        },
+        "page": {
+          "from": "$step3.value",
+          "type": "Page"
+        }
+      },
+      "purpose": "The SOAP version of F3's upload part - open a batch and add pages to an existing document.",
+      "steps": [
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.connection",
+              "type": "string"
+            },
+            {
+              "ref": "$input.password",
+              "type": "string"
+            },
+            {
+              "ref": "$input.username",
+              "type": "string"
+            }
+          ],
+          "n": 1,
+          "operationId": "soap.UserLogin",
+          "output": {
+            "type": "string"
+          },
+          "params": {
+            "connName": "$input.connection",
+            "password": "$input.password",
+            "username": "$input.username"
+          },
+          "purpose": "Open the session.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.applicationId",
+              "type": "int"
+            }
+          ],
+          "n": 2,
+          "operationId": "soap.CreateBatch",
+          "output": {
+            "type": "long"
+          },
+          "params": {
+            "applicationId": "$input.applicationId"
+          },
+          "purpose": "Open a capture batch.",
+          "safety": "write"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.documentRef",
+              "type": "DocumentRef"
+            },
+            {
+              "ref": "$input.pageImages",
+              "type": "ImageList[]"
+            },
+            {
+              "ref": "$step2.value",
+              "type": "long"
+            }
+          ],
+          "n": 3,
+          "operationId": "soap.AddPage",
+          "output": {
+            "type": "Page"
+          },
+          "params": {
+            "archiveImmediately": false,
+            "batchId": "$step2.value",
+            "documentRef": "$input.documentRef",
+            "imageList": "$input.pageImages"
+          },
+          "purpose": "Add one page.",
+          "repeat": "once per entry of $input.pageImages, in order",
+          "safety": "write"
+        },
+        {
+          "inputsFrom": [],
+          "n": 4,
+          "operationId": "soap.UserLogoff",
+          "output": {
+            "type": "boolean"
+          },
+          "params": {},
+          "purpose": "Close the session.",
+          "safety": "read"
+        }
+      ],
+      "surface": "soap",
+      "title": "Ingest pages over SOAP",
+      "versionCaveats": []
+    }
+  },
+  "profiles": [
+    "7.2",
+    "24.2",
+    "25.1"
+  ]
+}

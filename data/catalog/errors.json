@@ -1,0 +1,3202 @@
+{
+  "note": "Native REST ErrorCodes (shared by v1 and v2). IR-XXXX mapping is milestone M3.",
+  "rest": {
+    "1": {
+      "code": 1,
+      "family": "auth-security-general",
+      "name": "UserNameOrPasswordIsIncorrect",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.authentication.authenticate",
+        "rest.v1.authentication.authenticate2",
+        "rest.v1.authentication.authenticate3",
+        "rest.v1.users.changeUserPassword"
+      ]
+    },
+    "10": {
+      "code": 10,
+      "family": "auth-security-general",
+      "name": "ObjectNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.containers.getDeletedContent",
+        "rest.v1.containers.restoreDeletedDocFolder",
+        "rest.v1.documents.getDocumentById",
+        "rest.v1.documents.getDocumentHeadById",
+        "rest.v1.documents.getPathToFile",
+        "rest.v1.documents.moveDocument",
+        "rest.v1.files.createFileRelationship",
+        "rest.v1.files.deleteFilesRelationship",
+        "rest.v1.files.getFileById",
+        "rest.v1.files.getFileById2",
+        "rest.v1.folders.getFolderById",
+        "rest.v1.folders.getFolderById2",
+        "rest.v1.folders.getPathToFile",
+        "rest.v1.instances.createInstances",
+        "rest.v1.instances.getInstanceChildren",
+        "rest.v1.instances.getParentPath",
+        "rest.v1.instances.getPathToObject",
+        "rest.v1.instances.managePermissionsToInstance",
+        "rest.v1.notes.restoreDeletedNotesCollection",
+        "rest.v1.overlays.getDocumentOverlayInfo",
+        "rest.v1.overlays.getOverlayImage",
+        "rest.v1.pages.getDocumentHeadById",
+        "rest.v1.pages.getPathToFile",
+        "rest.v1.pages.movePage",
+        "rest.v2.documents.getDocumentByIdV2",
+        "rest.v2.files.getFileByIdV2",
+        "rest.v2.folders.getFolderByIdV2",
+        "rest.v2.marks.assignFileMarksToFile"
+      ]
+    },
+    "100": {
+      "code": 100,
+      "family": "notes",
+      "name": "NoteLockedByAnotherUser",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.notes.addNoteItem",
+        "rest.v1.notes.lockNote",
+        "rest.v1.notes.restoreDeletedNotesCollection",
+        "rest.v1.notes.setNoteAsDefault",
+        "rest.v1.notes.unlockNote"
+      ]
+    },
+    "1000": {
+      "code": 1000,
+      "family": "object-types",
+      "name": "NotFileType",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.objecttypes.getFileTypeExtensions",
+        "rest.v1.objecttypes.getFileTypeTemplate",
+        "rest.v1.objecttypes.getFileTypeTemplateList"
+      ]
+    },
+    "1001": {
+      "code": 1001,
+      "family": "object-types",
+      "name": "NotDrawerLocationType",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.objecttypes.getAllowedTypes",
+        "rest.v1.objecttypes.getAllowedTypesAll"
+      ]
+    },
+    "1002": {
+      "code": 1002,
+      "family": "object-types",
+      "name": "TypeNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.documents.updateProperties",
+        "rest.v1.files.mergeFiles",
+        "rest.v1.files.updateFileProperties",
+        "rest.v1.folders.updateFolderProperties",
+        "rest.v1.instances.createInstances",
+        "rest.v1.objecttypes.assignPermissionsForType",
+        "rest.v1.objecttypes.denyPermissionsForType",
+        "rest.v1.objecttypes.getSortOptionsForType",
+        "rest.v2.files.updateFilePropertiesV2"
+      ]
+    },
+    "1003": {
+      "code": 1003,
+      "family": "object-types",
+      "name": "TypeAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1004": {
+      "code": 1004,
+      "family": "object-types",
+      "name": "NotFileFolderType",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.objecttypes.getSortOptionsForType"
+      ]
+    },
+    "101": {
+      "code": 101,
+      "family": "notes",
+      "name": "NoteLockVersionMismatch",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.notes.lockNote"
+      ]
+    },
+    "102": {
+      "code": 102,
+      "family": "notes",
+      "name": "NoteIsNotLocked",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.notes.addNoteItem",
+        "rest.v1.notes.setNoteAsDefault"
+      ]
+    },
+    "11": {
+      "code": 11,
+      "family": "auth-security-general",
+      "name": "AccountNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.accounts.addMemberToGroup",
+        "rest.v1.accounts.findAccountsGroupsByIds",
+        "rest.v1.accounts.getAccount",
+        "rest.v1.accounts.getAccountGroups",
+        "rest.v1.accounts.getAccounts",
+        "rest.v1.accounts.getFullAccountsTree",
+        "rest.v1.accounts.getGroups",
+        "rest.v1.accounts.mapAccount",
+        "rest.v1.accounts.removeMemberFromGroup",
+        "rest.v1.functionalityrights.setPermissionsBatch",
+        "rest.v1.instances.managePermissionsToInstance",
+        "rest.v1.objecttypes.assignPermissionsForMultipleTypes",
+        "rest.v1.objecttypes.assignPermissionsForType",
+        "rest.v1.objecttypes.denyPermissionsForMultipleTypes",
+        "rest.v1.objecttypes.denyPermissionsForType",
+        "rest.v1.objecttypes.removePermissionsForMultipleTypes",
+        "rest.v1.users.mapUserToVssoAccount",
+        "rest.v1.users.updateUserData",
+        "rest.v1.workflow.assignPermissionsForMultipleFlows",
+        "rest.v1.workflow.denyPermissionsForMultipleFlows",
+        "rest.v1.workflow.removePermissionsForMultipleFlows"
+      ]
+    },
+    "110": {
+      "code": 110,
+      "family": "notes",
+      "name": "RegularNoteTemplateValidationException",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.notes.addNoteContainer",
+        "rest.v1.notes.addNoteItem"
+      ]
+    },
+    "1100": {
+      "code": 1100,
+      "family": "folders",
+      "name": "FolderIsNotRepeatable",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.instances.createInstances"
+      ]
+    },
+    "1101": {
+      "code": 1101,
+      "family": "folders",
+      "name": "FolderTypeNotValidForTemplate",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.instances.createInstances"
+      ]
+    },
+    "1102": {
+      "code": 1102,
+      "family": "folders",
+      "name": "NotFolder",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.folders.deleteFolder"
+      ]
+    },
+    "1103": {
+      "code": 1103,
+      "family": "folders",
+      "name": "DeleteFolderWithTasks",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.folders.deleteFolder"
+      ]
+    },
+    "1104": {
+      "code": 1104,
+      "family": "folders",
+      "name": "FolderNotFound",
+      "profiles": [
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1105": {
+      "code": 1105,
+      "family": "folders",
+      "name": "FolderDuplicated",
+      "profiles": [
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "111": {
+      "code": 111,
+      "family": "notes",
+      "name": "CalculatedNoteTemplateValidationException",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.notes.addNoteContainer",
+        "rest.v1.notes.addNoteItem"
+      ]
+    },
+    "12": {
+      "code": 12,
+      "family": "auth-security-general",
+      "name": "ModelEmpty",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.tasks.updateTask"
+      ]
+    },
+    "120": {
+      "code": 120,
+      "family": "notes",
+      "name": "NoteContainerAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.notes.addNoteContainer"
+      ]
+    },
+    "1200": {
+      "code": 1200,
+      "family": "marks",
+      "name": "FileMarkDefinitionNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1201": {
+      "code": 1201,
+      "family": "marks",
+      "name": "PageMarkDefinitionNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1202": {
+      "code": 1202,
+      "family": "marks",
+      "name": "PageMarkNotAllowedInFileType",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v2.marks.assignPageMarksToPages",
+        "rest.v2.marks.removePageMarksFromPages"
+      ]
+    },
+    "1203": {
+      "code": 1203,
+      "family": "marks",
+      "name": "FileMarkNotAllowedInFileType",
+      "profiles": [
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v2.marks.assignFileMarksToFile"
+      ]
+    },
+    "121": {
+      "code": 121,
+      "family": "notes",
+      "name": "NoteContainerNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.notes.addNoteItem",
+        "rest.v1.notes.getNotes"
+      ]
+    },
+    "13": {
+      "code": 13,
+      "family": "auth-security-general",
+      "name": "AuthorizedUsersNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "130": {
+      "code": 130,
+      "family": "notes",
+      "name": "NoteCollectionIsInvalid",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.notes.setNoteAsDefault"
+      ]
+    },
+    "1300": {
+      "code": 1300,
+      "family": "users",
+      "name": "ProfileNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.users.createUser"
+      ]
+    },
+    "1301": {
+      "code": 1301,
+      "family": "users",
+      "name": "UserAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.users.createUser"
+      ]
+    },
+    "1302": {
+      "code": 1302,
+      "family": "users",
+      "name": "UnableToDisableEnableAdminUser",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.users.setUserAccountDisabled",
+        "rest.v1.users.setUserAccountEnabled"
+      ]
+    },
+    "1303": {
+      "code": 1303,
+      "family": "users",
+      "name": "UnableToDisableEnableIRServerUser",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.users.setUserAccountDisabled",
+        "rest.v1.users.setUserAccountEnabled"
+      ]
+    },
+    "1304": {
+      "code": 1304,
+      "family": "users",
+      "name": "UserNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.authentication.validateJwtToken",
+        "rest.v1.users.assignUserToRole",
+        "rest.v1.users.getEmail",
+        "rest.v1.users.syncEmail",
+        "rest.v1.users.unassignUserFromRole"
+      ]
+    },
+    "1305": {
+      "code": 1305,
+      "family": "users",
+      "name": "UserDisabled",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1306": {
+      "code": 1306,
+      "family": "users",
+      "name": "DuplicateUsersFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1307": {
+      "code": 1307,
+      "family": "users",
+      "name": "UserEmailMissing",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1308": {
+      "code": 1308,
+      "family": "users",
+      "name": "ResetAttemptsExceeded",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1309": {
+      "code": 1309,
+      "family": "users",
+      "name": "SendEmailFailed",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "131": {
+      "code": 131,
+      "family": "notes",
+      "name": "NoteTypeNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.notes.restoreDeletedNotesCollection"
+      ]
+    },
+    "1310": {
+      "code": 1310,
+      "family": "users",
+      "name": "SecurityQuestionsNotSetUp",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1311": {
+      "code": 1311,
+      "family": "users",
+      "name": "NoResetAttemptsInfo",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1312": {
+      "code": 1312,
+      "family": "users",
+      "name": "InvalidLink",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1313": {
+      "code": 1313,
+      "family": "users",
+      "name": "TokenExpired",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1314": {
+      "code": 1314,
+      "family": "users",
+      "name": "ClientUrlMissing",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1315": {
+      "code": 1315,
+      "family": "users",
+      "name": "SecurityQuestionAnswerIncorrect",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1316": {
+      "code": 1316,
+      "family": "users",
+      "name": "QuestionAttemptsExceededAccountLocked",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "132": {
+      "code": 132,
+      "family": "notes",
+      "name": "NoteWithScriptsAreForbidden",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "14": {
+      "code": 14,
+      "family": "auth-security-general",
+      "name": "WorkflowNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.workflow.getSteps",
+        "rest.v1.workflow.getStepsLinksByWorkflow"
+      ]
+    },
+    "1400": {
+      "code": 1400,
+      "family": "groups-roles",
+      "name": "GroupAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.accounts.assignGroupToGroup",
+        "rest.v1.accounts.createGroup"
+      ]
+    },
+    "1401": {
+      "code": 1401,
+      "family": "groups-roles",
+      "name": "RoleAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.accounts.assignGroupToRole",
+        "rest.v1.accounts.createRole",
+        "rest.v1.users.assignUserToRole"
+      ]
+    },
+    "1402": {
+      "code": 1402,
+      "family": "groups-roles",
+      "name": "RoleNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.accounts.assignGroupToRole",
+        "rest.v1.accounts.unassignGroupFromRole",
+        "rest.v1.users.assignUserToRole",
+        "rest.v1.users.unassignUserFromRole"
+      ]
+    },
+    "1403": {
+      "code": 1403,
+      "family": "groups-roles",
+      "name": "GroupNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.accounts.assignGroupToGroup",
+        "rest.v1.accounts.assignGroupToRole",
+        "rest.v1.accounts.unassignGroupFromGroup",
+        "rest.v1.accounts.unassignGroupFromRole"
+      ]
+    },
+    "15": {
+      "code": 15,
+      "family": "auth-security-general",
+      "name": "DataNotReady",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.accounts.getAccountsByIds",
+        "rest.v1.accounts.getAllAccounts",
+        "rest.v1.accounts.getRootGroups",
+        "rest.v1.accounts.getUsersThatAreNotInAnyGroup"
+      ]
+    },
+    "1500": {
+      "code": 1500,
+      "family": "functionality-rights",
+      "name": "FunctionalityRightNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.accounts.validatePermission"
+      ]
+    },
+    "16": {
+      "code": 16,
+      "family": "auth-security-general",
+      "name": "DataBaseRequestError",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v2.marks.assignFileMarksToFile",
+        "rest.v2.marks.assignPageMarksToPages",
+        "rest.v2.marks.removePageMarksFromPages"
+      ]
+    },
+    "1600": {
+      "code": 1600,
+      "family": "sla",
+      "name": "SlaAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1601": {
+      "code": 1601,
+      "family": "sla",
+      "name": "SlaNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1602": {
+      "code": 1602,
+      "family": "sla",
+      "name": "SlaLastModifiedConditionFailed",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1603": {
+      "code": 1603,
+      "family": "sla",
+      "name": "DuplicatedAgeBucket",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1604": {
+      "code": 1604,
+      "family": "sla",
+      "name": "SlaRemoveConflict",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "17": {
+      "code": 17,
+      "family": "auth-security-general",
+      "name": "GenericException",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.documents.getDocumentById",
+        "rest.v1.instances.batchDeleteInstances",
+        "rest.v1.overlays.getDocumentOverlayInfo",
+        "rest.v1.overlays.getOverlayImage",
+        "rest.v1.pages.batchDeletePages",
+        "rest.v1.pages.restoreDeletedPages",
+        "rest.v2.documents.getDocumentByIdV2"
+      ]
+    },
+    "1700": {
+      "code": 1700,
+      "family": "dashboard",
+      "name": "ViewAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1701": {
+      "code": 1701,
+      "family": "dashboard",
+      "name": "ViewNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1702": {
+      "code": 1702,
+      "family": "dashboard",
+      "name": "NotAllSlaSelectedInTheViewExist",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1703": {
+      "code": 1703,
+      "family": "dashboard",
+      "name": "DashboardViewUpdateConflict",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1704": {
+      "code": 1704,
+      "family": "dashboard",
+      "name": "DashboardViewInvalidUpdateException",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "18": {
+      "code": 18,
+      "family": "auth-security-general",
+      "name": "ExternalAccountNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1800": {
+      "code": 1800,
+      "family": "vsso",
+      "name": "VssoMigrationStateIsInValid",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.users.mapUserToVssoAccount"
+      ]
+    },
+    "1801": {
+      "code": 1801,
+      "family": "vsso",
+      "name": "VssoAccountIsAlreadyMapped",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.users.mapUserToVssoAccount"
+      ]
+    },
+    "19": {
+      "code": 19,
+      "family": "auth-security-general",
+      "name": "FileContainerCannotBeRemoved",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1900": {
+      "code": 1900,
+      "family": "data-validation",
+      "name": "IncorrectDrawer",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "1901": {
+      "code": 1901,
+      "family": "data-validation",
+      "name": "IncorrectFileType",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2": {
+      "code": 2,
+      "family": "auth-security-general",
+      "name": "AccessDenied",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.containers.getDeletedContent",
+        "rest.v1.containers.restoreDeletedDocFolder",
+        "rest.v1.documents.getDocumentById",
+        "rest.v1.instrumentation.getEnterpriseId",
+        "rest.v1.notes.restoreDeletedNotesCollection",
+        "rest.v1.overlays.getDocumentOverlayInfo",
+        "rest.v1.overlays.getOverlayImage",
+        "rest.v2.documents.getDocumentByIdV2"
+      ]
+    },
+    "20": {
+      "code": 20,
+      "family": "auth-security-general",
+      "name": "NotFileNotFolder",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "200": {
+      "code": 200,
+      "family": "tasks",
+      "name": "TaskNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.killTask",
+        "rest.v1.taskactions.lockTask",
+        "rest.v1.taskactions.refreshTaskLock",
+        "rest.v1.taskactions.releaseTask",
+        "rest.v1.taskactions.releaseTaskByAnchor",
+        "rest.v1.taskactions.releaseTaskSplitStep",
+        "rest.v1.taskactions.routeTask",
+        "rest.v1.taskactions.unlockTask",
+        "rest.v1.taskattributes.getTaskAttributeById",
+        "rest.v1.taskattributes.getTaskAttributeByName",
+        "rest.v1.taskattributes.getTaskAttributes",
+        "rest.v1.taskattributes.setTaskAttributeById",
+        "rest.v1.taskattributes.setTaskAttributeByName",
+        "rest.v1.tasks.setTaskTarget",
+        "rest.v1.tasks.updateTask"
+      ]
+    },
+    "2000": {
+      "code": 2000,
+      "family": "ocr",
+      "name": "OcrFormError",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2001": {
+      "code": 2001,
+      "family": "ocr",
+      "name": "OcrFormAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2002": {
+      "code": 2002,
+      "family": "ocr",
+      "name": "OcrFormLockError",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2003": {
+      "code": 2003,
+      "family": "ocr",
+      "name": "OcrFormNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2004": {
+      "code": 2004,
+      "family": "ocr",
+      "name": "OcrFormLockedByAnotherUser",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2005": {
+      "code": 2005,
+      "family": "ocr",
+      "name": "OcrFormNotLocked",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2006": {
+      "code": 2006,
+      "family": "ocr",
+      "name": "UnableToDeleteLiveOcrForm",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2007": {
+      "code": 2007,
+      "family": "ocr",
+      "name": "OcrFormAlreadyMarkedAsDeleted",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2008": {
+      "code": 2008,
+      "family": "ocr",
+      "name": "OcrFormNotMarkedAsDeleted",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2009": {
+      "code": 2009,
+      "family": "ocr",
+      "name": "OcrFormMarkedAsDeleted",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "201": {
+      "code": 201,
+      "family": "tasks",
+      "name": "TaskLockedByAnotherUser",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.killTask",
+        "rest.v1.taskactions.lockTask",
+        "rest.v1.taskactions.refreshTaskLock",
+        "rest.v1.taskactions.releaseTask",
+        "rest.v1.taskactions.releaseTaskByAnchor",
+        "rest.v1.taskactions.releaseTaskSplitStep",
+        "rest.v1.taskactions.routeTask",
+        "rest.v1.taskactions.unlockTask",
+        "rest.v1.taskattributes.setTaskAttributeById",
+        "rest.v1.taskattributes.setTaskAttributeByName",
+        "rest.v1.tasks.setTaskTarget",
+        "rest.v1.tasks.updateTask"
+      ]
+    },
+    "2011": {
+      "code": 2011,
+      "family": "ocr",
+      "name": "OcrFormVersionNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2012": {
+      "code": 2012,
+      "family": "ocr",
+      "name": "OcrVersionUnableToCreate",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2013": {
+      "code": 2013,
+      "family": "ocr",
+      "name": "OcrVersionUnableToUpdate",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "202": {
+      "code": 202,
+      "family": "tasks",
+      "name": "TaskNotLocked",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.killTask",
+        "rest.v1.taskactions.refreshTaskLock",
+        "rest.v1.taskactions.releaseTask",
+        "rest.v1.taskactions.releaseTaskByAnchor",
+        "rest.v1.taskactions.releaseTaskSplitStep",
+        "rest.v1.taskactions.routeTask",
+        "rest.v1.tasks.setTaskTarget",
+        "rest.v1.tasks.updateTask"
+      ]
+    },
+    "2021": {
+      "code": 2021,
+      "family": "ocr",
+      "name": "OcrFolderAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2022": {
+      "code": 2022,
+      "family": "ocr",
+      "name": "OcrFolderIsNotEmpty",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2023": {
+      "code": 2023,
+      "family": "ocr",
+      "name": "OcrFolderNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "203": {
+      "code": 203,
+      "family": "tasks",
+      "name": "TaskNotAvailableOnSpecifiedWorkFlowStep",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2031": {
+      "code": 2031,
+      "family": "ocr",
+      "name": "OcrFieldNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2032": {
+      "code": 2032,
+      "family": "ocr",
+      "name": "OcrFieldAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2033": {
+      "code": 2033,
+      "family": "ocr",
+      "name": "SearchRequestCouldNotBeCompleted",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.pages.searchPages"
+      ]
+    },
+    "204": {
+      "code": 204,
+      "family": "tasks",
+      "name": "TaskIsInErrorState",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.releaseTask",
+        "rest.v1.taskactions.releaseTaskByAnchor",
+        "rest.v1.taskactions.releaseTaskSplitStep"
+      ]
+    },
+    "205": {
+      "code": 205,
+      "family": "tasks",
+      "name": "TaskCompleted",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.killTask",
+        "rest.v1.taskactions.lockTask",
+        "rest.v1.taskactions.refreshTaskLock",
+        "rest.v1.taskactions.releaseTaskSplitStep",
+        "rest.v1.taskactions.routeTask",
+        "rest.v1.taskactions.unlockTask"
+      ]
+    },
+    "206": {
+      "code": 206,
+      "family": "tasks",
+      "name": "TaskWrongState",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "21": {
+      "code": 21,
+      "family": "auth-security-general",
+      "name": "NotMarkedDeleted",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.containers.restoreDeletedDocFolder",
+        "rest.v1.notes.restoreDeletedNotesCollection"
+      ]
+    },
+    "210": {
+      "code": 210,
+      "family": "tasks",
+      "name": "TaskAttributeNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskattributes.getTaskAttributeById",
+        "rest.v1.taskattributes.getTaskAttributeByName",
+        "rest.v1.taskattributes.getTaskAttributes",
+        "rest.v1.taskattributes.setTaskAttributeById",
+        "rest.v1.taskattributes.setTaskAttributeByName"
+      ]
+    },
+    "2100": {
+      "code": 2100,
+      "family": "redaction",
+      "name": "RedactionRulesError",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2101": {
+      "code": 2101,
+      "family": "redaction",
+      "name": "RedactionRuleSetNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2102": {
+      "code": 2102,
+      "family": "redaction",
+      "name": "RedactionRuleSetAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2103": {
+      "code": 2103,
+      "family": "redaction",
+      "name": "RedactionRulesAreEmpty",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2104": {
+      "code": 2104,
+      "family": "redaction",
+      "name": "RedactionRuleSetLockedByAnotherUser",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2105": {
+      "code": 2105,
+      "family": "redaction",
+      "name": "RedactionRuleSetLock",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2106": {
+      "code": 2106,
+      "family": "redaction",
+      "name": "RedactionRuleSetNotLocked",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2107": {
+      "code": 2107,
+      "family": "redaction",
+      "name": "RedactionRulesDrawerDoesNotExistException",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2108": {
+      "code": 2108,
+      "family": "redaction",
+      "name": "RedactionRulesGlobalRuleSetDeleteForbiddenException",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2109": {
+      "code": 2109,
+      "family": "redaction",
+      "name": "RedactionRulesFileTypeEmptyException",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "211": {
+      "code": 211,
+      "family": "tasks",
+      "name": "TaskAttributeValueTypeIsInvalid",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskattributes.setTaskAttributeById",
+        "rest.v1.taskattributes.setTaskAttributeByName"
+      ]
+    },
+    "2110": {
+      "code": 2110,
+      "family": "redaction",
+      "name": "RedactionRulesFileTypeNotAllowedException",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "212": {
+      "code": 212,
+      "family": "tasks",
+      "name": "TaskMandatoryAttributeIsNotSet",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.releaseTask",
+        "rest.v1.taskactions.releaseTaskByAnchor",
+        "rest.v1.taskactions.releaseTaskSplitStep"
+      ]
+    },
+    "213": {
+      "code": 213,
+      "family": "tasks",
+      "name": "TaskAttributeValueNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskattributes.getTaskAttributeById",
+        "rest.v1.taskattributes.getTaskAttributeByName"
+      ]
+    },
+    "22": {
+      "code": 22,
+      "family": "auth-security-general",
+      "name": "ObjectNotOwned",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "220": {
+      "code": 220,
+      "family": "tasks",
+      "name": "SubtasksNotCompleted",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.releaseTask",
+        "rest.v1.taskactions.releaseTaskByAnchor",
+        "rest.v1.taskactions.releaseTaskSplitStep"
+      ]
+    },
+    "2200": {
+      "code": 2200,
+      "family": "document-filters",
+      "name": "DescriptionInUse",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.documentfilter.create",
+        "rest.v1.documentfilter.update"
+      ]
+    },
+    "2201": {
+      "code": 2201,
+      "family": "document-filters",
+      "name": "DrawerFileTypeCombinationInUse",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.documentfilter.create",
+        "rest.v1.documentfilter.update"
+      ]
+    },
+    "2202": {
+      "code": 2202,
+      "family": "document-filters",
+      "name": "DescriptionInvalidCharacter",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.documentfilter.create",
+        "rest.v1.documentfilter.update"
+      ]
+    },
+    "221": {
+      "code": 221,
+      "family": "tasks",
+      "name": "UserIdIsInvalid",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.accounts.findAccountsGroupsByIds",
+        "rest.v1.accounts.getAccountGroups",
+        "rest.v1.accounts.getGroups",
+        "rest.v1.taskactions.releaseTaskByAnchor",
+        "rest.v1.taskactions.routeTask",
+        "rest.v1.taskattributes.setTaskAttributeById",
+        "rest.v1.taskattributes.setTaskAttributeByName",
+        "rest.v1.tasks.updateTask"
+      ]
+    },
+    "222": {
+      "code": 222,
+      "family": "tasks",
+      "name": "UserIdIsEmpty",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "223": {
+      "code": 223,
+      "family": "tasks",
+      "name": "SplitParametersAreEmpty",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.releaseTaskSplitStep"
+      ]
+    },
+    "224": {
+      "code": 224,
+      "family": "tasks",
+      "name": "SplitParametersAreInvalid",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.releaseTaskSplitStep"
+      ]
+    },
+    "225": {
+      "code": 225,
+      "family": "tasks",
+      "name": "SplitParametersNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.workflow.getSplitLinkParameters"
+      ]
+    },
+    "226": {
+      "code": 226,
+      "family": "tasks",
+      "name": "TaskIdEmpty",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "227": {
+      "code": 227,
+      "family": "tasks",
+      "name": "TaskAccessDeniedException",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "23": {
+      "code": 23,
+      "family": "auth-security-general",
+      "name": "ServerNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2300": {
+      "code": 2300,
+      "family": "config",
+      "name": "ConfigValueInSectionNotAllowed",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.globalconfig.createGlobalConfig",
+        "rest.v1.userconfig.createUserConfig"
+      ]
+    },
+    "2301": {
+      "code": 2301,
+      "family": "config",
+      "name": "ConfigValueIsNull",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.globalconfig.createGlobalConfig",
+        "rest.v1.userconfig.createUserConfig"
+      ]
+    },
+    "2302": {
+      "code": 2302,
+      "family": "config",
+      "name": "ConfigDuplicateKey",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.globalconfig.createGlobalConfig",
+        "rest.v1.userconfig.createUserConfig"
+      ]
+    },
+    "2303": {
+      "code": 2303,
+      "family": "config",
+      "name": "ConfigPathNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.globalconfig.deleteGlobalConfig",
+        "rest.v1.globalconfig.deleteGlobalConfigSection",
+        "rest.v1.globalconfig.getGlobalConfig",
+        "rest.v1.userconfig.deleteUserConfig",
+        "rest.v1.userconfig.getUserConfig"
+      ]
+    },
+    "2304": {
+      "code": 2304,
+      "family": "config",
+      "name": "ConfigInvalidNodeType",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.globalconfig.createGlobalConfig",
+        "rest.v1.globalconfig.deleteGlobalConfig",
+        "rest.v1.globalconfig.deleteGlobalConfigSection",
+        "rest.v1.userconfig.createUserConfig",
+        "rest.v1.userconfig.deleteUserConfig"
+      ]
+    },
+    "2305": {
+      "code": 2305,
+      "family": "config",
+      "name": "ConfigChildrenInKeyNotAllowed",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.globalconfig.createGlobalConfig",
+        "rest.v1.userconfig.createUserConfig"
+      ]
+    },
+    "2306": {
+      "code": 2306,
+      "family": "config",
+      "name": "ConfigValueTypeIsEmpty",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.globalconfig.createGlobalConfig",
+        "rest.v1.userconfig.createUserConfig"
+      ]
+    },
+    "2307": {
+      "code": 2307,
+      "family": "config",
+      "name": "ConfigPathContainsKey",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.globalconfig.createGlobalConfig",
+        "rest.v1.userconfig.createUserConfig"
+      ]
+    },
+    "2308": {
+      "code": 2308,
+      "family": "config",
+      "name": "ConfigCannotChangeNodeType",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.globalconfig.createGlobalConfig",
+        "rest.v1.userconfig.createUserConfig"
+      ]
+    },
+    "24": {
+      "code": 24,
+      "family": "auth-security-general",
+      "name": "UnsupportedType",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.authentication.validTo"
+      ]
+    },
+    "2400": {
+      "code": 2400,
+      "family": "email",
+      "name": "UnableToOpenEmail",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2401": {
+      "code": 2401,
+      "family": "email",
+      "name": "OutlookIsNotInstalled",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "25": {
+      "code": 25,
+      "family": "auth-security-general",
+      "name": "MergeFailed",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2500": {
+      "code": 2500,
+      "family": "task-history",
+      "name": "CanNotRequestBothFileAndTaskLevelHistory",
+      "profiles": [
+        "7.2"
+      ],
+      "raisedBy": []
+    },
+    "26": {
+      "code": 26,
+      "family": "auth-security-general",
+      "name": "KeyNotAvailable",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "2600": {
+      "code": 2600,
+      "family": "annotations",
+      "name": "AnnotationTemplateAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "27": {
+      "code": 27,
+      "family": "auth-security-general",
+      "name": "TargetInvalid",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.containers.restoreDeletedDocFolder",
+        "rest.v1.folders.moveFolder",
+        "rest.v2.documents.copyDocumentV2",
+        "rest.v2.documents.moveDocumentV2",
+        "rest.v2.pages.copyPageV2",
+        "rest.v2.pages.mergeToDocument",
+        "rest.v2.pages.movePageV2"
+      ]
+    },
+    "28": {
+      "code": 28,
+      "family": "auth-security-general",
+      "name": "TargetNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.folders.moveFolder",
+        "rest.v1.instances.createInstances",
+        "rest.v2.documents.copyDocumentV2",
+        "rest.v2.documents.moveDocumentV2",
+        "rest.v2.pages.copyPageV2",
+        "rest.v2.pages.mergeToDocument",
+        "rest.v2.pages.movePageV2"
+      ]
+    },
+    "29": {
+      "code": 29,
+      "family": "auth-security-general",
+      "name": "PermissionNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.instances.managePermissionsToInstance",
+        "rest.v1.objecttypes.assignPermissionsForType",
+        "rest.v1.objecttypes.denyPermissionsForType"
+      ]
+    },
+    "3": {
+      "code": 3,
+      "family": "auth-security-general",
+      "name": "AccountIsLocked",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.authentication.authenticate",
+        "rest.v1.authentication.authenticate2",
+        "rest.v1.authentication.authenticate3",
+        "rest.v1.users.changeUserPassword"
+      ]
+    },
+    "30": {
+      "code": 30,
+      "family": "auth-security-general",
+      "name": "InvalidData",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.accounts.addMemberToGroup",
+        "rest.v1.accounts.mapAccount",
+        "rest.v1.accounts.removeMemberFromGroup",
+        "rest.v1.emailreceiver.getAccountStatusByEmail",
+        "rest.v1.instances.batchDeleteInstances",
+        "rest.v1.pages.batchDeletePages",
+        "rest.v1.taskhistory.getTaskHistory",
+        "rest.v1.taskhistory.getWorkSummary",
+        "rest.v2.marks.assignPageMarksToPages",
+        "rest.v2.marks.removePageMarksFromPages"
+      ]
+    },
+    "300": {
+      "code": 300,
+      "family": "workflow",
+      "name": "StepNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.routeTask",
+        "rest.v1.workflow.getDefaultStepLink",
+        "rest.v1.workflow.getPriorityList",
+        "rest.v1.workflow.getSplitLinkParameters",
+        "rest.v1.workflow.getStepAttributeById",
+        "rest.v1.workflow.getStepAttributeByName",
+        "rest.v1.workflow.getStepAttributes",
+        "rest.v1.workflow.getStepLinks",
+        "rest.v1.workflow.getUsersToAssign",
+        "rest.v1.workflow.getUsersToAssignSteps"
+      ]
+    },
+    "31": {
+      "code": 31,
+      "family": "auth-security-general",
+      "name": "LastModifiedConditionFailed",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "310": {
+      "code": 310,
+      "family": "workflow",
+      "name": "StepAttributeNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.workflow.getStepAttributeById",
+        "rest.v1.workflow.getStepAttributeByName",
+        "rest.v1.workflow.getStepAttributes"
+      ]
+    },
+    "311": {
+      "code": 311,
+      "family": "workflow",
+      "name": "StepLinksNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.workflow.getDefaultStepLink",
+        "rest.v1.workflow.getStepLinks"
+      ]
+    },
+    "32": {
+      "code": 32,
+      "family": "auth-security-general",
+      "name": "LastModifiedHeaderNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "320": {
+      "code": 320,
+      "family": "workflow",
+      "name": "LinkToStepNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.releaseTask",
+        "rest.v1.taskactions.releaseTaskByAnchor",
+        "rest.v1.taskactions.releaseTaskSplitStep"
+      ]
+    },
+    "321": {
+      "code": 321,
+      "family": "workflow",
+      "name": "ReleaseNotSingleLinkStepBySingleLinkMethod",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "322": {
+      "code": 322,
+      "family": "workflow",
+      "name": "ReleaseNotSplitStepBySplitMethod",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.releaseTask",
+        "rest.v1.taskactions.releaseTaskByAnchor",
+        "rest.v1.taskactions.releaseTaskSplitStep"
+      ]
+    },
+    "323": {
+      "code": 323,
+      "family": "workflow",
+      "name": "ReleaseFromSplitByNotSplitMethod",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "324": {
+      "code": 324,
+      "family": "workflow",
+      "name": "StepCodeCheckFails",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.releaseTask",
+        "rest.v1.taskactions.releaseTaskByAnchor",
+        "rest.v1.taskactions.releaseTaskSplitStep"
+      ]
+    },
+    "325": {
+      "code": 325,
+      "family": "workflow",
+      "name": "UnableToConnectToWfProcessor",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.taskactions.releaseTask",
+        "rest.v1.taskactions.releaseTaskByAnchor",
+        "rest.v1.taskactions.releaseTaskSplitStep"
+      ]
+    },
+    "326": {
+      "code": 326,
+      "family": "workflow",
+      "name": "NotIndexingStep",
+      "profiles": [
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.workflow.getIndexingStepParams"
+      ]
+    },
+    "33": {
+      "code": 33,
+      "family": "auth-security-general",
+      "name": "TenantHeaderNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "34": {
+      "code": 34,
+      "family": "auth-security-general",
+      "name": "ApiKeyHeaderNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "35": {
+      "code": 35,
+      "family": "auth-security-general",
+      "name": "InvalidApiKey",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "36": {
+      "code": 36,
+      "family": "auth-security-general",
+      "name": "ApiKeyNotConfigured",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "37": {
+      "code": 37,
+      "family": "auth-security-general",
+      "name": "MissingParameters",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.authentication.validateJwtToken",
+        "rest.v1.taskhistory.getTaskHistory",
+        "rest.v1.taskhistory.getWorkSummary",
+        "rest.v1.workflow.getFromPostFlowsAuthorizationInfo"
+      ]
+    },
+    "38": {
+      "code": 38,
+      "family": "auth-security-general",
+      "name": "IrVimApiKeyHeaderNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "39": {
+      "code": 39,
+      "family": "auth-security-general",
+      "name": "ExpiredToken",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.authentication.validateJwtToken"
+      ]
+    },
+    "4": {
+      "code": 4,
+      "family": "auth-security-general",
+      "name": "PasswordExpired",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.authentication.authenticate",
+        "rest.v1.authentication.authenticate2",
+        "rest.v1.authentication.authenticate3"
+      ]
+    },
+    "40": {
+      "code": 40,
+      "family": "auth-security-general",
+      "name": "TenantAccessForbidden",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.authentication.validateJwtToken"
+      ]
+    },
+    "400": {
+      "code": 400,
+      "family": "documents",
+      "name": "DocumentStructureException",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.containers.getContainers",
+        "rest.v1.containers.getFirstPage",
+        "rest.v1.documents.createDocument",
+        "rest.v1.documents.findDocuments",
+        "rest.v1.documents.moveDocument",
+        "rest.v1.documents.updateProperties",
+        "rest.v1.drawers.getDrawerById",
+        "rest.v1.drawers.getDrawers",
+        "rest.v1.drawers.getDrawersByName",
+        "rest.v1.drawers.getDrawersInContainer",
+        "rest.v1.drawers.getDrawersInContainerByName",
+        "rest.v1.drawers.getLocationTree",
+        "rest.v1.files.createFile",
+        "rest.v1.files.findFiles",
+        "rest.v1.folders.createFolder",
+        "rest.v1.pages.createPage",
+        "rest.v1.pages.getAllPagesFromDocument",
+        "rest.v1.pages.getPageById",
+        "rest.v1.pages.getPageById2",
+        "rest.v1.pages.getPageImageMetadata",
+        "rest.v1.pages.movePage",
+        "rest.v1.pages.rotatePage",
+        "rest.v1.pages.updatePageContent",
+        "rest.v1.pages.updatePageProperties",
+        "rest.v1.pageversions.getPageVersions",
+        "rest.v1.pageversions.promotePageVersion",
+        "rest.v1.phonecalls.addCallPage",
+        "rest.v1.phonecalls.updateCallPageContent",
+        "rest.v2.containers.getContainer",
+        "rest.v2.containers.getContainers",
+        "rest.v2.pages.createPageV2",
+        "rest.v2.pages.updatePageContentV2"
+      ]
+    },
+    "401": {
+      "code": 401,
+      "family": "documents",
+      "name": "ReadonlyPermissions",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.documents.getDocumentById",
+        "rest.v1.documents.moveDocument",
+        "rest.v1.documents.updateProperties",
+        "rest.v1.files.mergeFiles",
+        "rest.v1.files.updateFileProperties",
+        "rest.v1.folders.updateFolderProperties",
+        "rest.v1.instances.batchDeleteInstances",
+        "rest.v1.overlays.getDocumentOverlayInfo",
+        "rest.v1.overlays.getOverlayImage",
+        "rest.v1.pages.batchDeletePages",
+        "rest.v1.pages.movePage",
+        "rest.v1.pages.updatePageProperties",
+        "rest.v2.documents.getDocumentByIdV2",
+        "rest.v2.files.updateFilePropertiesV2"
+      ]
+    },
+    "402": {
+      "code": 402,
+      "family": "documents",
+      "name": "MultipleSourceFileIds",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.documents.moveDocument",
+        "rest.v1.folders.moveFolder",
+        "rest.v2.documents.copyDocumentV2",
+        "rest.v2.documents.moveDocumentV2",
+        "rest.v2.pages.copyPageV2",
+        "rest.v2.pages.mergeToDocument",
+        "rest.v2.pages.movePageV2"
+      ]
+    },
+    "403": {
+      "code": 403,
+      "family": "documents",
+      "name": "NotDocument",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.documents.getDocumentById",
+        "rest.v1.overlays.getDocumentOverlayInfo",
+        "rest.v2.documents.deleteDocument",
+        "rest.v2.documents.getDocumentByIdV2"
+      ]
+    },
+    "404": {
+      "code": 404,
+      "family": "documents",
+      "name": "DocumentShouldBeLocal",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "405": {
+      "code": 405,
+      "family": "documents",
+      "name": "IncompatibleDocumentTypes",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "406": {
+      "code": 406,
+      "family": "documents",
+      "name": "MovedDeletedDocuments",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "407": {
+      "code": 407,
+      "family": "documents",
+      "name": "DocTypeNotValidForTemplate",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.folders.moveFolder",
+        "rest.v1.instances.createInstances",
+        "rest.v2.documents.copyDocumentV2",
+        "rest.v2.documents.moveDocumentV2",
+        "rest.v2.pages.copyPageV2",
+        "rest.v2.pages.mergeToDocument",
+        "rest.v2.pages.movePageV2"
+      ]
+    },
+    "408": {
+      "code": 408,
+      "family": "documents",
+      "name": "TargetDocTypeNotValidForTemplate",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "409": {
+      "code": 409,
+      "family": "documents",
+      "name": "MoveDocumentWithLockedPages",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "410": {
+      "code": 410,
+      "family": "documents",
+      "name": "DeleteDocumentWithTasks",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.instances.batchDeleteInstances",
+        "rest.v2.documents.deleteDocument"
+      ]
+    },
+    "411": {
+      "code": 411,
+      "family": "documents",
+      "name": "DocumentNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.instances.batchDeleteInstances",
+        "rest.v1.phonecalls.addCallPage",
+        "rest.v1.phonecalls.updateCallPageContent",
+        "rest.v2.pages.createPageV2"
+      ]
+    },
+    "412": {
+      "code": 412,
+      "family": "documents",
+      "name": "ObjectsNotBelongToSameFile",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "5": {
+      "code": 5,
+      "family": "auth-security-general",
+      "name": "PasswordAlreadyUsed",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.users.changeUserPassword"
+      ]
+    },
+    "500": {
+      "code": 500,
+      "family": "files",
+      "name": "FileAlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.files.createFile",
+        "rest.v1.files.findFiles"
+      ]
+    },
+    "501": {
+      "code": 501,
+      "family": "files",
+      "name": "FileNumberNotValidForFileTypeNumberFormat",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.files.createFile",
+        "rest.v1.files.findFiles"
+      ]
+    },
+    "502": {
+      "code": 502,
+      "family": "files",
+      "name": "NotFile",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.files.createFileRelationship",
+        "rest.v1.files.deleteFilesRelationship",
+        "rest.v1.files.getRelatedFiles"
+      ]
+    },
+    "503": {
+      "code": 503,
+      "family": "files",
+      "name": "FileShouldBeLocal",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "504": {
+      "code": 504,
+      "family": "files",
+      "name": "FileFrozen",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.instances.batchDeleteInstances",
+        "rest.v1.pages.batchDeletePages",
+        "rest.v2.marks.assignFileMarksToFile",
+        "rest.v2.marks.assignPageMarksToPages",
+        "rest.v2.marks.removePageMarksFromPages"
+      ]
+    },
+    "505": {
+      "code": 505,
+      "family": "files",
+      "name": "DuplicateFiles",
+      "profiles": [
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.files.createFileRelationship",
+        "rest.v1.files.deleteFilesRelationship"
+      ]
+    },
+    "6": {
+      "code": 6,
+      "family": "auth-security-general",
+      "name": "PasswordPolicy",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.users.changeUserPassword",
+        "rest.v1.users.createUser"
+      ]
+    },
+    "600": {
+      "code": 600,
+      "family": "attributes",
+      "name": "AttributeNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.attributes.getAttributeByAttId",
+        "rest.v1.attributes.getAttributeByAttName",
+        "rest.v1.attributes.getAttributesByObject",
+        "rest.v1.documents.createDocument",
+        "rest.v1.documents.findDocuments",
+        "rest.v1.documents.updateProperties",
+        "rest.v1.files.createFile",
+        "rest.v1.files.findFiles",
+        "rest.v1.files.mergeFiles",
+        "rest.v1.files.updateFileProperties",
+        "rest.v1.folders.createFolder",
+        "rest.v1.folders.findFolders",
+        "rest.v1.folders.updateFolderProperties",
+        "rest.v1.objecttypes.getAttributeDefinitionsForType",
+        "rest.v1.objecttypes.getAttributeDefinitionsForTypes",
+        "rest.v2.files.updateFilePropertiesV2"
+      ]
+    },
+    "601": {
+      "code": 601,
+      "family": "attributes",
+      "name": "AttributeRequired",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.attributes.getAttributeByAttId",
+        "rest.v1.attributes.getAttributeByAttName",
+        "rest.v1.attributes.getAttributesByObject",
+        "rest.v1.documents.createDocument",
+        "rest.v1.documents.findDocuments",
+        "rest.v1.documents.updateProperties",
+        "rest.v1.files.createFile",
+        "rest.v1.files.findFiles",
+        "rest.v1.files.mergeFiles",
+        "rest.v1.files.updateFileProperties",
+        "rest.v1.folders.createFolder",
+        "rest.v1.folders.findFolders",
+        "rest.v1.folders.updateFolderProperties",
+        "rest.v2.files.updateFilePropertiesV2"
+      ]
+    },
+    "602": {
+      "code": 602,
+      "family": "attributes",
+      "name": "AttributeNotAllowed",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.attributes.getAttributeByAttId",
+        "rest.v1.attributes.getAttributeByAttName",
+        "rest.v1.attributes.getAttributesByObject",
+        "rest.v1.documents.createDocument",
+        "rest.v1.documents.findDocuments",
+        "rest.v1.documents.updateProperties",
+        "rest.v1.files.createFile",
+        "rest.v1.files.findFiles",
+        "rest.v1.files.mergeFiles",
+        "rest.v1.files.updateFileProperties",
+        "rest.v1.folders.createFolder",
+        "rest.v1.folders.findFolders",
+        "rest.v1.folders.updateFolderProperties",
+        "rest.v2.files.updateFilePropertiesV2"
+      ]
+    },
+    "603": {
+      "code": 603,
+      "family": "attributes",
+      "name": "AttributeValueInvalid",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.attributes.getAttributeByAttId",
+        "rest.v1.attributes.getAttributeByAttName",
+        "rest.v1.attributes.getAttributesByObject",
+        "rest.v1.documents.createDocument",
+        "rest.v1.documents.findDocuments",
+        "rest.v1.documents.updateProperties",
+        "rest.v1.files.createFile",
+        "rest.v1.files.findFiles",
+        "rest.v1.files.mergeFiles",
+        "rest.v1.files.updateFileProperties",
+        "rest.v1.folders.createFolder",
+        "rest.v1.folders.findFolders",
+        "rest.v1.folders.updateFolderProperties",
+        "rest.v2.files.updateFilePropertiesV2"
+      ]
+    },
+    "7": {
+      "code": 7,
+      "family": "auth-security-general",
+      "name": "PasswordChangeNotAllowed",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.users.changeUserPassword"
+      ]
+    },
+    "700": {
+      "code": 700,
+      "family": "pages",
+      "name": "VersionMismatch",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.pages.lockPage",
+        "rest.v1.pages.lockPage2",
+        "rest.v1.pages.unlockPage"
+      ]
+    },
+    "701": {
+      "code": 701,
+      "family": "pages",
+      "name": "PageNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.documents.moveDocument",
+        "rest.v1.pages.checkReadPermissions",
+        "rest.v1.pages.getPageById",
+        "rest.v1.pages.getPageById2",
+        "rest.v1.pages.getPageImageMetadata",
+        "rest.v1.pages.movePage",
+        "rest.v1.pages.updatePageProperties",
+        "rest.v1.pageversions.getPageVersions",
+        "rest.v1.pageversions.promotePageVersion",
+        "rest.v1.phonecalls.addCallPage",
+        "rest.v1.phonecalls.getPhoneCallMetadata",
+        "rest.v1.phonecalls.updateCallPageContent",
+        "rest.v2.marks.assignPageMarksToPages",
+        "rest.v2.marks.removePageMarksFromPages",
+        "rest.v2.pages.createPageV2"
+      ]
+    },
+    "702": {
+      "code": 702,
+      "family": "pages",
+      "name": "InconsistentPageId",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "703": {
+      "code": 703,
+      "family": "pages",
+      "name": "UnsupportedRotationAngle",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "704": {
+      "code": 704,
+      "family": "pages",
+      "name": "PageDoesNotBelongToDocument",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.pages.updatePageProperties"
+      ]
+    },
+    "705": {
+      "code": 705,
+      "family": "pages",
+      "name": "PageCut",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v2.marks.assignPageMarksToPages",
+        "rest.v2.marks.removePageMarksFromPages"
+      ]
+    },
+    "706": {
+      "code": 706,
+      "family": "pages",
+      "name": "PageDeleted",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v2.marks.assignPageMarksToPages",
+        "rest.v2.marks.removePageMarksFromPages"
+      ]
+    },
+    "707": {
+      "code": 707,
+      "family": "pages",
+      "name": "PageInDeletedContent",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.pages.restoreDeletedPages",
+        "rest.v2.marks.assignPageMarksToPages",
+        "rest.v2.marks.removePageMarksFromPages"
+      ]
+    },
+    "708": {
+      "code": 708,
+      "family": "pages",
+      "name": "PagesNotBelongToSameFile",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.instances.batchDeleteInstances",
+        "rest.v1.pages.batchDeletePages",
+        "rest.v1.pages.restoreDeletedPages"
+      ]
+    },
+    "709": {
+      "code": 709,
+      "family": "pages",
+      "name": "NoPages",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.pages.batchDeletePages",
+        "rest.v1.pages.restoreDeletedPages"
+      ]
+    },
+    "710": {
+      "code": 710,
+      "family": "pages",
+      "name": "DeletePageWithTasks",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.instances.batchDeleteInstances",
+        "rest.v1.pages.batchDeletePages"
+      ]
+    },
+    "711": {
+      "code": 711,
+      "family": "pages",
+      "name": "DeletePageWithDiaries",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.instances.batchDeleteInstances",
+        "rest.v1.pages.batchDeletePages"
+      ]
+    },
+    "712": {
+      "code": 712,
+      "family": "pages",
+      "name": "PageAlreadyDeleted",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.instances.batchDeleteInstances",
+        "rest.v1.pages.batchDeletePages"
+      ]
+    },
+    "8": {
+      "code": 8,
+      "family": "auth-security-general",
+      "name": "NativeSecurityOperation",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.users.updatePassword"
+      ]
+    },
+    "800": {
+      "code": 800,
+      "family": "drawers",
+      "name": "DrawerNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "801": {
+      "code": 801,
+      "family": "drawers",
+      "name": "NotDrawer",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "9": {
+      "code": 9,
+      "family": "auth-security-general",
+      "name": "InvalidToken",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.authentication.validateJwtToken"
+      ]
+    },
+    "900": {
+      "code": 900,
+      "family": "general-objects",
+      "name": "AlreadyExists",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "901": {
+      "code": 901,
+      "family": "general-objects",
+      "name": "TemplateValidationEx",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.documents.updateProperties",
+        "rest.v1.files.mergeFiles",
+        "rest.v1.files.updateFileProperties",
+        "rest.v1.folders.updateFolderProperties",
+        "rest.v2.files.updateFilePropertiesV2"
+      ]
+    },
+    "902": {
+      "code": 902,
+      "family": "general-objects",
+      "name": "ObjectNotLocked",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.notes.restoreDeletedNotesCollection",
+        "rest.v1.pages.rotatePage",
+        "rest.v1.pages.updatePageContent",
+        "rest.v1.pageversions.promotePageVersion",
+        "rest.v2.pages.updatePageContentV2"
+      ]
+    },
+    "903": {
+      "code": 903,
+      "family": "general-objects",
+      "name": "UnsupportedObjectClass",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.containers.getDeletedContent",
+        "rest.v1.containers.restoreDeletedDocFolder",
+        "rest.v1.instances.createInstances",
+        "rest.v1.notes.restoreDeletedNotesCollection",
+        "rest.v1.objecttypes.getAllowedTypesForContainer"
+      ]
+    },
+    "904": {
+      "code": 904,
+      "family": "general-objects",
+      "name": "UnableToLoadImage",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.overlays.getOverlayImage"
+      ]
+    },
+    "905": {
+      "code": 905,
+      "family": "general-objects",
+      "name": "ImageSetNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.phonecalls.getPhoneCallMetadata"
+      ]
+    },
+    "906": {
+      "code": 906,
+      "family": "general-objects",
+      "name": "ImageTypesMissing",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "907": {
+      "code": 907,
+      "family": "general-objects",
+      "name": "PermissionDenied",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.containers.restoreDeletedDocFolder",
+        "rest.v1.documents.getDocumentById",
+        "rest.v1.notes.restoreDeletedNotesCollection",
+        "rest.v1.overlays.getDocumentOverlayInfo",
+        "rest.v1.overlays.getOverlayImage",
+        "rest.v1.pages.checkReadPermissions",
+        "rest.v2.documents.getDocumentByIdV2",
+        "rest.v2.marks.assignFileMarksToFile",
+        "rest.v2.marks.assignPageMarksToPages",
+        "rest.v2.marks.removePageMarksFromPages"
+      ]
+    },
+    "908": {
+      "code": 908,
+      "family": "general-objects",
+      "name": "LockedByAnotherUser",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v2.pages.lockPage"
+      ]
+    },
+    "909": {
+      "code": 909,
+      "family": "general-objects",
+      "name": "PageLockedByAnotherUser",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.instances.batchDeleteInstances",
+        "rest.v1.pages.batchDeletePages"
+      ]
+    },
+    "910": {
+      "code": 910,
+      "family": "general-objects",
+      "name": "WorkflowException",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "911": {
+      "code": 911,
+      "family": "general-objects",
+      "name": "FlowNotLocked",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "913": {
+      "code": 913,
+      "family": "general-objects",
+      "name": "InvalidObjectClass",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "914": {
+      "code": 914,
+      "family": "general-objects",
+      "name": "ImageEmpty",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v2.pages.createPageV2"
+      ]
+    },
+    "915": {
+      "code": 915,
+      "family": "general-objects",
+      "name": "ImageListEmpty",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": [
+        "rest.v1.pages.createPage"
+      ]
+    },
+    "916": {
+      "code": 916,
+      "family": "general-objects",
+      "name": "OcrDataSetNotFound",
+      "profiles": [
+        "7.2",
+        "24.2",
+        "25.1"
+      ],
+      "raisedBy": []
+    },
+    "917": {
+      "code": 917,
+      "family": "general-objects",
+      "name": "DocFolderInDeletedContent",
+      "profiles": [
+        "25.1"
+      ],
+      "raisedBy": []
+    }
+  },
+  "sameDictionaryInV1AndV2": true,
+  "soap": {
+    "note": "SOAP reports failures as SOAP faults; no numeric dictionary is published."
+  }
+}

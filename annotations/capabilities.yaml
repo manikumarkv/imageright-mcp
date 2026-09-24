@@ -1,0 +1,760 @@
+# Logical operations (plan §4.3), in our own words. Each capability lists its per-surface
+# implementations; the router picks one by profile availability and surfacePreference.
+#
+# Per implementation:
+#   op       native operation key ("METHOD /path" or "soap:Name")
+#   params   capability param -> native param (dotted paths reach into SOAP ref/data types)
+#   fixed    native param -> literal the router always sends
+#   derived  native param -> how the router builds it from capability params
+# The builder fails if a required native param is left unbound, a dotted path does not exist,
+# or an implementation points at a deprecated operation. Every mapping starts as
+# verified: false until a fixture confirms it (plan §4.3).
+
+capabilities:
+  # ---------------------------------------------------------------- server and session
+  server.version:
+    summary: Report the product version of the connected server.
+    params: {}
+    implementations:
+      rest-v1:
+        op: GET /api/integration/version
+      soap:
+        op: soap:Version
+        note: SOAP reports the web-service build, which can differ from the product release.
+
+  user.current:
+    summary: Return the account the current credentials belong to.
+    params: {}
+    implementations:
+      rest-v1:
+        op: GET /api/users/currentuser
+      soap:
+        op: soap:CurrentUser
+
+  user.get:
+    summary: Look up one user account by its numeric id.
+    params:
+      userId: {type: int64, required: true, meaning: Numeric id of the user account.}
+    implementations:
+      rest-v1:
+        op: GET /api/users/{userid}
+        params: {userId: userid}
+      soap:
+        op: soap:GetUser
+        params: {userId: id.Id}
+
+  # ---------------------------------------------------------------- drawers and containers
+  drawer.list:
+    summary: List the drawers (top-level storage areas) the caller can see.
+    params: {}
+    implementations:
+      rest-v1:
+        op: GET /api/drawers
+      soap:
+        op: soap:GetDrawers
+        fixed: {includeDeleted: false}
+
+  container.content:
+    summary: List what sits directly (or recursively) under a drawer, file, folder or document.
+    params:
+      containerId: {type: int64, required: true, meaning: Id of the object whose children to list.}
+      recursive: {type: boolean, required: false, meaning: Walk the whole subtree instead of one level.}
+    implementations:
+      rest-v2:
+        op: GET /api/v2/containers/{containerId}
+        params: {containerId: containerId, recursive: recursive}
+      rest-v1:
+        op: GET /api/containers/{containerId}
+        params: {containerId: containerId, recursive: recursive}
+      soap:
+        op: soap:GetContent
+        params: {containerId: objectId}
+        fixed: {includeDeleted: false}
+        note: SOAP always returns one level; recursive is ignored on this surface.
+
+  container.allowedTypes:
+    summary: List the object types the parent's template allows as children.
+    params:
+      containerId: {type: int64, required: true, meaning: Id of the prospective parent.}
+    implementations:
+      rest-v1:
+        op: GET /api/containers/{objectId}/allowedtypes
+        params: {containerId: objectId}
+
+  object.pathToFile:
+    summary: Return the chain of containers from a document up to its file.
+    params:
+      documentId: {type: int64, required: true, meaning: Id of the document to trace upward.}
+    implementations:
+      rest-v1:
+        op: GET /api/documents/{docId}/pathToFile
+        params: {documentId: docId}
+      soap:
+        op: soap:GetObjectPathToFile
+        params: {documentId: objectRef}
+
+  object.attributes:
+    summary: Read all attribute values stored on an object.
+    params:
+      objectId: {type: int64, required: true, meaning: "Id of the file, folder, document or page."}
+    implementations:
+      rest-v1:
+        op: GET /api/attributes/{objId}
+        params: {objectId: objId}
+      soap:
+        op: soap:GetAttributes
+        params: {objectId: objectId}
+
+  # ---------------------------------------------------------------- files
+  file.find:
+    summary: Search for files by number parts, name, type or parent.
+    params:
+      fileNumber1: {type: string, required: false, meaning: First part of the file number.}
+      fileNumber2: {type: string, required: false, meaning: Second part of the file number.}
+      fileNumber3: {type: string, required: false, meaning: Third part of the file number.}
+      fileName: {type: string, required: false, meaning: File name to match.}
+      parentId: {type: int64, required: false, meaning: Restrict the search to one drawer.}
+    implementations:
+      rest-v1:
+        op: POST /api/files/find
+        params:
+          fileNumber1: FileNumberPart1
+          fileNumber2: FileNumberPart2
+          fileNumber3: FileNumberPart3
+          fileName: FileName
+          parentId: ParentId
+      soap:
+        op: soap:FindFilesEx
+        derived:
+          searchConditions: One equality condition per supplied filter, all joined with AND.
+        fixed: {getContent: false, includeDeleted: false}
+
+  file.get:
+    summary: Fetch one file's properties by id.
+    params:
+      fileId: {type: int64, required: true, meaning: Numeric id of the file.}
+    implementations:
+      rest-v2:
+        op: GET /api/v2/files/{fileId}
+        params: {fileId: fileId}
+      rest-v1:
+        op: GET /api/files/{fileId}
+        params: {fileId: fileId}
+      soap:
+        op: soap:GetFileByRef
+        params: {fileId: fileRef.RefId}
+        fixed: {getContent: false, includeDeleted: false}
+
+  file.create:
+    summary: Create a new file of a given type inside a drawer.
+    params:
+      drawerId: {type: int64, required: true, meaning: Drawer that will hold the file.}
+      fileTypeId: {type: int64, required: true, meaning: File type (template) to create.}
+      name: {type: string, required: false, meaning: Display name of the new file.}
+      fileNumber1: {type: string, required: false, meaning: First part of the file number.}
+      fileNumber2: {type: string, required: false, meaning: Second part of the file number.}
+      fileNumber3: {type: string, required: false, meaning: Third part of the file number.}
+    implementations:
+      rest-v1:
+        op: POST /api/files
+        params:
+          drawerId: ParentId
+          fileTypeId: FileTypeId
+          name: Name
+          fileNumber1: FileNumberPart1
+          fileNumber2: FileNumberPart2
+          fileNumber3: FileNumberPart3
+        fixed: {IsTemporary: false, CreatedByApplication: imageright-mcp}
+      soap:
+        op: soap:CreateFile
+        params:
+          drawerId: drawerContainerId
+          fileTypeId: fileData.ObjTypeId
+          name: fileData.Name
+          fileNumber1: fileData.FileNumber1
+          fileNumber2: fileData.FileNumber2
+          fileNumber3: fileData.FileNumber3
+        fixed: {fileData.TemporaryFile: false}
+
+  file.updateProperties:
+    summary: Change a file's name, number, type, drawer or attributes.
+    params:
+      fileId: {type: int64, required: true, meaning: File to update.}
+      name: {type: string, required: false, meaning: New display name.}
+      drawerId: {type: int64, required: false, meaning: Drawer to move the file into.}
+    implementations:
+      rest-v2:
+        op: POST /api/v2/files/{fileId}/properties
+        params: {fileId: fileId, name: Name, drawerId: DrawerId}
+      soap:
+        op: soap:UpdateFile
+        derived:
+          updateRequests: One FileUpdateRequest for fileId carrying only the supplied changes.
+
+  file.merge:
+    summary: Merge one file into another; the source file's content moves and the source goes away.
+    params:
+      sourceFileId: {type: int64, required: true, meaning: File that is merged away.}
+      targetFileId: {type: int64, required: true, meaning: File that receives the content.}
+    implementations:
+      rest-v1:
+        op: POST /api/files/{sourceFileId}/merge
+        params: {sourceFileId: sourceFileId, targetFileId: targetFileId}
+
+  file.tasks:
+    summary: List workflow tasks attached to a file.
+    params:
+      fileId: {type: int64, required: true, meaning: File whose tasks to list.}
+    implementations:
+      rest-v1:
+        op: POST /api/files/{fileId}/tasks/find
+        params: {fileId: fileId}
+      soap:
+        op: soap:GetTasksForFile
+        params: {fileId: fileRef.RefId}
+        fixed: {limit: 0}
+        note: A limit of 0 is assumed to mean no limit; confirm against a test server.
+
+  # ---------------------------------------------------------------- folders
+  folder.find:
+    summary: Search for folders inside a file by type or description.
+    params:
+      fileId: {type: int64, required: false, meaning: File to search in.}
+      description: {type: string, required: false, meaning: Folder description to match.}
+    implementations:
+      rest-v1:
+        op: POST /api/folders/find
+        params: {fileId: FileId, description: Description}
+      soap:
+        op: soap:FindFolders
+        params: {fileId: parentFile.RefId}
+        fixed: {includeDeleted: false}
+        note: SOAP cannot filter by description; the router filters the result instead.
+
+  folder.get:
+    summary: Fetch one folder's properties by id.
+    params:
+      folderId: {type: int64, required: true, meaning: Numeric id of the folder.}
+    implementations:
+      rest-v2:
+        op: GET /api/v2/folders/{folderId}
+        params: {folderId: folderId}
+      rest-v1:
+        op: GET /api/folders/{folderId}
+        params: {folderId: folderId}
+      soap:
+        op: soap:GetFolderByRef
+        params: {folderId: folderRef.RefId}
+        fixed: {getContent: false, includeDeleted: false}
+
+  folder.create:
+    summary: Create a folder of a given type inside a file or another folder.
+    params:
+      parentId: {type: int64, required: true, meaning: File or folder that will hold the new folder.}
+      folderTypeId: {type: int64, required: true, meaning: Folder type to create.}
+      description: {type: string, required: true, meaning: Label shown for the folder.}
+    implementations:
+      rest-v1:
+        op: POST /api/folders
+        params: {parentId: ParentId, folderTypeId: FolderTypeId, description: Description}
+      soap:
+        op: soap:CreateFolder
+        params: {parentId: containerId, folderTypeId: data.ObjTypeId, description: data.Description}
+
+  # ---------------------------------------------------------------- documents
+  document.find:
+    summary: Search for documents by parent, type, description or dates.
+    params:
+      fileId: {type: int64, required: false, meaning: File to search in.}
+      parentId: {type: int64, required: false, meaning: Folder or file directly above the documents.}
+      description: {type: string, required: false, meaning: Document description to match.}
+    implementations:
+      rest-v1:
+        op: POST /api/documents/find
+        params: {fileId: FileId, parentId: ParentId, description: Description}
+      soap:
+        op: soap:FindDocumentsEx
+        derived:
+          searchConditions: One equality condition per supplied filter, all joined with AND.
+        fixed: {includeDeleted: false, includePageData: false}
+
+  document.get:
+    summary: Fetch one document's properties by id.
+    params:
+      documentId: {type: int64, required: true, meaning: Numeric id of the document.}
+    implementations:
+      rest-v2:
+        op: GET /api/v2/documents/{docId}
+        params: {documentId: docId}
+      rest-v1:
+        op: GET /api/documents/{docId}
+        params: {documentId: docId}
+      soap:
+        op: soap:GetDocumentByRef
+        params: {documentId: docRef.RefId}
+        fixed: {getContent: false, includeDeleted: false}
+
+  document.create:
+    summary: Create an empty document of a given type; add pages to it afterwards.
+    params:
+      parentId: {type: int64, required: true, meaning: File or folder that will hold the document.}
+      documentTypeId: {type: int64, required: true, meaning: Document type; must be allowed under the parent.}
+      description: {type: string, required: true, meaning: Label shown for the document.}
+      documentDate: {type: date-time, required: false, meaning: Business date of the document; defaults to now.}
+      batchId: {type: int64, required: false, meaning: Capture batch to record the document under.}
+    implementations:
+      rest-v1:
+        op: POST /api/documents
+        params:
+          parentId: ParentId
+          documentTypeId: DocumentTypeId
+          description: Description
+          documentDate: DocumentDate
+        note: REST requires DocumentDate; the router fills in the current time when it is omitted.
+      soap:
+        op: soap:CreateDocument
+        params:
+          parentId: containerId
+          documentTypeId: data.ObjTypeId
+          description: data.Description
+          batchId: batchId
+        note: SOAP requires batchId; the router creates a batch first (batch.create) when none is given.
+
+  document.updateProperties:
+    summary: Change a document's description, dates, type or attributes.
+    params:
+      documentId: {type: int64, required: true, meaning: Document to update.}
+      description: {type: string, required: false, meaning: New description.}
+      documentTypeId: {type: int64, required: false, meaning: New document type.}
+    implementations:
+      rest-v1:
+        op: POST /api/documents/{docId}/properties
+        params: {documentId: docId, description: Description, documentTypeId: DocTypeId}
+      soap:
+        op: soap:UpdateDocument
+        derived:
+          updateRequests: One DocumentUpdateRequest for documentId carrying only the supplied changes.
+
+  document.move:
+    summary: Move documents to another file or folder.
+    params:
+      documentIds: {type: "int64[]", required: true, meaning: Documents to move.}
+      targetId: {type: int64, required: true, meaning: File or folder that receives them.}
+    implementations:
+      rest-v2:
+        op: POST /api/v2/documents/move
+        params: {documentIds: DocumentIds, targetId: TargetId}
+      rest-v1:
+        op: POST /api/documents/move
+        params: {documentIds: DocumentIds, targetId: TargetParentId}
+
+  document.copy:
+    summary: Copy documents, pages included, to another file or folder.
+    params:
+      documentIds: {type: "int64[]", required: true, meaning: Documents to copy.}
+      targetId: {type: int64, required: true, meaning: File or folder that receives the copies.}
+    implementations:
+      rest-v2:
+        op: POST /api/v2/documents/copy
+        params: {documentIds: DocumentIds, targetId: TargetId}
+
+  document.delete:
+    summary: Delete a document and its pages.
+    params:
+      documentId: {type: int64, required: true, meaning: Document to delete.}
+    implementations:
+      rest-v2:
+        op: DELETE /api/v2/documents/{documentId}
+        params: {documentId: documentId}
+      soap:
+        op: soap:DeleteDocument
+        params: {documentId: docId}
+        fixed: {killTasks: false}
+        note: With killTasks false the call fails if open tasks point at the document.
+
+  # ---------------------------------------------------------------- pages
+  page.list:
+    summary: List the pages of a document in order.
+    params:
+      documentId: {type: int64, required: true, meaning: Document whose pages to list.}
+    implementations:
+      rest-v1:
+        op: GET /api/documents/{docId}/pages
+        params: {documentId: docId}
+      soap:
+        op: soap:GetPages
+        params: {documentId: documentRef.RefId}
+        fixed: {includeDeleted: false}
+
+  page.get:
+    summary: Fetch one page's properties by id.
+    params:
+      pageId: {type: int64, required: true, meaning: Numeric id of the page.}
+    implementations:
+      rest-v1:
+        op: GET /api/pages/{pageId}
+        params: {pageId: pageId}
+      soap:
+        op: soap:GetPageByRef
+        params: {pageId: pageRef.RefId}
+
+  page.create:
+    summary: Add a page with its image to a document.
+    params:
+      documentId: {type: int64, required: true, meaning: Document that receives the page.}
+      imagePath: {type: path, required: true, meaning: "Image file on disk, inside the allowed upload root."}
+      description: {type: string, required: false, meaning: Label shown for the page.}
+      batchId: {type: int64, required: false, meaning: Capture batch to record the page under.}
+    implementations:
+      rest-v2:
+        op: POST /api/v2/pages
+        params: {documentId: DocId, description: Description, batchId: BatchId, imagePath: Image}
+        derived:
+          PageCreateData: JSON part holding DocId, BatchId and Description.
+      rest-v1:
+        op: POST /api/pages
+        params: {documentId: DocId, description: Description, batchId: BatchId, imagePath: image0}
+        derived:
+          PageCreateData: JSON part holding DocId, BatchId and Description.
+      soap:
+        op: soap:AddPage
+        params: {documentId: documentRef.RefId, description: description, batchId: batchId}
+        derived:
+          imageList: One base64 image read from imagePath.
+        fixed: {archiveImmediately: false}
+        note: SOAP requires batchId; the router creates a batch first (batch.create) when none is given.
+
+  page.updateContent:
+    summary: Replace a page's image with a new version.
+    params:
+      pageId: {type: int64, required: true, meaning: Page to update; lock it first.}
+      imagePath: {type: path, required: true, meaning: "New image file on disk, inside the allowed upload root."}
+    implementations:
+      rest-v2:
+        op: POST /api/v2/pages/{pageId}/content
+        params: {pageId: pageId, imagePath: image}
+        derived:
+          PageUpdateData: JSON part describing the new version.
+      rest-v1:
+        op: POST /api/pages/{pageId}/content
+        params: {pageId: pageId, imagePath: image0}
+        derived:
+          PageUpdateData: JSON part describing the new version.
+      soap:
+        op: soap:UpdatePage
+        params: {pageId: pageRef.RefId}
+        derived:
+          images: One base64 image read from imagePath.
+        fixed: {archiveImmediately: false}
+
+  page.lock:
+    summary: Take a short edit lock on a page before changing it.
+    params:
+      pageId: {type: int64, required: true, meaning: Page to lock.}
+    implementations:
+      rest-v2:
+        op: GET /api/v2/pages/{pageId}/lock
+        params: {pageId: pageId}
+      rest-v1:
+        op: GET /api/pages/{pageId}/lock
+        params: {pageId: pageId}
+      soap:
+        op: soap:LockPage
+        params: {pageId: pageRef.RefId}
+
+  page.refreshLock:
+    summary: Extend a page lock you already hold.
+    params:
+      pageId: {type: int64, required: true, meaning: Locked page.}
+    implementations:
+      rest-v1:
+        op: GET /api/pages/{pageId}/refresh
+        params: {pageId: pageId}
+
+  page.unlock:
+    summary: Release a page lock you hold.
+    params:
+      pageId: {type: int64, required: true, meaning: Locked page.}
+    implementations:
+      rest-v1:
+        op: GET /api/pages/{pageId}/unlock
+        params: {pageId: pageId}
+      soap:
+        op: soap:UnlockPage
+        params: {pageId: pageRef.RefId}
+
+  page.move:
+    summary: Move pages to another document.
+    params:
+      pageIds: {type: "int64[]", required: true, meaning: Pages to move.}
+      targetDocumentId: {type: int64, required: true, meaning: Document that receives them.}
+    implementations:
+      rest-v2:
+        op: POST /api/v2/pages/move
+        params: {pageIds: PageIds, targetDocumentId: TargetId}
+      rest-v1:
+        op: POST /api/pages/move
+        params: {pageIds: PageIds, targetDocumentId: TargetDocumentId}
+
+  page.updateDescription:
+    summary: Change the label shown for a page.
+    params:
+      pageId: {type: int64, required: true, meaning: Page to relabel.}
+      description: {type: string, required: true, meaning: New label.}
+    implementations:
+      rest-v1:
+        op: POST /api/pages/{pageId}/properties
+        params: {pageId: pageId, description: Description}
+      soap:
+        op: soap:UpdatePageDescription
+        params: {pageId: pageReference.RefId, description: newDescription}
+
+  pages.delete:
+    summary: Delete pages and/or documents that belong to one file.
+    params:
+      fileId: {type: int64, required: true, meaning: File that owns everything being deleted.}
+      pageIds: {type: "int64[]", required: false, meaning: Pages to delete.}
+      containerIds: {type: "int64[]", required: false, meaning: Documents or folders to delete.}
+    implementations:
+      rest-v1:
+        op: POST /api/files/{fileId}/instances/delete
+        params: {fileId: fileId, pageIds: Pages, containerIds: Containers}
+
+  # ---------------------------------------------------------------- capture batches
+  batch.create:
+    summary: Open a capture batch to group newly added documents and pages.
+    params:
+      application: {type: string, required: true, meaning: Name of the capturing application.}
+    implementations:
+      rest-v1:
+        op: POST /api/batches
+        params: {application: Application}
+      soap:
+        op: soap:CreateBatch
+        derived:
+          applicationId: Numeric application code; the name-to-code mapping is not published yet.
+
+  # ---------------------------------------------------------------- workflows and steps
+  workflow.list:
+    summary: List the workflows the caller can see.
+    params: {}
+    implementations:
+      rest-v1:
+        op: GET /api/workflows
+      soap:
+        op: soap:GetFlows
+
+  step.list:
+    summary: List the steps of one workflow.
+    params:
+      workflowId: {type: int64, required: true, meaning: Workflow whose steps to list.}
+    implementations:
+      rest-v1:
+        op: GET /api/workflows/{flowId}/steps
+        params: {workflowId: flowId}
+      soap:
+        op: soap:GetSteps
+        params: {workflowId: flowRef.RefId}
+        fixed: {requestFlag: Production}
+
+  step.get:
+    summary: Fetch one workflow step by id.
+    params:
+      stepId: {type: int64, required: true, meaning: Numeric id of the step.}
+    implementations:
+      rest-v1:
+        op: GET /api/steps/{stepId}
+        params: {stepId: stepId}
+      soap:
+        op: soap:GetStepByRef
+        params: {stepId: stepRef.RefId}
+        fixed: {requestFlag: Production}
+
+  step.assignableUsers:
+    summary: List users who may be given tasks on a step.
+    params:
+      stepId: {type: int64, required: true, meaning: Step the task will sit on.}
+    implementations:
+      rest-v1:
+        op: GET /api/steps/{stepId}/users
+        params: {stepId: stepId}
+      soap:
+        op: soap:GetAuthorizedUsersForStep
+        params: {stepId: stepRef.RefId}
+        fixed: {stepPermission: AssignmentAllowed}
+
+  step.priorities:
+    summary: List the task priorities a step accepts.
+    params:
+      stepId: {type: int64, required: true, meaning: Step to inspect.}
+    implementations:
+      rest-v1:
+        op: GET /api/steps/{stepId}/priorities
+        params: {stepId: stepId}
+
+  step.links:
+    summary: List the routes leading out of a step.
+    params:
+      stepId: {type: int64, required: true, meaning: Step the routes start from.}
+    implementations:
+      rest-v1:
+        op: GET /api/steps/{srcStepId}/links
+        params: {stepId: srcStepId}
+      soap:
+        op: soap:GetLinks
+        params: {stepId: stepRef.RefId}
+
+  # ---------------------------------------------------------------- tasks
+  task.find:
+    summary: Search workflow tasks by workflow, step, assignee or date window.
+    params:
+      workflowIds: {type: "int64[]", required: false, meaning: Only tasks in these workflows.}
+      stepIds: {type: "int64[]", required: false, meaning: Only tasks on these steps.}
+    implementations:
+      rest-v1:
+        op: POST /api/tasks/find
+        params: {workflowIds: Flows, stepIds: Steps}
+      soap:
+        op: soap:GetTasksEx
+        derived:
+          searchConditions: One condition per supplied filter, all joined with AND.
+
+  task.get:
+    summary: Fetch one task by id.
+    params:
+      taskId: {type: int64, required: true, meaning: Numeric id of the task.}
+    implementations:
+      soap:
+        op: soap:GetTaskByRef
+        params: {taskId: taskRef.RefId}
+        note: REST has no single-task read; use task.find with a Tasks filter there.
+
+  task.create:
+    summary: Put a new task on a workflow step for a file, folder, document or page.
+    params:
+      objectId: {type: int64, required: true, meaning: Object the task is about.}
+      stepId: {type: int64, required: true, meaning: Step the task starts on.}
+      priority: {type: int64, required: true, meaning: Priority; must be one the step accepts.}
+      availableDate: {type: date-time, required: true, meaning: When the task becomes workable.}
+      description: {type: string, required: false, meaning: Free-text task description.}
+      pageId: {type: int64, required: false, meaning: "Page the task points at (an id, not a position)."}
+    implementations:
+      rest-v1:
+        op: POST /api/tasks
+        params:
+          objectId: ObjectId
+          stepId: StepId
+          priority: Priority
+          availableDate: AvailableDate
+          description: Description
+          pageId: PageNumber
+        note: Despite its name, PageNumber carries a page id.
+      soap:
+        op: soap:CreateTask
+        params:
+          objectId: objId
+          stepId: stepRef.RefId
+          priority: createData.Priority
+          availableDate: createData.Available
+          description: createData.Description
+          pageId: createData.Pagenumber
+        note: Despite its name, Pagenumber carries a page id. A null stepRef creates a diary entry.
+
+  task.update:
+    summary: Change a task's description, priority, availability date or assignee.
+    params:
+      taskId: {type: int64, required: true, meaning: Task to update; lock it first.}
+      description: {type: string, required: false, meaning: New description.}
+      priority: {type: int64, required: false, meaning: New priority.}
+    implementations:
+      rest-v1:
+        op: POST /api/tasks/{taskId}
+        params: {taskId: taskId, description: Description, priority: Priority}
+      soap:
+        op: soap:UpdateTask
+        params: {taskId: taskRef.RefId, description: parameters.Description, priority: parameters.Priority}
+
+  task.lock:
+    summary: Lock a task so only the caller can work or route it.
+    params:
+      taskId: {type: int64, required: true, meaning: Task to lock.}
+    implementations:
+      rest-v1:
+        op: POST /api/tasks/{taskId}/lock
+        params: {taskId: taskId}
+      soap:
+        op: soap:LockTask
+        params: {taskId: taskRef.RefId}
+
+  task.refreshLock:
+    summary: Extend a task lock you already hold.
+    params:
+      taskId: {type: int64, required: true, meaning: Locked task.}
+    implementations:
+      rest-v1:
+        op: POST /api/tasks/{taskId}/refresh
+        params: {taskId: taskId}
+
+  task.unlock:
+    summary: Give up a task lock without moving the task.
+    params:
+      taskId: {type: int64, required: true, meaning: Locked task.}
+    implementations:
+      rest-v1:
+        op: POST /api/tasks/{taskId}/unlock
+        params: {taskId: taskId}
+      soap:
+        op: soap:UnlockTask
+        params: {taskId: taskRef.RefId}
+
+  task.route:
+    summary: Send a locked task to a chosen step.
+    params:
+      taskId: {type: int64, required: true, meaning: Locked task to move.}
+      stepId: {type: int64, required: true, meaning: Destination step.}
+      availableDate: {type: date-time, required: false, meaning: When the task becomes workable at the destination.}
+    implementations:
+      rest-v1:
+        op: POST /api/tasks/{taskId}/route
+        params: {taskId: taskId, stepId: stepId, availableDate: availableDate}
+      soap:
+        op: soap:RouteTask
+        params: {taskId: taskRef.RefId, stepId: stepRef.RefId, availableDate: newAvailableDate}
+        fixed: {commit: true}
+        note: SOAP requires a date; the router sends the current time when availableDate is omitted.
+
+  task.release:
+    summary: Finish work on a locked task and let the workflow move it along its default route.
+    params:
+      taskId: {type: int64, required: true, meaning: Locked task to release.}
+    implementations:
+      rest-v1:
+        op: POST /api/tasks/{taskId}/release
+        params: {taskId: taskId}
+      soap:
+        op: soap:ReleaseTask
+        params: {taskId: taskRef.RefId}
+        fixed: {commit: true}
+
+  task.cancel:
+    summary: End a task for good without completing it.
+    params:
+      taskId: {type: int64, required: true, meaning: Task to end.}
+    implementations:
+      rest-v1:
+        op: POST /api/tasks/{taskId}/cancel
+        params: {taskId: taskId}
+      soap:
+        op: soap:KillTask
+        params: {taskId: taskRef.RefId}
+
+  # ---------------------------------------------------------------- notes
+  note.list:
+    summary: Read the notes of one category attached to an object.
+    params:
+      objectId: {type: int64, required: true, meaning: Object whose notes to read.}
+      category: {type: string, required: true, meaning: Note category to read.}
+    implementations:
+      rest-v1:
+        op: GET /api/objects/{objectId}/notes/{category}
+        params: {objectId: objectId, category: category}

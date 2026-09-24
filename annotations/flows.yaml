@@ -1,0 +1,523 @@
+# Multi-step recipes (research report §10, F1-F8), in our own words.
+# The builder checks every reference: `$stepN.Field` must name a field of an earlier step's output
+# type, `$input.name` must be a declared input, and every required parameter must be bound.
+#
+# Reference rules (also written into flows.json):
+#   $input.name     a value supplied by the caller
+#   $stepN.Field    a field of step N's result; `value` means the whole result (ids, scalars)
+#   When a step returns a list, its `select` says which item(s) later references read.
+# Steps are documentation in phase 1; nothing here is executed.
+
+flows:
+  - id: F1
+    title: Create a workflow task from names
+    purpose: >-
+      Turn a workflow name, a step name and a target object into ids, check who may receive the
+      task and which priorities are allowed, then create the task.
+    surface: rest-v1
+    inputs:
+      - name: workflowName
+        type: string
+        required: true
+        meaning: Display name of the workflow.
+      - name: stepName
+        type: string
+        required: true
+        meaning: Display name of the step the task should start on.
+      - name: targetObjectId
+        type: int64
+        required: true
+        meaning: File, folder or document the task is about (see flow F7 to find it).
+      - name: priority
+        type: int64
+        required: true
+        meaning: Desired priority; must be in the list step 4 returns.
+      - name: availableDate
+        type: date-time
+        required: true
+        meaning: When the task becomes workable; use now for immediate work.
+      - name: assigneeName
+        type: string
+        required: false
+        meaning: Optional user to assign the task to.
+      - name: description
+        type: string
+        required: false
+        meaning: Optional task description.
+    steps:
+      - op: GET /api/workflows
+        purpose: Find the workflow.
+        params: {}
+        select: the item whose Name equals $input.workflowName
+        onError: No match means the workflow does not exist or the caller has no rights on it.
+      - op: GET /api/workflows/{flowId}/steps
+        purpose: Find the starting step inside that workflow.
+        params:
+          flowId: $step1.Id
+          flag: Production
+        select: the item whose Name equals $input.stepName
+        alternatives:
+          - GET /api/workflows/{flowProgName}/{stepProgName}
+      - op: GET /api/steps/{stepId}/users
+        purpose: Resolve the assignee among the users the step allows.
+        optional: only when an assignee is wanted
+        params:
+          stepId: $step2.Id
+        select: the item whose Name or FriendlyName equals $input.assigneeName
+      - op: GET /api/steps/{stepId}/priorities
+        purpose: Check that the requested priority is permitted on this step.
+        params:
+          stepId: $step2.Id
+      - op: GET /api/steps/{stepId}/attributes
+        purpose: See whether the step defines mandatory task attributes that must be supplied.
+        optional: when the step has attribute rules
+        params:
+          stepId: $step2.Id
+      - op: POST /api/tasks
+        purpose: Create the task.
+        params:
+          ObjectId: $input.targetObjectId
+          StepId: $step2.Id
+          Priority: $input.priority
+          AvailableDate: $input.availableDate
+          UserId: $step3.Id
+          Description: $input.description
+        onError: Priority or assignee outside the step's lists are the usual causes of a rejection.
+    outputs:
+      taskId: $step6.Id
+      stepId: $step2.Id
+    notes:
+      - Using the diary step instead of a regular step creates a diary entry rather than a task.
+
+  - id: F2
+    title: Act on a task under a lock
+    purpose: Lock a task, pick the next step from its outgoing links, route it there, and unlock.
+    surface: rest-v1
+    inputs:
+      - name: taskId
+        type: int64
+        required: true
+        meaning: Task to act on (see flow F7 to find it).
+      - name: targetStepName
+        type: string
+        required: true
+        meaning: Name or label of the step to send the task to.
+      - name: assigneeId
+        type: int64
+        required: false
+        meaning: Optional user who gets the task on the new step.
+    steps:
+      - op: POST /api/tasks/{taskId}/lock
+        purpose: Take the lock and read the task's current step.
+        params:
+          taskId: $input.taskId
+          returnTask: true
+        onError: If another user holds the lock, stop and report who (LockedBy).
+      - op: GET /api/steps/{srcStepId}/links
+        purpose: List where the task may go from its current step.
+        params:
+          srcStepId: $step1.StepId
+        select: the link whose Label or target step matches $input.targetStepName
+      - op: POST /api/tasks/{taskId}/route
+        purpose: Send the task to the chosen step.
+        params:
+          taskId: $input.taskId
+          stepId: $step2.TargetStepId
+          userId: $input.assigneeId
+          commit: true
+        alternatives:
+          - POST /api/tasks/{taskId}/release
+          - POST /api/tasks/{taskId}/cancel
+          - POST /api/tasks/{taskId}/attributes/{attrId}
+      - op: POST /api/tasks/{taskId}/unlock
+        purpose: Release the lock, also when step 3 failed.
+        params:
+          taskId: $input.taskId
+    outputs:
+      task: $step1.Id
+    notes:
+      - For long work, call POST /api/tasks/{taskId}/refresh to keep the lock alive.
+      - A route or release commits by default; commit=false is a trial run.
+
+  - id: F3
+    title: Ingest a document page by page
+    purpose: >-
+      Locate the file, check which document types it accepts, create the document, open a
+      capture batch and upload each page image.
+    surface: rest-v1
+    inputs:
+      - name: fileNumber
+        type: string
+        required: true
+        meaning: First part of the number of the file that receives the document.
+      - name: documentTypeName
+        type: string
+        required: true
+        meaning: Name of the document type to create.
+      - name: description
+        type: string
+        required: true
+        meaning: Label for the new document.
+      - name: documentDate
+        type: date
+        required: true
+        meaning: Business date of the document.
+      - name: application
+        type: ApiApplicationId
+        required: true
+        default: WebSdk
+        meaning: Capturing application recorded on the batch.
+      - name: pageFiles
+        type: file[]
+        required: true
+        meaning: Page images in order, one file per page (splitting a PDF is phase 2).
+    steps:
+      - op: POST /api/files/find
+        purpose: Find the file by its number.
+        params:
+          FileNumberPart1: $input.fileNumber
+        select: the single match; zero or several matches need a human decision
+        alternatives:
+          - POST /api/files
+      - op: GET /api/containers/{objectId}/allowedtypes
+        purpose: List the document types this file's template permits.
+        params:
+          objectId: $step1.Id
+        select: the item whose Name equals $input.documentTypeName
+      - op: POST /api/documents
+        purpose: Create the empty document.
+        params:
+          ParentId: $step1.Id
+          DocumentTypeId: $step2.Id
+          Description: $input.description
+          DocumentDate: $input.documentDate
+      - op: POST /api/batches
+        purpose: Open a real capture batch for the pages.
+        params:
+          Application: $input.application
+      - op: POST /api/pages
+        purpose: Upload one page.
+        repeat: once per entry of $input.pageFiles, in order
+        params:
+          DocId: $step3.value
+          BatchId: $step4.value
+          PageCreateData: {docId: $step3.value, batchId: $step4.value}
+          image0: $input.pageFiles
+        alternatives:
+          - POST /api/v2/pages
+    outputs:
+      documentId: $step3.value
+      batchId: $step4.value
+      pageId: $step5.Id
+    notes:
+      - To place the document in a folder, find the folder with POST /api/folders/find and use it as ParentId.
+      - If a page upload fails midway, the document holds the pages uploaded so far; phase 2 decides on cleanup.
+
+  - id: F4
+    title: Replace a page's image under a lock
+    purpose: Lock a page, upload new image content as a new version, and unlock.
+    surface: rest-v1
+    inputs:
+      - name: pageId
+        type: int64
+        required: true
+        meaning: Page to update.
+      - name: documentId
+        type: int64
+        required: true
+        meaning: Document the page belongs to (PageModel.DocumentId).
+      - name: imageFile
+        type: file
+        required: true
+        meaning: New image for the page.
+    steps:
+      - op: GET /api/pages/{pageId}/lock
+        purpose: Take the page lock.
+        params:
+          pageId: $input.pageId
+        alternatives:
+          - GET /api/v2/pages/{pageId}/lock
+      - op: POST /api/pages/{pageId}/content
+        purpose: Upload the new image.
+        params:
+          pageId: $input.pageId
+          PageUpdateData: {documentId: $input.documentId}
+          image0: $input.imageFile
+        alternatives:
+          - POST /api/v2/pages/{pageId}/content
+      - op: GET /api/pages/{pageId}/unlock
+        purpose: Release the lock, also when step 2 failed.
+        params:
+          pageId: $input.pageId
+    outputs: {}
+    notes:
+      - The lock only lasts about 30 seconds; refresh it every 10 seconds with GET /api/pages/{pageId}/refresh during slow uploads.
+      - The REST v2 content call names its parts image and annotation instead of image0.
+
+  - id: F5
+    title: Move all documents from one file to another
+    purpose: List the documents of a source file and move them into a target file in one call.
+    surface: rest-v1
+    inputs:
+      - name: sourceFileId
+        type: int64
+        required: true
+        meaning: File to take the documents from.
+      - name: targetContainerId
+        type: int64
+        required: true
+        meaning: File or folder that receives them.
+    steps:
+      - op: POST /api/documents/find
+        purpose: Collect the documents of the source file.
+        params:
+          FileId: $input.sourceFileId
+          Deleted: false
+        select: all items
+      - op: POST /api/documents/move
+        purpose: Move them.
+        params:
+          DocumentIds: $step1.Id
+          TargetParentId: $input.targetContainerId
+        alternatives:
+          - POST /api/v2/documents/move
+          - POST /api/v2/documents/copy
+        onError: Check FailedDocumentMoves in the result; the call can partly succeed.
+    outputs:
+      documentIdMap: $step2.DocumentIdMap
+      pageIdMap: $step2.PageIdMap
+    notes:
+      - Folders move with POST /api/folders/move and pages with POST /api/pages/move or the v2 page move, copy and merge calls.
+      - Merging two whole files is POST /api/files/{sourceFileId}/merge, which cannot be undone.
+      - Deleting pages or documents in bulk is POST /api/files/{fileId}/instances/delete (all or nothing).
+
+  - id: F6
+    title: Add a note to a file, folder or task
+    purpose: Make sure the note collection exists, lock it at its current version, append a note, and unlock.
+    surface: rest-v1
+    inputs:
+      - name: objectId
+        type: int64
+        required: true
+        meaning: File, folder or task that gets the note.
+      - name: category
+        type: NoteCategory
+        required: true
+        default: Regular
+        meaning: Kind of note collection.
+      - name: text
+        type: string
+        required: true
+        meaning: The note text.
+    steps:
+      - op: GET /api/objects/{objectId}/notes/{category}
+        purpose: Read the collection to learn its version (an Id of -1 means there is none yet).
+        params:
+          objectId: $input.objectId
+          category: $input.category
+        select: the first item
+      - op: POST /api/objects/{objectId}/notes/{category}
+        purpose: Create the collection when step 1 found none.
+        optional: only when step 1 returned Id -1
+        params:
+          objectId: $input.objectId
+          category: $input.category
+      - op: POST /api/objects/{objectId}/notes/{category}/lock
+        purpose: Lock the collection at the version just read.
+        params:
+          objectId: $input.objectId
+          category: $input.category
+          version: $step1.Version
+      - op: POST /api/objects/{objectId}/notes
+        purpose: Append the note.
+        params:
+          objectId: $input.objectId
+          Category: $input.category
+          Text: $input.text
+      - op: POST /api/objects/{objectId}/notes/{category}/unlock
+        purpose: Release the lock, also when step 4 failed.
+        params:
+          objectId: $input.objectId
+          category: $input.category
+    outputs:
+      noteItemId: $step4.ItemId
+    notes:
+      - When step 2 ran, lock with the Version it returned instead of step 1's.
+
+  - id: F7
+    title: Find content, then act on it
+    purpose: Resolve a file number to a file, its documents and their pages, producing ids for the other flows.
+    surface: rest-v1
+    inputs:
+      - name: fileNumber
+        type: string
+        required: true
+        meaning: First part of the file number.
+      - name: documentTypeIds
+        type: int64[]
+        required: false
+        meaning: Optional document types to narrow the search.
+    steps:
+      - op: POST /api/files/find
+        purpose: Find the file.
+        params:
+          FileNumberPart1: $input.fileNumber
+        select: the single match
+      - op: POST /api/documents/find
+        purpose: Find documents in it.
+        params:
+          FileId: $step1.Id
+          DocumentTypeIds: $input.documentTypeIds
+        select: the document(s) of interest
+      - op: GET /api/documents/{docId}/pages
+        purpose: List the pages of a chosen document.
+        params:
+          docId: $step2.Id
+    outputs:
+      fileId: $step1.Id
+      documentId: $step2.Id
+      pageId: $step3.Id
+    notes:
+      - Tasks are found with GET /api/tasks or POST /api/tasks/find and then handled with F2.
+      - To walk upwards from any object, use the pathToFile calls.
+
+  - id: F8
+    title: Create a task over SOAP
+    purpose: >-
+      The SOAP version of F1: open a session, resolve workflow, step and assignee, create the
+      task, read it back and close the session.
+    surface: soap
+    inputs:
+      - name: username
+        type: string
+        required: true
+        meaning: Login name (case-sensitive), from configuration.
+      - name: password
+        type: string
+        required: true
+        meaning: Password (case-sensitive), from configuration only.
+      - name: connection
+        type: string
+        required: true
+        meaning: Connection name (case-sensitive).
+      - name: workflowName
+        type: string
+        required: true
+        meaning: Display name of the workflow.
+      - name: stepName
+        type: string
+        required: true
+        meaning: Display name of the step.
+      - name: targetObjectId
+        type: long
+        required: true
+        meaning: File, folder or document the task is about.
+      - name: priority
+        type: long
+        required: true
+        meaning: Task priority.
+      - name: availableDate
+        type: dateTime
+        required: true
+        meaning: When the task becomes workable.
+    steps:
+      - op: soap:UserLogin
+        purpose: Open the session; the result is the first security token.
+        params:
+          username: $input.username
+          password: $input.password
+          connName: $input.connection
+      - op: soap:GetFlows
+        purpose: Find the workflow.
+        params: {}
+        select: the item whose Name equals $input.workflowName
+      - op: soap:GetSteps
+        purpose: Find the step in it.
+        params:
+          flowRef: $step2.Id
+          requestFlag: Both
+        select: the item whose Name equals $input.stepName
+      - op: soap:GetAuthorizedUsersForStep
+        purpose: Pick an assignee among the users allowed on the step.
+        optional: only when an assignee is wanted
+        params:
+          stepRef: $step3.Id
+          stepPermission: All
+      - op: soap:CreateTask
+        purpose: Create the task.
+        params:
+          objId: $input.targetObjectId
+          stepRef: $step3.Id
+          createData.Priority: $input.priority
+          createData.Available: $input.availableDate
+          createData.AssignedTo: $step4.User.SecurityAccount.Id
+      - op: soap:GetTaskByRef
+        purpose: Read the new task back.
+        params:
+          taskRef: $step5.value
+      - op: soap:UserLogoff
+        purpose: Close the session.
+        params: {}
+    outputs:
+      taskRef: $step5.value
+      task: $step6.value
+    notes:
+      - Every response carries a new security token; each call must send the token from the previous response.
+      - Acting on the task follows LockTask, then RouteTask, ReleaseTask, ReleaseTaskToStep, SetTaskAttribute, UpdateTask or KillTask, then UnlockTask.
+
+  - id: F8b
+    title: Ingest pages over SOAP
+    purpose: The SOAP version of F3's upload part - open a batch and add pages to an existing document.
+    surface: soap
+    inputs:
+      - name: username
+        type: string
+        required: true
+        meaning: Login name (case-sensitive), from configuration.
+      - name: password
+        type: string
+        required: true
+        meaning: Password (case-sensitive), from configuration only.
+      - name: connection
+        type: string
+        required: true
+        meaning: Connection name (case-sensitive).
+      - name: documentRef
+        type: DocumentRef
+        required: true
+        meaning: Document that receives the pages.
+      - name: applicationId
+        type: int
+        required: true
+        meaning: Numeric id of the capturing application.
+      - name: pageImages
+        type: ImageList[]
+        required: true
+        meaning: One image list per page, in order.
+    steps:
+      - op: soap:UserLogin
+        purpose: Open the session.
+        params:
+          username: $input.username
+          password: $input.password
+          connName: $input.connection
+      - op: soap:CreateBatch
+        purpose: Open a capture batch.
+        params:
+          applicationId: $input.applicationId
+      - op: soap:AddPage
+        purpose: Add one page.
+        repeat: once per entry of $input.pageImages, in order
+        params:
+          documentRef: $input.documentRef
+          imageList: $input.pageImages
+          batchId: $step2.value
+          archiveImmediately: false
+      - op: soap:UserLogoff
+        purpose: Close the session.
+        params: {}
+    outputs:
+      batchId: $step2.value
+      page: $step3.value
+    notes:
+      - AddConvertedPage accepts a batch id of -1 to create a batch on the fly; whether phase 2 needs it is still open.

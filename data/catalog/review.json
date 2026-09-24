@@ -1,0 +1,453 @@
+{
+  "claims": [
+    {
+      "claim": "REST v1 25.1 is a superset of 24.2.",
+      "id": "C1",
+      "observed": {
+        "removedIn25.1": []
+      },
+      "reportSection": "§1, §7",
+      "status": "confirmed"
+    },
+    {
+      "claim": "REST v1 25.1 adds 7 EmailReceiver operations and no other endpoints.",
+      "id": "C2",
+      "note": "The 7 EmailReceiver ops are confirmed. The extra ops and schema changes account for the unattributed deltas in report §12.2.",
+      "observed": {
+        "changedParams": {
+          "rest.v1.folders.findFolders": {
+            "added": [
+              "ExcludeHidden (body)"
+            ],
+            "modified": [],
+            "removed": []
+          },
+          "rest.v1.pages.checkReadPermissions": {
+            "added": [
+              "excludeDeleted (query)"
+            ],
+            "modified": [],
+            "removed": []
+          },
+          "rest.v1.tasks.getNextAvailableTask": {
+            "added": [
+              "ExpandAssignedWithGroupsAndRoles (body)"
+            ],
+            "modified": [],
+            "removed": []
+          }
+        },
+        "changedSchemas": {
+          "DrawerModel": "+ObjectClass ~extends",
+          "FolderDataResult": "+HasWorkflowItems +IsHidden",
+          "FolderSearchObject": "+ExcludeHidden",
+          "PageVersionModel": "+CreatedByFullName +CreatedByName",
+          "TaskFilterV2": "+ExpandAssignedWithGroupsAndRoles"
+        },
+        "emailReceiverAdded": [
+          "rest.v1.emailreceiver.getAccountDetails",
+          "rest.v1.emailreceiver.getAccountDetailsByEmail",
+          "rest.v1.emailreceiver.getAccountStatusByEmail",
+          "rest.v1.emailreceiver.getAccountsByConfiguration",
+          "rest.v1.emailreceiver.getConfigurations",
+          "rest.v1.emailreceiver.getErrorEmails",
+          "rest.v1.emailreceiver.getErrorEmailsByEmail"
+        ],
+        "otherAdded": [
+          "rest.v1.containers.getDeletedContent",
+          "rest.v1.containers.restoreDeletedContent",
+          "rest.v1.containers.restoreDeletedDocFolder",
+          "rest.v1.drawers.getLocationTree",
+          "rest.v1.notes.restoreDeletedNotesCollection",
+          "rest.v1.pages.restoreDeletedPages"
+        ]
+      },
+      "reportSection": "§1, §7",
+      "status": "discrepancy"
+    },
+    {
+      "claim": "REST v1 7.2 lacks steps/{id}/indexingsettings, workflows/rootbuddies, POST steps/users.",
+      "id": "C3",
+      "observed": {
+        "operations": [
+          "rest.v1.workflow.getIndexingStepParams",
+          "rest.v1.workflow.getRootBuddies",
+          "rest.v1.workflow.getUsersToAssignSteps"
+        ]
+      },
+      "reportSection": "§7",
+      "status": "confirmed"
+    },
+    {
+      "claim": "Those three are the only endpoint-level differences between 7.2 and 24.2 (v1).",
+      "id": "C4",
+      "note": "The extra absences account for the unattributed delta in report §12.3.",
+      "observed": {
+        "absentIn7.2": [
+          "rest.v1.files.createFileRelationship",
+          "rest.v1.files.deleteFilesRelationship",
+          "rest.v1.globalconfig.createGlobalConfig",
+          "rest.v1.globalconfig.deleteGlobalConfig",
+          "rest.v1.globalconfig.deleteGlobalConfigSection",
+          "rest.v1.instances.managePermissionsToInstance",
+          "rest.v1.taskhistory.getWorkSummary",
+          "rest.v1.workflow.getIndexingStepParams",
+          "rest.v1.workflow.getRootBuddies",
+          "rest.v1.workflow.getUsersToAssignSteps"
+        ],
+        "changedEnums7.2->24.2": {
+          "NoteCategory": "+value CompletedTask",
+          "TaskAgeCalculationAlgorithm": "+value AvailableDate"
+        },
+        "changedSchemas7.2->24.2": {
+          "AdvancedTypesMetadataDataResult": "+FolderTypes",
+          "AgencyOneSettings": "+BaseGlobalNavUrl +BaseUrl -Url",
+          "FolderDataResult": "+File +FolderTypeName",
+          "FolderSearchObject": "~Attributes",
+          "PageModel": "+PageExtension",
+          "TaskFilterV2": "+FileId"
+        },
+        "extraAbsentIn7.2": [
+          "rest.v1.files.createFileRelationship",
+          "rest.v1.files.deleteFilesRelationship",
+          "rest.v1.globalconfig.createGlobalConfig",
+          "rest.v1.globalconfig.deleteGlobalConfig",
+          "rest.v1.globalconfig.deleteGlobalConfigSection",
+          "rest.v1.instances.managePermissionsToInstance",
+          "rest.v1.taskhistory.getWorkSummary"
+        ]
+      },
+      "reportSection": "§1, §7",
+      "status": "discrepancy"
+    },
+    {
+      "claim": "REST v2 25.1 adds the excludeHidden query parameter (GET /api/v2/folders/{folderId}).",
+      "id": "C5",
+      "observed": {
+        "paramAvailability": {
+          "excludeHidden": [
+            "25.1"
+          ]
+        }
+      },
+      "reportSection": "§1, §7",
+      "status": "confirmed"
+    },
+    {
+      "claim": "REST v2 25.1 has no other path changes than excludeHidden.",
+      "id": "C6",
+      "observed": {
+        "addedOperations": [
+          "rest.v2.tasks.getTaskCountV2"
+        ],
+        "changedParams": {
+          "rest.v2.folders.getFolderByIdV2": {
+            "added": [
+              "excludeHidden (query)"
+            ],
+            "modified": [],
+            "removed": []
+          },
+          "rest.v2.tasks.getPostTasksBatchV2": {
+            "added": [
+              "ExpandAssignedWithGroupsAndRoles (body)"
+            ],
+            "modified": [],
+            "removed": []
+          }
+        },
+        "changedSchemas": {
+          "BatchTaskFilterV2": "+ExpandAssignedWithGroupsAndRoles",
+          "DashboardTaskFilterV2": "+ExpandAssignedWithGroupsAndRoles",
+          "FolderDataResult": "+HasWorkflowItems +IsHidden",
+          "TaskFilterV2": "+ExpandAssignedWithGroupsAndRoles"
+        }
+      },
+      "reportSection": "§7",
+      "status": "discrepancy"
+    },
+    {
+      "claim": "REST v2 7.2 TaskFilterV2 has no FileId.",
+      "id": "C7",
+      "observed": {
+        "TaskFilterV2.FileId.availableIn": [
+          "24.2",
+          "25.1"
+        ],
+        "alsoInV1": [
+          "24.2",
+          "25.1"
+        ],
+        "inheritedBy": [
+          "BatchTaskFilterV2",
+          "DashboardTaskFilterV2",
+          "TaskFilterV2"
+        ]
+      },
+      "reportSection": "§1, §7",
+      "status": "confirmed"
+    },
+    {
+      "claim": "7.2 TaskAgeCalculationAlgorithm lacks AvailableDate.",
+      "id": "C8",
+      "observed": {
+        "AvailableDate.availableIn": [
+          "24.2",
+          "25.1"
+        ]
+      },
+      "reportSection": "§1, §7",
+      "status": "confirmed"
+    },
+    {
+      "claim": "Three deprecations in each v1 profile (files properties, permissionsbatch, pages delete).",
+      "id": "C9",
+      "observed": {
+        "rest-v1": {
+          "24.2": [
+            "rest.v1.files.updateFileProperties",
+            "rest.v1.functionalityrights.getPermissionsBatchAll",
+            "rest.v1.pages.batchDeletePages"
+          ],
+          "25.1": [
+            "rest.v1.files.updateFileProperties",
+            "rest.v1.functionalityrights.getPermissionsBatchAll",
+            "rest.v1.pages.batchDeletePages"
+          ],
+          "7.2": [
+            "rest.v1.files.updateFileProperties",
+            "rest.v1.functionalityrights.getPermissionsBatchAll",
+            "rest.v1.pages.batchDeletePages"
+          ]
+        },
+        "rest-v2": {
+          "24.2": [],
+          "25.1": [],
+          "7.2": []
+        }
+      },
+      "reportSection": "§1, §7",
+      "status": "confirmed"
+    },
+    {
+      "claim": "Error 917 DocFolderInDeletedContent exists only in 25.1.",
+      "id": "C10",
+      "observed": {
+        "profilesWith917": [
+          "25.1"
+        ]
+      },
+      "reportSection": "§7, §8",
+      "status": "confirmed"
+    },
+    {
+      "claim": "The SOAP service has 114 operations; the report's area tables list each once.",
+      "id": "C11",
+      "observed": {
+        "areaCounts": {
+          "Attributes": {
+            "declared": 4,
+            "listed": 4
+          },
+          "Files / folders / documents / containers": {
+            "declared": 32,
+            "listed": 32
+          },
+          "Marks": {
+            "declared": 8,
+            "listed": 8
+          },
+          "Misc": {
+            "declared": 2,
+            "listed": 2
+          },
+          "Notes": {
+            "declared": 2,
+            "listed": 2
+          },
+          "Pages / images": {
+            "declared": 17,
+            "listed": 17
+          },
+          "Permissions": {
+            "declared": 2,
+            "listed": 2
+          },
+          "Session / identity": {
+            "declared": 11,
+            "listed": 11
+          },
+          "Types / templates / attribute metadata": {
+            "declared": 10,
+            "listed": 10
+          },
+          "Workflow / tasks": {
+            "declared": 26,
+            "listed": 26
+          }
+        },
+        "inReportTables": 114,
+        "missingFromReport": [],
+        "notPublished": [],
+        "published": 114
+      },
+      "reportSection": "§1, §11",
+      "status": "confirmed"
+    },
+    {
+      "claim": "Open item: is error 2500 CanNotRequestBothFileAndTaskLevelHistory in 24.2?",
+      "id": "C12",
+      "note": "Resolved mechanically: 2500 exists only in 7.2.",
+      "observed": {
+        "profilesWith2500": [
+          "7.2"
+        ]
+      },
+      "reportSection": "§12.4",
+      "status": "confirmed"
+    },
+    {
+      "claim": "The report's error list matches the 24.2 ErrorCodes dictionary.",
+      "id": "C13",
+      "observed": {
+        "inOASNotReport": {
+          "1500": "FunctionalityRightNotFound",
+          "2600": "AnnotationTemplateAlreadyExists"
+        },
+        "inReportNotOAS": [],
+        "nameMismatches": {},
+        "removedIn7.2(unreported)": {
+          "1104": "FolderNotFound",
+          "1105": "FolderDuplicated",
+          "1203": "FileMarkNotAllowedInFileType",
+          "326": "NotIndexingStep",
+          "505": "DuplicateFiles"
+        }
+      },
+      "reportSection": "§8",
+      "status": "discrepancy"
+    },
+    {
+      "claim": "The report's rest-v1 24.2 endpoint list is complete and accurate.",
+      "id": "C14",
+      "observed": {
+        "caseDiffersOnly": [
+          "GET /api/pages/{}/pathtofile"
+        ],
+        "inReportNotPublished": [
+          "GET /api/tasks/{}/history",
+          "GET /api/tasks/{}/history/details",
+          "POST /api/instances/{}"
+        ],
+        "publishedNotInReport": [
+          "rest.v1.containers.getFirstPage",
+          "rest.v1.dashboard.getTaskCount",
+          "rest.v1.dashboardviews.createView",
+          "rest.v1.dashboardviews.deleteView",
+          "rest.v1.dashboardviews.getAllViews",
+          "rest.v1.dashboardviews.getDefaultView",
+          "rest.v1.dashboardviews.getView",
+          "rest.v1.dashboardviews.setDefaultView",
+          "rest.v1.dashboardviews.updateView",
+          "rest.v1.datavalidation.getPageContainsValidatedField",
+          "rest.v1.datavalidation.getValidationFields",
+          "rest.v1.datavalidation.updateOcrDataAfterValidation",
+          "rest.v1.datavalidation.updateRemainingOcrDataValidationFields",
+          "rest.v1.documentfilter.areMappingsDefined",
+          "rest.v1.documentfilter.create",
+          "rest.v1.documentfilter.deleteFileType",
+          "rest.v1.documentfilter.deleteMapping",
+          "rest.v1.documentfilter.getMappings",
+          "rest.v1.documentfilter.getMappingsAll",
+          "rest.v1.documentfilter.isMappingDefined",
+          "rest.v1.documentfilter.update",
+          "rest.v1.instances.createInstances",
+          "rest.v1.objecttypes.removePermissionsForMultipleTypes",
+          "rest.v1.pages.getPageById2",
+          "rest.v1.sla.updateSla",
+          "rest.v1.taskhistory.getWorkSummary"
+        ]
+      },
+      "reportSection": "§4",
+      "status": "discrepancy"
+    },
+    {
+      "claim": "The report's rest-v2 24.2 endpoint list is complete and accurate.",
+      "id": "C15",
+      "observed": {
+        "caseDiffersOnly": [],
+        "inReportNotPublished": [],
+        "publishedNotInReport": []
+      },
+      "reportSection": "§5",
+      "status": "confirmed"
+    },
+    {
+      "claim": "Portal topics Annotations, Config, Dashboard, DataValidation, Devices, DocumentFilters, Email, Images, Logs and Rruser do not appear as v1 OAS tags.",
+      "id": "C16",
+      "observed": {
+        "allV1Tags": [
+          "Accounts",
+          "Attributes",
+          "Authentication",
+          "Batches",
+          "ClientActions",
+          "Collaboration Portal",
+          "Containers",
+          "Dashboard",
+          "DashboardViews",
+          "DataValidation",
+          "DocumentFilter",
+          "Documents",
+          "Drawers",
+          "EmailReceiver",
+          "Encryption",
+          "Files",
+          "Folders",
+          "FunctionalityRights",
+          "GlobalConfig",
+          "Health",
+          "Instances",
+          "Instrumentation",
+          "Integration",
+          "Licensing",
+          "Marks",
+          "Notes",
+          "ObjectTypes",
+          "OcrDataForms",
+          "OcrDataSets",
+          "OcrFields",
+          "OcrFolders",
+          "OcrFormVersions",
+          "OcrForms",
+          "Overlays",
+          "PageVersions",
+          "Pages",
+          "PhoneCalls",
+          "RedactionRuleSets",
+          "ReportParameters",
+          "ReportTemplates",
+          "Reports",
+          "ServiceDiscovery",
+          "Sla",
+          "TaskActions",
+          "TaskAttributes",
+          "TaskHistory",
+          "Tasks",
+          "UserConfig",
+          "Users",
+          "Workflow"
+        ],
+        "presentAsTags": [
+          "Dashboard",
+          "DataValidation",
+          "DocumentFilters"
+        ]
+      },
+      "reportSection": "§9",
+      "status": "discrepancy"
+    }
+  ],
+  "note": "Mechanical checks of the research report against the vendor snapshots. Discrepancies are for human review; the report itself is not modified.",
+  "vendorInconsistencies": []
+}
