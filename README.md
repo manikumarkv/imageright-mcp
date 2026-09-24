@@ -3,8 +3,24 @@
 An [MCP](https://modelcontextprotocol.io) server that helps AI coding assistants work correctly against
 Vertafore ImageRight on your product version (24.x, 25.x, or 7.2).
 
-> **Status: pre-alpha (M0 scaffold).** Only the `ir_get_config` tool exists so far. The planned phase-1 tools are an offline API explorer covering REST v1, REST v2, and SOAP, a version-aware client, a custom error
-> catalog, and dry-run previews. None of them are here yet.
+> **Status: pre-alpha (M2).** The offline API explorer and version-matrix tools work; the version-aware client,
+> custom error catalog, and dry-run previews are not here yet.
+
+## Tools
+
+All tools below work offline: no server, no credentials.
+
+| Tool | What it does |
+|---|---|
+| `ir_get_config` | Effective configuration, secrets redacted |
+| `ir_search_apis` | Plain-language search over REST v1, REST v2 and SOAP operations |
+| `ir_list_areas` | Functional areas with operation counts per surface |
+| `ir_describe_api` | One operation in detail: params, value sources, body, multipart parts, response, errors, gotchas, versions |
+| `ir_describe_type` | A schema or enum, with per-version differences |
+| `ir_list_flows` / `ir_describe_flow` | Multi-step recipes (documentation only; nothing is executed) |
+| `ir_check_availability` | Is an operation, parameter, field or enum value present in each version? |
+| `ir_compare_versions` | Diff two versions |
+| `ir_list_deprecations` | Deprecated operations and their replacements |
 
 ## Install
 

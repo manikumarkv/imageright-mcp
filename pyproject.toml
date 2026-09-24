@@ -45,6 +45,9 @@ Issues = "https://github.com/manikumarkv/imageright-mcp/issues"
 [tool.hatch.build.targets.wheel]
 packages = ["src/imageright_mcp"]
 
+[tool.hatch.build.targets.wheel.force-include]
+"data/catalog" = "imageright_mcp/_data/catalog"
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"

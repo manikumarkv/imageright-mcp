@@ -2,32 +2,24 @@
 
 from __future__ import annotations
 
-import json
 from collections.abc import Mapping
-from typing import Any
 
 from mcp.server.mcpserver import MCPServer
-from mcp.types import CallToolResult, TextContent, ToolAnnotations
+from mcp.types import CallToolResult, ToolAnnotations
 
 from imageright_mcp import __version__
 from imageright_mcp.config import ConfigError, load_config
+from imageright_mcp.envelope import to_envelope
+from imageright_mcp.tools import register_catalog_tools
 
 SERVER_NAME = "imageright-mcp"
 
 INSTRUCTIONS = (
     "Unofficial helper for the ImageRight document-management APIs (REST v1, REST v2, SOAP). "
-    "Call ir_get_config first to see which product version and surfaces are configured."
+    "Call ir_get_config first to see which product version and surfaces are configured. "
+    "To find an API, start with ir_search_apis, then ir_describe_api; ir_list_flows shows "
+    "multi-step recipes. Explorer and version tools work offline."
 )
-
-
-def _envelope(data: Any = None, error: dict[str, Any] | None = None) -> CallToolResult:
-    """Wrap a result in the standard envelope (plan §5.4); ``isError`` mirrors ``ok``."""
-    envelope = {"ok": error is None, "data": data, "error": error, "meta": {"warnings": []}}
-    return CallToolResult(
-        content=[TextContent(type="text", text=json.dumps(envelope, indent=2))],
-        structured_content=envelope,
-        is_error=error is not None,
-    )
 
 
 def create_server(env: Mapping[str, str] | None = None) -> MCPServer:
@@ -51,7 +43,7 @@ def create_server(env: Mapping[str, str] | None = None) -> MCPServer:
         try:
             config = load_config(env)
         except ConfigError as exc:
-            return _envelope(
+            return to_envelope(
                 error={
                     "code": "IR-1001",
                     "name": "ConfigMissing",
@@ -61,6 +53,7 @@ def create_server(env: Mapping[str, str] | None = None) -> MCPServer:
                     "hint": "Fix the IMAGERIGHT_* environment variables or the config file.",
                 }
             )
-        return _envelope(data=config.redacted())
+        return to_envelope(data=config.redacted())
 
+    register_catalog_tools(server, env)
     return server

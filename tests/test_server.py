@@ -20,11 +20,12 @@ def _structured(result: CallToolResult) -> dict[str, Any]:
     return payload
 
 
-async def test_lists_ir_get_config_in_memory() -> None:
+async def test_lists_tools_in_memory() -> None:
     async with Client(create_server({})) as client:
         tools = (await client.list_tools()).tools
     names = [tool.name for tool in tools]
-    assert names == ["ir_get_config"]
+    assert names[0] == "ir_get_config"
+    assert len(names) == 10
     annotations = tools[0].annotations
     assert annotations is not None
     assert annotations.read_only_hint is True
@@ -72,7 +73,11 @@ async def test_stdio_smoke_lists_and_calls_ir_get_config() -> None:
         tools = (await client.list_tools()).tools
         assert "ir_get_config" in [tool.name for tool in tools]
         result = await client.call_tool("ir_get_config", {})
+        search = await client.call_tool("ir_search_apis", {"query": "upload a page"})
     payload = _structured(result)
     assert payload["ok"] is True
     assert payload["data"]["password"] == "***"
     assert SECRET not in json.dumps(payload)
+    found = _structured(search)
+    assert found["ok"] is True
+    assert found["data"]["results"]
