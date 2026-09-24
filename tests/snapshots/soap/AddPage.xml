@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <AddPage xmlns="http://imageright.com/imageright.webservice">
+      <securityToken>***</securityToken>
+      <documentRef>
+        <RefId>1001</RefId>
+      </documentRef>
+      <description />
+      <imageList>
+        <Images>
+          <Image>
+            <Rotation>0</Rotation>
+            <Data>SUkq</Data>
+            <Extension>tif</Extension>
+            <Id>0</Id>
+            <ImageType>1</ImageType>
+          </Image>
+        </Images>
+        <Version>1</Version>
+        <PreRotation>0</PreRotation>
+        <Rotation>0</Rotation>
+      </imageList>
+      <batchId>0</batchId>
+      <archiveImmediately>true</archiveImmediately>
+    </AddPage>
+  </soap:Body>
+</soap:Envelope>

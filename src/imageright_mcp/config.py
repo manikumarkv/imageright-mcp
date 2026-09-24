@@ -31,6 +31,8 @@ _SETTINGS: dict[str, str] = {
     "irVersion": "VERSION",
     "restBaseUrl": "REST_BASE_URL",
     "soapUrl": "SOAP_URL",
+    "soapConnection": "SOAP_CONNECTION",
+    "soapInactivityMinutes": "SOAP_INACTIVITY_MINUTES",
     "authMode": "AUTH_MODE",
     "surfacePreference": "SURFACE_PREFERENCE",
     "writeMode": "WRITE_MODE",
@@ -64,13 +66,15 @@ _SECRETS: dict[str, str] = {
 }
 _BOOLS = {"dryRun", "requireConfirm", "verifyTls"}
 _INTS = {"jwtTtlSeconds", "maxRetries"}
-_FLOATS = {"timeoutSeconds"}
+_FLOATS = {"timeoutSeconds", "soapInactivityMinutes"}
 _MAPPINGS = {"extraHeaders", "secretEnv"}
 
 _DEFAULTS: dict[str, Any] = {
     "irVersion": "24.x",
     "restBaseUrl": None,
     "soapUrl": None,
+    "soapConnection": None,
+    "soapInactivityMinutes": 20.0,
     "authMode": "password",
     "surfacePreference": ["rest-v2", "rest-v1", "soap"],
     "writeMode": "dry-run",
@@ -114,6 +118,10 @@ class EffectiveConfig(BaseModel):
     profile: ProfileResolution
     restBaseUrl: str | None
     soapUrl: str | None
+    # UserLogin connection name (case-sensitive); unset means "ask AvailableConnections".
+    soapConnection: str | None
+    # The server ends an idle SOAP session after this long; the next call checks IsLoggedIn.
+    soapInactivityMinutes: float = Field(gt=0)
     authMode: AuthMode
     surfacePreference: list[Surface]
     writeMode: WriteMode

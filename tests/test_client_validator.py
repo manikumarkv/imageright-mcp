@@ -185,7 +185,12 @@ async def test_unknown_and_soap_operations(make_client: ClientFactory) -> None:
     unknown = await client.call("rest.v1.documents.nope")
     assert unknown.error is not None
     assert unknown.error["code"] == "IR-3001"
+    # SOAP operations are live (M5) and validated against the operation table: the missing
+    # required arguments are reported and nothing is sent. The token is never a caller argument.
     soap = await client.call("soap.GetDocumentByRef")
     assert soap.error is not None
-    assert soap.error["code"] == "IR-3004"
+    assert soap.error["code"] == "IR-3005"
+    missing = {issue["param"] for issue in soap.error["issues"]}
+    assert missing == {"docRef", "getContent", "includeDeleted"}
+    assert "request" in soap.error["preview"]
     assert not mock.requests

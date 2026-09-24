@@ -74,6 +74,10 @@ class PreparedRequest:
     def full_url(self) -> str:
         return f"{self.url}?{urlencode(self.query)}" if self.query else self.url
 
+    @property
+    def is_soap(self) -> bool:
+        return "SOAPAction" in self.headers
+
     def with_headers(self, extra: dict[str, str]) -> PreparedRequest:
         return replace(self, headers={**self.headers, **extra})
 

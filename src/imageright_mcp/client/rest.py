@@ -3,7 +3,9 @@ request builder -> AuthManager -> Transport.send, plus ErrorMapper on failure.
 
 Routing (step 2) and normalizers (step 8) arrive in M6; here an explicit REST ``operationId`` is
 executed as-is and the body is returned parsed (JSON / text) or as a file reference (binary).
-Everything that leaves this module passes through the ``Redactor``.
+A SOAP ``operationId`` is handed to ``SoapClient`` (M5), which shares the validator, write policy,
+preview ledger, ErrorMapper and Redactor. Everything that leaves this module passes through the
+``Redactor``.
 """
 
 from __future__ import annotations
@@ -13,19 +15,18 @@ import json
 import logging
 import time
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
-
-from mcp.types import CallToolResult
 
 from imageright_mcp.catalog import Catalog, get_catalog
 from imageright_mcp.client.auth import AuthError, AuthManager, AuthSettings, CommandRunner
 from imageright_mcp.client.auth import run_command as default_runner
 from imageright_mcp.client.builder import BuildError, RequestBuilder
 from imageright_mcp.client.models import PreparedRequest, RawResponse, TransportFailure
-from imageright_mcp.client.policy import PreviewLedger, build_preview, decide, preview_id
+from imageright_mcp.client.pipeline import CallOutcome, policy_gate
+from imageright_mcp.client.policy import PreviewLedger
 from imageright_mcp.client.redact import RedactingFilter, Redactor
+from imageright_mcp.client.soap import SoapClient
 from imageright_mcp.client.transport import (
     BodySink,
     RestTransport,
@@ -36,25 +37,12 @@ from imageright_mcp.client.transport import (
 )
 from imageright_mcp.client.validator import Validator
 from imageright_mcp.config import EffectiveConfig, strip_userinfo
-from imageright_mcp.envelope import to_envelope
 from imageright_mcp.errors import ErrorContext, ErrorMapper, get_registry
 
 logger = logging.getLogger(__name__)
 PACKAGE_LOGGER = "imageright_mcp"
 
-
-@dataclass
-class CallOutcome:
-    data: Any = None
-    error: dict[str, Any] | None = None
-    meta: dict[str, Any] = field(default_factory=dict)
-
-    @property
-    def ok(self) -> bool:
-        return self.error is None
-
-    def envelope(self) -> CallToolResult:
-        return to_envelope(data=self.data, error=self.error, meta=self.meta)
+__all__ = ["CallOutcome", "RestClient"]
 
 
 def _decode_body(response: RawResponse) -> Any:
@@ -84,11 +72,13 @@ class RestClient:
         self.config = config
         self.catalog = catalog or get_catalog()
         self.redactor = redactor or Redactor(config.secret_values())
+        self.sink = BodySink(Path(config.outputDir).expanduser() if config.outputDir else None)
+        # One HTTP client for both surfaces; SOAP adds its own serialized session on top.
         self.transport: Transport = transport or RestTransport(
             timeout=config.timeoutSeconds,
             verify=config.caBundle or config.verifyTls,
             request_id_header=config.requestIdHeader,
-            sink=BodySink(Path(config.outputDir).expanduser() if config.outputDir else None),
+            sink=self.sink,
         )
         self.mapper = ErrorMapper(operations=self.catalog.ops)
         self.validator = Validator(self.catalog.schemas)
@@ -108,6 +98,19 @@ class RestClient:
             clock=clock,
             command_runner=command_runner,
         )
+        self.soap = SoapClient(
+            config,
+            transport=self.transport,
+            catalog=self.catalog,
+            redactor=self.redactor,
+            mapper=self.mapper,
+            validator=self.validator,
+            ledger=self.ledger,
+            retry=self.retry,
+            sink=self.sink,
+            clock=clock,
+            sleep=sleep,
+        )
         self._install_log_filter()
 
     def _install_log_filter(self) -> None:
@@ -120,6 +123,8 @@ class RestClient:
                     f.redactor = self.redactor
 
     async def aclose(self) -> None:
+        """Log the SOAP session off (best effort), then close the HTTP client."""
+        await self.soap.aclose()
         await self.transport.aclose()
 
     # ------------------------------------------------------------------ pipeline
@@ -160,10 +165,10 @@ class RestClient:
         meta["capabilityId"] = capability_id or op.get("capability")
         meta["surface"] = op["surface"]
         if op["surface"] == "soap":
-            error = registry.error(
-                "IR-3004", message="SOAP operations are not callable yet (SOAP transport: M5)."
+            outcome = await self.soap.call(
+                op, params, files, meta, dry_run=dry_run, confirm=confirm
             )
-            return self._finish(CallOutcome(error=error, meta=meta))
+            return self._finish(outcome)
         route = [{"surface": op["surface"], "chosen": True, "reason": "explicit operationId"}]
         meta["route"] = route
 
@@ -186,49 +191,21 @@ class RestClient:
                     "IR-1003", "restBaseUrl is not set; the preview uses a placeholder."
                 )
             )
-        pid = preview_id(request)
-        decision = decide(
-            safety=str(op["safety"]),
-            write_mode=self.config.writeMode,
-            config_dry_run=self.config.dryRun,
-            dry_run=dry_run,
-            require_confirm=self.config.requireConfirm,
-            confirm=confirm,
-            current_preview_id=pid,
+        gated = policy_gate(
+            config=self.config,
             ledger=self.ledger,
+            redactor=self.redactor,
+            request=request,
+            op=op,
+            meta=meta,
+            validation=validation,
+            route=route,
+            auth_headers=self.auth.preview_headers(),
+            confirm=confirm,
+            dry_run=dry_run,
         )
-        meta["warnings"].extend(decision.warnings)
-
-        def preview() -> dict[str, Any]:
-            self.ledger.issue(pid)
-            return build_preview(
-                request=request,
-                op=op,
-                capability_id=meta["capabilityId"],
-                auth_headers=self.auth.preview_headers(),
-                validation=validation.to_dict(),
-                route=route,
-                warnings=list(meta["warnings"]),
-                redactor=self.redactor,
-            )
-
-        if not validation.ok:
-            first = validation.issues[0]
-            error = registry.error(first.code, message=first.message)
-            error["issues"] = [i.to_dict() for i in validation.issues]
-            error["preview"] = preview()
-            meta["dryRun"] = decision.action != "execute"
-            return self._finish(CallOutcome(error=error, meta=meta))
-        if decision.action == "block":
-            assert decision.error is not None
-            error = dict(decision.error)
-            error["preview"] = preview()
-            meta["dryRun"] = True
-            return self._finish(CallOutcome(error=error, meta=meta))
-        if decision.action == "preview":
-            meta["dryRun"] = True
-            meta["confirmRequired"] = decision.confirm_required
-            return self._finish(CallOutcome(data={"preview": preview()}, meta=meta))
+        if gated is not None:
+            return self._finish(gated)
         if self.config.restBaseUrl is None:
             return self._finish(CallOutcome(error=registry.error("IR-1003"), meta=meta))
         return self._finish(await self._execute(request, op, meta))

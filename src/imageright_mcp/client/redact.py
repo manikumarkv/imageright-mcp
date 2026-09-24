@@ -32,6 +32,13 @@ class Redactor:
             with self._lock:
                 self._secrets.add(secret)
 
+    def discard(self, secret: str | None) -> None:
+        """Forget a secret that is no longer live (a rotated-out SOAP token), so the set stays
+        small over a long session."""
+        if secret:
+            with self._lock:
+                self._secrets.discard(secret)
+
     def add_header(self, name: str) -> None:
         self.sensitive_headers.add(name.lower())
 

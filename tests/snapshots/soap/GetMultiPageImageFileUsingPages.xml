@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <GetMultiPageImageFileUsingPages xmlns="http://imageright.com/imageright.webservice">
+      <securityToken>***</securityToken>
+      <pageRefs>
+        <PageRef>
+          <RefId>1</RefId>
+        </PageRef>
+        <PageRef>
+          <Id>p2</Id>
+          <RefId>2</RefId>
+        </PageRef>
+      </pageRefs>
+      <outputType>PDF</outputType>
+    </GetMultiPageImageFileUsingPages>
+  </soap:Body>
+</soap:Envelope>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <GetDocumentByRef xmlns="http://imageright.com/imageright.webservice">
+      <securityToken>***</securityToken>
+      <docRef>
+        <Id>D-1</Id>
+        <RefId>1001</RefId>
+      </docRef>
+      <getContent>true</getContent>
+      <includeDeleted>false</includeDeleted>
+    </GetDocumentByRef>
+  </soap:Body>
+</soap:Envelope>

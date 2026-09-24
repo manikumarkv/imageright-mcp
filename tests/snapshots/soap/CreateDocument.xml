@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <CreateDocument xmlns="http://imageright.com/imageright.webservice">
+      <securityToken>***</securityToken>
+      <containerId>42</containerId>
+      <data>
+        <Description>Q3 &lt;draft&gt;</Description>
+        <Name>Policy &amp; Terms</Name>
+        <ObjTypeId>7</ObjTypeId>
+      </data>
+      <batchId>0</batchId>
+      <attributes>
+        <AttributeData>
+          <Type>atString</Type>
+          <Name>PolicyNo</Name>
+          <Val xsi:type="xsd:string">P-1</Val>
+        </AttributeData>
+        <AttributeData>
+          <Type>atInt</Type>
+          <Id>
+            <RefId>3</RefId>
+          </Id>
+          <Val xsi:type="xsd:int">12</Val>
+        </AttributeData>
+        <AttributeData xsi:nil="true" />
+      </attributes>
+    </CreateDocument>
+  </soap:Body>
+</soap:Envelope>

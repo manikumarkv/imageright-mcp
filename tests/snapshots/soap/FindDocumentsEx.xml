@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <FindDocumentsEx xmlns="http://imageright.com/imageright.webservice">
+      <securityToken>***</securityToken>
+      <searchConditions>
+        <DocumentConditions>
+          <DocumentCondition>
+            <AType>atInt</AType>
+            <ATarget>catSelf</ATarget>
+            <CompOp>coEqual</CompOp>
+            <Id>0</Id>
+            <Value xsi:type="xsd:int">55</Value>
+            <ConditionName>dsaDocType</ConditionName>
+          </DocumentCondition>
+          <DocumentCondition>
+            <AType>atDate</AType>
+            <ATarget>catSelf</ATarget>
+            <CompOp>coBetween</CompOp>
+            <Id>0</Id>
+            <Value xsi:type="xsd:string">2026-01-01T00:00:00</Value>
+            <Value2 xsi:type="xsd:string">2026-06-30T00:00:00</Value2>
+            <ConditionName>dsaDateCreated</ConditionName>
+          </DocumentCondition>
+        </DocumentConditions>
+        <Operation>And</Operation>
+      </searchConditions>
+      <includeDeleted>false</includeDeleted>
+      <includePageData>true</includePageData>
+    </FindDocumentsEx>
+  </soap:Body>
+</soap:Envelope>

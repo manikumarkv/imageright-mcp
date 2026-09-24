@@ -15,6 +15,7 @@ CATALOG_FILES = (
     "capabilities",
     "errors",
     "version_diff",
+    "soap_table",
 )
 
 

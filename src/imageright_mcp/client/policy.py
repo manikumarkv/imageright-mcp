@@ -152,6 +152,8 @@ def _part_view(part: JsonPart | FilePart) -> dict[str, Any]:
 
 
 def body_headers(request: PreparedRequest) -> dict[str, str]:
+    if any(name.lower() == "content-type" for name in request.headers):
+        return {}  # set by the builder (SOAP: text/xml)
     if request.multipart:
         return {"Content-Type": MULTIPART_CONTENT_TYPE}
     if request.text is not None:
@@ -185,6 +187,13 @@ def curl_command(request: PreparedRequest, headers: Mapping[str, str]) -> str:
 
 def possible_errors(op: Mapping[str, Any]) -> list[str]:
     registry = get_registry()
+    if op["surface"] == "soap":
+        # SOAP publishes no fault catalog: the result-level failure the registry knows for this
+        # operation, then the session and transport codes every SOAP call can raise.
+        rule = registry.result_failures.get(str(op["id"]))
+        codes = [str(rule["code"])] if rule else []
+        codes += ["IR-2007", "IR-2001", "IR-5003", "IR-5004", "IR-5005"]
+        return list(dict.fromkeys(codes))
     codes = [registry.for_native_rest(int(c)) for c in op.get("errors") or []]
     codes += ["IR-2004", "IR-2005", "IR-5004", "IR-5005"]
     return list(dict.fromkeys(codes))
@@ -220,6 +229,10 @@ def build_preview(
     }
     if request.multipart:
         request_view["multipart"] = [_part_view(p) for p in request.multipart]
+    elif request.is_soap:
+        # Plan §7.2: the full envelope, with <securityToken>***</securityToken>.
+        request_view["soapAction"] = request.headers["SOAPAction"].strip('"')
+        request_view["envelope"] = request.text
     elif request.text is not None:
         request_view["text"] = request.text
     elif request.json is not NO_BODY:

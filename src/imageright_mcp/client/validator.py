@@ -8,6 +8,8 @@ IR-3002 (operation absent from the profile).
 
 from __future__ import annotations
 
+import base64
+import binascii
 import difflib
 import re
 import uuid
@@ -16,11 +18,24 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from typing import Any
 
-INT_RANGES = {"int32": (-(2**31), 2**31 - 1), "int64": (-(2**63), 2**63 - 1)}
+INT_RANGES = {
+    "int16": (-(2**15), 2**15 - 1),
+    "int32": (-(2**31), 2**31 - 1),
+    "int64": (-(2**63), 2**63 - 1),
+}
 STRINGISH = {"string", "binary", "byte"}
 ANY = {"any", "object", "application/json"}
+# XSD built-ins on the SOAP surface, in the vocabulary the REST checks already use.
+SOAP_TYPES = {
+    "long": "int64",
+    "int": "int32",
+    "short": "int16",
+    "dateTime": "date-time",
+    "inline": "any",  # an untyped element (xs:anyType); the envelope adds xsi:type
+}
 MAX_DEPTH = 8
 _MAP = re.compile(r"^map<string,(.+)>$")
+_DECIMAL = re.compile(r"-?\d+(\.\d+)?")
 
 
 @dataclass(frozen=True)
@@ -110,12 +125,23 @@ class Validator:
             )
 
         declared = {str(p["name"]): p for p in op["params"]}
+        # The SOAP securityToken belongs to the session manager, never to the caller.
+        tokens = {n for n, p in declared.items() if p.get("token")}
+        declared = {n: p for n, p in declared.items() if n not in tokens}
         json_part = json_part_name(op)
         surface = str(op["surface"])
         param_availability: Mapping[str, list[str]] = op.get("paramAvailability") or {}
 
         for name in params:
-            if name in declared and declared[name]["type"] == "file":
+            if name in tokens:
+                result.issues.append(
+                    Issue(
+                        "IR-3006",
+                        name,
+                        f"{name} is managed by the server's SOAP session; do not pass it.",
+                    )
+                )
+            elif name in declared and declared[name]["type"] == "file":
                 result.issues.append(
                     Issue("IR-3006", name, f"{name} is a file part; pass it in files, not params.")
                 )
@@ -212,6 +238,8 @@ class Validator:
         where: str,
         depth: int,
     ) -> list[Issue]:
+        if surface == "soap":
+            type_name = SOAP_TYPES.get(type_name, type_name)
         if depth > MAX_DEPTH or type_name in ANY:
             return []
         bad = [Issue("IR-3006", label, f"{label} must be {type_name}, got {_describe(value)}.")]
@@ -251,8 +279,20 @@ class Validator:
             return []
         if type_name == "boolean":
             return [] if isinstance(value, bool) else bad
+        if type_name == "decimal" and isinstance(value, str):
+            return [] if _DECIMAL.fullmatch(value) else bad  # text keeps full precision
         if type_name in {"number", "double", "float", "decimal"}:
             return [] if isinstance(value, int | float) and not isinstance(value, bool) else bad
+        if type_name == "char":
+            return [] if isinstance(value, str) and len(value) == 1 else bad
+        if type_name == "base64Binary":
+            if not isinstance(value, str):
+                return bad
+            try:
+                base64.b64decode(value, validate=True)
+            except (binascii.Error, ValueError):
+                return [Issue("IR-3006", label, f"{label} must be base64 text.")]
+            return []
         if type_name in STRINGISH:
             return [] if isinstance(value, str) else bad
         if type_name in {"date-time", "date"}:
@@ -277,6 +317,24 @@ class Validator:
             return []  # a type the catalog does not describe: let the server judge
         if schema.get("kind") == "enum":
             return self._check_enum(value, type_name, schema, profile, label)
+        if schema.get("kind") == "flags":
+            items = value.split() if isinstance(value, str) else value
+            if not isinstance(items, list):
+                return bad
+            issues = []
+            for item in items:
+                issues += self._check_enum(item, type_name, schema, profile, label)
+            return issues
+        item = _array_item(surface, type_name, schema)
+        if item is not None and isinstance(value, list):
+            # SOAP ArrayOfX: a plain list stands for {"X": [...]}.
+            issues = []
+            for i, element in enumerate(value):
+                if element is not None:
+                    issues += self._check(
+                        element, item, surface, profile, f"{label}[{i}]", where, depth + 1
+                    )
+            return issues
         if not isinstance(value, Mapping):
             return bad
         return self._check_object(value, type_name, schema, surface, profile, label, depth)
@@ -347,6 +405,19 @@ class Validator:
                 continue
             if item is None:
                 continue
+            if spec.get("repeated") and isinstance(item, list):
+                for i, element in enumerate(item):
+                    if element is not None:
+                        issues += self._check(
+                            element,
+                            str(spec["type"]),
+                            surface,
+                            profile,
+                            f"{label}.{key}[{i}]",
+                            "body",
+                            depth + 1,
+                        )
+                continue
             issues += self._check(
                 item, str(spec["type"]), surface, profile, f"{label}.{key}", "body", depth + 1
             )
@@ -356,6 +427,15 @@ class Validator:
                 if available_in is None or profile in available_in:
                     issues.append(Issue("IR-3005", f"{label}.{key}", f"{key} is required."))
         return issues
+
+
+def _array_item(surface: str, type_name: str, schema: Mapping[str, Any]) -> str | None:
+    """Item type of a SOAP ``ArrayOfX`` wrapper (one repeated field), else None."""
+    fields = schema.get("fields") or {}
+    if surface != "soap" or not type_name.startswith("ArrayOf") or len(fields) != 1:
+        return None
+    (spec,) = fields.values()
+    return str(spec["type"]) if spec.get("repeated") else None
 
 
 def _describe(value: Any) -> str:

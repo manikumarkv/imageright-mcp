@@ -698,6 +698,8 @@ class Context:
     operations: dict[str, Json]
     soap_type_map: dict[str, Json]
     review_extra: list[Json] = field(default_factory=list)
+    # SOAP op name -> response element children, in XSD order (echoed ``ref`` args included).
+    soap_responses: dict[str, list[str]] = field(default_factory=dict)
 
 
 def build_rest(ctx: Context) -> None:
@@ -928,6 +930,7 @@ def build_soap(ctx: Context) -> None:
             {"name": e.get("name", ""), "type": xs_type(e.get("type"))}
             for e in sequence_elements(response)
         ]
+        ctx.soap_responses[name] = [str(r["name"]) for r in results]
         echoes_token = any(r["name"] == "securityToken" for r in results)
         result = next((r for r in results if r["name"] != "securityToken"), None)
         level = safety[name]
@@ -959,6 +962,113 @@ def build_soap(ctx: Context) -> None:
             "deprecation": None,
             "source": {"soapActionDerivedFrom": "ASMX document/literal convention"},
         }
+
+
+# XSD built-ins the SOAP surface uses; "inline" marks an untyped element (xs:anyType).
+SOAP_PRIMITIVES = frozenset(
+    {"string", "boolean", "long", "int", "short", "dateTime", "decimal", "double", "char"}
+    | {"base64Binary"}
+)
+
+
+def soap_kind(ctx: Context, type_name: str) -> str:
+    if type_name in SOAP_PRIMITIVES:
+        return "primitive"
+    if type_name == "inline":
+        return "any"
+    record = ctx.soap_type_map.get(type_name)
+    if record is None:
+        raise BuildError(f"SOAP type without a definition: {type_name}")
+    if record["kind"] in {"enum", "flags"}:
+        return str(record["kind"])
+    fields = record.get("fields") or {}
+    if type_name.startswith("ArrayOf") and len(fields) == 1:
+        (only,) = fields.values()
+        if only.get("repeated"):
+            return "array"
+    return "complex"
+
+
+def soap_sequence(ctx: Context, type_name: str, depth: int = 0) -> list[Json]:
+    """Fields in wire order: an XSD extension serializes its base's sequence first."""
+    if depth > 8:
+        raise BuildError(f"SOAP type inheritance too deep: {type_name}")
+    record = ctx.soap_type_map[type_name]
+    fields: list[Json] = []
+    for base in record.get("extends") or []:
+        fields += soap_sequence(ctx, str(base), depth + 1)
+    for name, spec in (record.get("fields") or {}).items():
+        entry: dict[str, Json] = {
+            "name": name,
+            "type": spec["type"],
+            "kind": soap_kind(ctx, str(spec["type"])),
+            "required": bool(spec.get("required")),
+        }
+        if spec.get("repeated"):
+            entry["repeated"] = True
+        if spec.get("nullable"):
+            entry["nullable"] = True
+        fields.append(entry)
+    return fields
+
+
+def build_soap_table(ctx: Context) -> Json:
+    """The SOAP operation table (plan §4.1): everything the envelope builder and the response
+    parser need, in wire order. schemas.json is written with sorted keys, so the XSD sequence
+    order of complex types only survives here."""
+    operations: dict[str, Json] = {}
+    for op_id, op in ctx.operations.items():
+        if op["surface"] != "soap":
+            continue
+        name = str(op["operation"])
+        echoed = set(ctx.soap_responses[name])
+        args = []
+        for param in op["params"]:
+            arg: dict[str, Json] = {
+                "name": param["name"],
+                "order": param["order"],
+                "type": param["type"],
+                "kind": soap_kind(ctx, str(param["type"])),
+                "required": bool(param["required"]),
+                # ASMX ``ref`` parameters come back in the response element.
+                "ref": param["name"] in echoed,
+                "token": bool(param.get("token")),
+            }
+            if param.get("repeated"):
+                arg["repeated"] = True
+            args.append(arg)
+        result = op["result"]
+        operations[name] = {
+            "operationId": op_id,
+            "soapAction": op["soapAction"],
+            "requestElement": op["requestElement"],
+            "responseElement": op["responseElement"],
+            "safety": op["safety"],
+            "args": args,
+            "result": None
+            if result is None
+            else {**result, "kind": soap_kind(ctx, str(result["type"]))},
+            "echoesToken": bool(op["tokenRotation"]),
+        }
+    types: dict[str, Json] = {}
+    for type_name, record in ctx.soap_type_map.items():
+        kind = soap_kind(ctx, type_name)
+        entry: dict[str, Json] = {"kind": kind}
+        if kind in {"enum", "flags"}:
+            entry["values"] = sorted(record.get("values") or {})
+        else:
+            entry["fields"] = soap_sequence(ctx, type_name)
+            if record.get("extends"):
+                entry["extends"] = list(record["extends"])
+        if kind == "array":
+            entry["item"] = entry["fields"][0]
+        types[type_name] = entry
+    return {
+        "namespace": SOAP_NS,
+        "style": "SOAP 1.1 document/literal (ASMX)",
+        "operations": operations,
+        "types": types,
+    }
 
 
 # --------------------------------------------------------------------------------------------
@@ -1797,6 +1907,7 @@ def build(inputs: Inputs) -> dict[str, dict[str, str]]:
         "sources.json": dumps({**header, "inputs": inputs.sources}),
         "operations.json": dumps({**header, "counts": counts, "operations": ctx.operations}),
         "schemas.json": dumps({**header, "schemas": schemas}),
+        "soap_table.json": dumps({**header, **build_soap_table(ctx)}),
         "errors.json": dumps(build_errors(ctx)),
         "matrix.json": dumps(build_matrix(ctx, caps)),
         "version_diff.json": dumps({**header, "diff": diff}),

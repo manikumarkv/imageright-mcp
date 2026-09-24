@@ -89,6 +89,8 @@ class Catalog:
         self.capabilities: dict[str, dict[str, Any]] = raw["capabilities"]["capabilities"]
         self.errors: dict[str, dict[str, Any]] = raw["errors"]["rest"]
         self.diff: dict[str, dict[str, dict[str, Any]]] = raw["version_diff"]["diff"]
+        # Wire-level SOAP operation table (arg order, kinds, field sequences) for the M5 client.
+        self.soap_table: dict[str, Any] = raw["soap_table"]
         self.area: dict[str, str] = {op_id: area_of(op) for op_id, op in self.ops.items()}
         self.index = SearchIndex(self.ops.values(), self.area, self._response_text())
         self._by_key: dict[str, str] = {

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <RouteTask xmlns="http://imageright.com/imageright.webservice">
+      <securityToken>***</securityToken>
+      <taskRef>
+        <RefId>77</RefId>
+      </taskRef>
+      <stepRef>
+        <StepProgrammaticName>Review</StepProgrammaticName>
+        <FlowProgrammaticName>UW</FlowProgrammaticName>
+        <RefId>0</RefId>
+      </stepRef>
+      <newAvailableDate>2026-10-01T09:00:00</newAvailableDate>
+      <userId>
+        <Id>12</Id>
+        <HasId>true</HasId>
+      </userId>
+      <commit>true</commit>
+    </RouteTask>
+  </soap:Body>
+</soap:Envelope>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <SetTaskAttribute xmlns="http://imageright.com/imageright.webservice">
+      <securityToken>***</securityToken>
+      <taskRef>
+        <RefId>77</RefId>
+      </taskRef>
+      <attributeRef>
+        <RefId>5</RefId>
+      </attributeRef>
+      <attribute xsi:type="xsd:boolean">true</attribute>
+    </SetTaskAttribute>
+  </soap:Body>
+</soap:Envelope>
