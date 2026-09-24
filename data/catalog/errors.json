@@ -1,5 +1,5 @@
 {
-  "note": "Native REST ErrorCodes (shared by v1 and v2). IR-XXXX mapping is milestone M3.",
+  "note": "Native REST ErrorCodes (v1 and v2). IR codes: data/errors/registry.json.",
   "rest": {
     "1": {
       "code": 1,

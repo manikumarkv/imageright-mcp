@@ -54,6 +54,9 @@ DEFAULT_REPORT = (
 )
 ANNOTATIONS_DIR = REPO / "annotations"
 OUTPUT_DIR = REPO / "data" / "catalog"
+ERRORS_DIR = REPO / "data" / "errors"
+# Hand-written error files in ERRORS_DIR: checked for copied vendor prose, never generated.
+HAND_WRITTEN_ERROR_FILES = ("registry.json", "soap-faults.json")
 
 # Our own family labels for the native REST error-code ranges.
 ERROR_FAMILIES: tuple[tuple[int, int, str], ...] = (
@@ -104,13 +107,16 @@ class Inputs:
     report: str
     annotations: dict[str, Json]  # annotation file stem -> parsed yaml
     sources: dict[str, Json]
+    error_texts: dict[str, Json] = field(default_factory=dict)  # hand-written data/errors files
 
 
 def _sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def load_inputs(vendor: Path, report: Path, annotations: Path) -> Inputs:
+def load_inputs(
+    vendor: Path, report: Path, annotations: Path, errors_dir: Path = ERRORS_DIR
+) -> Inputs:
     if not vendor.is_dir():
         raise BuildError(f"vendor directory not found: {vendor} (run scripts/fetch_vendor.py)")
     if not report.is_file():
@@ -156,6 +162,11 @@ def load_inputs(vendor: Path, report: Path, annotations: Path) -> Inputs:
         report=report_raw.decode("utf-8"),
         annotations=parsed,
         sources=sources,
+        error_texts={
+            name: json.loads((errors_dir / name).read_text(encoding="utf-8"))
+            for name in HAND_WRITTEN_ERROR_FILES
+            if (errors_dir / name).is_file()
+        },
     )
 
 
@@ -665,6 +676,8 @@ def check_own_words(inputs: Inputs) -> None:
 
     for stem, data in sorted(inputs.annotations.items()):
         walk(data, stem)
+    for name, data in sorted(inputs.error_texts.items()):
+        walk(data, name)
     if copied:
         raise BuildError("annotation text copies vendor prose: " + "; ".join(copied))
 
@@ -1390,13 +1403,35 @@ def build_errors(ctx: Context) -> Json:
     v1 = ctx.dictionaries["rest-v1"]
     v2 = ctx.dictionaries["rest-v2"]
     return {
-        "note": "Native REST ErrorCodes (shared by v1 and v2). IR-XXXX mapping is milestone M3.",
+        "note": "Native REST ErrorCodes (v1 and v2). IR codes: data/errors/registry.json.",
         "sameDictionaryInV1AndV2": all(v1[p] == v2[p] for p in PROFILES),
         "rest": codes,
         "soap": {
             "note": "SOAP reports failures as SOAP faults; no numeric dictionary is published.",
         },
     }
+
+
+def build_native_errors(ctx: Context) -> dict[str, str]:
+    """``native-rest.{profile}.json``: each profile's full ErrorCodes dictionary (plan §6.2)."""
+    outputs: dict[str, str] = {}
+    for profile in PROFILES:
+        dictionary = ctx.dictionaries["rest-v1"][profile]
+        if dictionary != ctx.dictionaries["rest-v2"][profile]:
+            raise BuildError(f"REST v1 and v2 ErrorCodes differ in {profile}")
+        codes = {
+            str(code): {"name": name, "family": error_family(code)}
+            for code, name in sorted(dictionary.items())
+        }
+        outputs[f"native-rest.{profile}.json"] = dumps(
+            {
+                "profile": profile,
+                "source": f"OAS components.schemas.ErrorCodes ({profile}, v1 and v2 identical)",
+                "count": len(codes),
+                "codes": codes,
+            }
+        )
+    return outputs
 
 
 def claim(
@@ -1730,8 +1765,8 @@ def review_markdown(review: Json) -> str:
     return "\n".join(lines)
 
 
-def build(inputs: Inputs) -> dict[str, str]:
-    """Return ``{file name: content}`` for every catalog file (pure; no I/O)."""
+def build(inputs: Inputs) -> dict[str, dict[str, str]]:
+    """Return ``{"catalog"|"errors": {file name: content}}`` for every generated file (no I/O)."""
     ctx = Context(
         inputs=inputs,
         dictionaries={},
@@ -1758,7 +1793,7 @@ def build(inputs: Inputs) -> dict[str, str]:
     review = build_review(ctx, diff)
     counts = {s: sum(1 for op in ctx.operations.values() if op["surface"] == s) for s in SURFACES}
     header = {"profiles": list(PROFILES), "baseline": BASELINE}
-    return {
+    catalog = {
         "sources.json": dumps({**header, "inputs": inputs.sources}),
         "operations.json": dumps({**header, "counts": counts, "operations": ctx.operations}),
         "schemas.json": dumps({**header, "schemas": schemas}),
@@ -1770,6 +1805,12 @@ def build(inputs: Inputs) -> dict[str, str]:
         "review.json": dumps(review),
         "REVIEW.md": review_markdown(review),
     }
+    return {"catalog": catalog, "errors": build_native_errors(ctx)}
+
+
+def generated(group: str, name: str) -> bool:
+    """data/errors mixes generated and hand-written files; only the former are managed here."""
+    return group == "catalog" or name.startswith("native-rest.")
 
 
 # --------------------------------------------------------------------------------------------
@@ -1786,23 +1827,25 @@ def default_paths() -> tuple[Path, Path]:
     )
 
 
-def write_outputs(outputs: Mapping[str, str], out_dir: Path) -> None:
+def write_outputs(outputs: Mapping[str, str], out_dir: Path, group: str = "catalog") -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     for stale in out_dir.iterdir():
-        if stale.is_file() and stale.name not in outputs:
+        if stale.is_file() and stale.name not in outputs and generated(group, stale.name):
             stale.unlink()
     for name, content in outputs.items():
         (out_dir / name).write_text(content, encoding="utf-8")
 
 
-def stale_files(outputs: Mapping[str, str], out_dir: Path) -> list[str]:
+def stale_files(outputs: Mapping[str, str], out_dir: Path, group: str = "catalog") -> list[str]:
     stale = [
         name
         for name, content in outputs.items()
         if not (out_dir / name).is_file() or (out_dir / name).read_text(encoding="utf-8") != content
     ]
     if out_dir.is_dir():
-        stale += sorted(p.name for p in out_dir.iterdir() if p.name not in outputs)
+        stale += sorted(
+            p.name for p in out_dir.iterdir() if p.name not in outputs and generated(group, p.name)
+        )
     return sorted(stale)
 
 
@@ -1813,22 +1856,29 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--report", type=Path, default=report)
     parser.add_argument("--annotations", type=Path, default=ANNOTATIONS_DIR)
     parser.add_argument("--out", type=Path, default=OUTPUT_DIR)
+    parser.add_argument("--errors-out", type=Path, default=ERRORS_DIR)
     parser.add_argument("--check", action="store_true", help="fail if committed files differ")
     args = parser.parse_args(argv)
+    targets = {"catalog": args.out, "errors": args.errors_out}
     try:
-        outputs = build(load_inputs(args.vendor, args.report, args.annotations))
+        outputs = build(load_inputs(args.vendor, args.report, args.annotations, args.errors_out))
     except BuildError as exc:
         print(f"build_catalog: {exc}", file=sys.stderr)
         return 2
     if args.check:
-        stale = stale_files(outputs, args.out)
+        stale = [
+            f"{group}/{name}"
+            for group, files in outputs.items()
+            for name in stale_files(files, targets[group], group)
+        ]
         if stale:
             print(f"build_catalog: out of date: {', '.join(stale)}", file=sys.stderr)
             return 1
         print("build_catalog: up to date")
         return 0
-    write_outputs(outputs, args.out)
-    print(f"build_catalog: wrote {len(outputs)} files to {args.out}")
+    for group, files in outputs.items():
+        write_outputs(files, targets[group], group)
+        print(f"build_catalog: wrote {len(files)} files to {targets[group]}")
     return 0
 
 

@@ -1,4 +1,4 @@
-"""Explorer and version-matrix tools (plan §3.1, §3.2): thin handlers over the Catalog service.
+"""Explorer, version-matrix and error tools (plan §3.1, §3.2, §6): thin handlers over services.
 
 Each handler resolves defaults, calls one Catalog method, and returns the standard envelope.
 All of them work offline: no server and no credentials.
@@ -16,7 +16,9 @@ from pydantic import Field
 from imageright_mcp.catalog import Answer, Catalog, CatalogError, get_catalog
 from imageright_mcp.catalog.service import warning
 from imageright_mcp.config import ConfigError, load_config
-from imageright_mcp.envelope import to_envelope
+from imageright_mcp.envelope import internal_error, to_envelope
+from imageright_mcp.errors import get_registry
+from imageright_mcp.errors.explain import ErrorExplainer
 
 SurfaceArg = Literal["rest-v1", "rest-v2", "soap", "any"]
 VersionArg = Annotated[
@@ -53,6 +55,8 @@ def _respond(run: Callable[[], Answer], extra_warnings: list[dict[str, str]]) ->
         answer = run()
     except CatalogError as exc:
         return to_envelope(error=exc.to_error(), meta={"warnings": extra_warnings})
+    except Exception as exc:
+        return to_envelope(error=internal_error(exc), meta={"warnings": extra_warnings})
     meta = {**answer.meta, "warnings": extra_warnings + answer.warnings}
     return to_envelope(data=answer.data, meta=meta)
 
@@ -328,3 +332,31 @@ def register_catalog_tools(server: MCPServer, env: Mapping[str, str] | None = No
             return catalog.list_deprecations(profile)
 
         return _respond(run, warnings)
+
+
+def register_error_tools(server: MCPServer) -> None:
+    @server.tool(
+        name="ir_explain_error",
+        title="Explain an error code",
+        description=(
+            "Explain an ImageRight error. Accepts an IR code from an envelope (IR-4301), a native "
+            "REST error code (201) or name (TaskLockedByAnotherUser), an IR name "
+            "(LockedByAnotherUser), an HTTP status (HTTP 403), or SOAP fault text. Returns the "
+            "IR code with category, whether a retry can help and what to do next, every native "
+            "REST code, HTTP status and SOAP fault pattern that maps to it, and the operations "
+            "that can raise it. Pass operationId to tailor the hint to one operation."
+        ),
+        annotations=OFFLINE,
+    )
+    def ir_explain_error(
+        query: Annotated[
+            str, Field(description="IR code, native code or name, HTTP status, or fault text.")
+        ],
+        operationId: Annotated[
+            str | None, Field(description="Operation the error came from, for the hint.")
+        ] = None,
+    ) -> CallToolResult:
+        def run() -> Answer:
+            return ErrorExplainer(get_registry(), get_catalog()).explain(query, operationId)
+
+        return _respond(run, [])

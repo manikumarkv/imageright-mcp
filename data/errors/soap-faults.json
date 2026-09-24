@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "note": "SOAP fault-string patterns (case-insensitive regex), tried in order from most to least specific against faultstring + detail. The vendor publishes no fault catalog, so these are unverified guesses until faults are recorded from a live server. Anything that matches none of them maps to IR-5003 with the raw fault kept.",
+  "patterns": [
+    {
+      "pattern": "(security ?token|session)\\b.{0,40}\\b(expired|timed? ?out|invalid|not valid)|not logged ?in",
+      "code": "IR-2007",
+      "note": "Session ended or token no longer valid."
+    },
+    {
+      "pattern": "password\\b.{0,40}\\bexpired",
+      "code": "IR-2003",
+      "note": "Expired password."
+    },
+    {
+      "pattern": "account\\b.{0,40}\\blocked",
+      "code": "IR-2002",
+      "note": "Locked account."
+    },
+    {
+      "pattern": "(user ?name|password|log ?in|log ?on)\\b.{0,40}\\b(incorrect|invalid|wrong|failed)",
+      "code": "IR-2001",
+      "note": "Rejected credentials."
+    },
+    {
+      "pattern": "locked by (another|other|a different) user|is locked by",
+      "code": "IR-4301",
+      "note": "Lock held by someone else."
+    },
+    {
+      "pattern": "\\bnot locked\\b|must be locked",
+      "code": "IR-4302",
+      "note": "Caller does not hold the lock."
+    },
+    {
+      "pattern": "version mismatch|(modified|changed) by another",
+      "code": "IR-4303",
+      "note": "Stale version."
+    },
+    {
+      "pattern": "task\\b.{0,40}\\b(is )?completed?\\b",
+      "code": "IR-4401",
+      "note": "Task already completed."
+    },
+    {
+      "pattern": "\\bfrozen\\b",
+      "code": "IR-4403",
+      "note": "Frozen file."
+    },
+    {
+      "pattern": "already (been )?deleted|marked (as )?deleted|in deleted content",
+      "code": "IR-4405",
+      "note": "Already deleted."
+    },
+    {
+      "pattern": "already exists|duplicate",
+      "code": "IR-4110",
+      "note": "Name or key taken."
+    },
+    {
+      "pattern": "(mandatory|required) attribute",
+      "code": "IR-4102",
+      "note": "Mandatory attribute missing."
+    },
+    {
+      "pattern": "attribute\\b.{0,40}\\bnot found",
+      "code": "IR-4007",
+      "note": "Unknown attribute."
+    },
+    {
+      "pattern": "task\\b.{0,40}\\bnot found",
+      "code": "IR-4004",
+      "note": "Unknown task."
+    },
+    {
+      "pattern": "page\\b.{0,40}\\bnot found",
+      "code": "IR-4005",
+      "note": "Unknown page."
+    },
+    {
+      "pattern": "(user|account|group|role)\\b.{0,40}\\bnot found",
+      "code": "IR-4002",
+      "note": "Unknown account."
+    },
+    {
+      "pattern": "(workflow|step|flow)\\b.{0,40}\\bnot found",
+      "code": "IR-4003",
+      "note": "Unknown workflow or step."
+    },
+    {
+      "pattern": "(type|drawer)\\b.{0,40}\\bnot found",
+      "code": "IR-4006",
+      "note": "Unknown type or drawer."
+    },
+    {
+      "pattern": "not found|does not exist|no such",
+      "code": "IR-4001",
+      "note": "Generic not found."
+    },
+    {
+      "pattern": "access (is )?denied|permission denied|not authori[sz]ed|insufficient (rights|permissions)",
+      "code": "IR-4201",
+      "note": "Missing rights."
+    },
+    {
+      "pattern": "read[- ]?only",
+      "code": "IR-4202",
+      "note": "Read-only rights."
+    },
+    {
+      "pattern": "workflow processor",
+      "code": "IR-5007",
+      "note": "Workflow service down."
+    },
+    {
+      "pattern": "database|sql ?exception|deadlock",
+      "code": "IR-5002",
+      "note": "Database failure."
+    },
+    {
+      "pattern": "timed? ?out|timeout",
+      "code": "IR-5005",
+      "note": "Timeout."
+    }
+  ],
+  "resultFailures": [
+    {
+      "operationId": "soap.DeleteDocument",
+      "when": "falseField",
+      "field": "Succeeded",
+      "messageField": "ErrorMessage",
+      "code": "IR-5008",
+      "note": "The delete returns a result object instead of a fault; the message is matched against the fault patterns first."
+    },
+    {
+      "operationId": "soap.FindUserByName",
+      "when": "null",
+      "code": "IR-4002",
+      "note": "An unknown user name yields an empty result, not a fault."
+    },
+    {
+      "operationId": "soap.GetUser",
+      "when": "null",
+      "code": "IR-4002",
+      "note": "An unknown user id yields an empty result."
+    },
+    {
+      "operationId": "soap.IsLoggedIn",
+      "when": "false",
+      "code": "IR-2007",
+      "note": "False means the session token is no longer valid."
+    }
+  ]
+}

@@ -172,7 +172,7 @@ async def test_describe_page_create_has_multipart_value_sources_and_gotchas() ->
     assert batch["meaning"]
     assert batch["valueFrom"][0]["operationId"] == "rest.v1.batches.createBatch"
     assert any("batch" in g for g in data["gotchas"])
-    assert {"nativeCode": 915, "irCode": None}.items() <= next(
+    assert {"nativeCode": 915, "irCode": "IR-4108", "irName": "ImageMissing"}.items() <= next(
         e for e in data["errors"] if e["nativeCode"] == 915
     ).items()
     assert data["flows"][0]["flowId"] == "F3"

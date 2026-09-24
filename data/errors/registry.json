@@ -1,0 +1,1707 @@
+{
+  "schemaVersion": 1,
+  "note": "IR error registry (plan §6). Append-only: never renumber, rename, remove or reuse a code; set \"deprecated\": true instead. All text is our own wording.",
+  "codes": [
+    {
+      "code": "IR-1001",
+      "name": "ConfigMissing",
+      "category": "config",
+      "retryable": false,
+      "message": "The server configuration is missing or invalid.",
+      "hint": "Set the IMAGERIGHT_* environment variables or fix the config file, then call ir_get_config to confirm.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-1002",
+      "name": "UnsupportedVersion",
+      "category": "config",
+      "retryable": false,
+      "message": "That ImageRight version is not one this server has a catalog for.",
+      "hint": "Use 24.x, 25.x or 7.2 (or an exact 24.2 / 25.1).",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-1003",
+      "name": "BaseUrlMissing",
+      "category": "config",
+      "retryable": false,
+      "message": "No base URL is configured for the surface this call needs.",
+      "hint": "Set the REST or SOAP URL for your ImageRight server; ir_get_config shows what is set.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-1004",
+      "name": "ServerVersionMismatch",
+      "category": "config",
+      "retryable": false,
+      "message": "The server reports a different ImageRight version than the one configured.",
+      "hint": "Update IMAGERIGHT_VERSION to match the server so the right catalog profile is used.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-1005",
+      "name": "ProfileApproximated",
+      "category": "config",
+      "retryable": false,
+      "message": "The requested version has no exact catalog profile, so the closest one is used.",
+      "hint": "Results may miss small differences; check ir_compare_versions if something looks off.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1",
+      "severity": "warning"
+    },
+    {
+      "code": "IR-1006",
+      "name": "SurfaceDisabled",
+      "category": "config",
+      "retryable": false,
+      "message": "The surface this call needs is switched off in the configuration.",
+      "hint": "Enable it in the surface preference, or pick an operation on another surface.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-1007",
+      "name": "FileOutsideAllowedRoot",
+      "category": "config",
+      "retryable": false,
+      "message": "The local file path is outside the folders this server may read or write.",
+      "hint": "Move the file under an allowed root or extend the allowed roots in the config.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-2001",
+      "name": "InvalidCredentials",
+      "category": "auth",
+      "retryable": false,
+      "message": "The user name or password was rejected.",
+      "hint": "Check the credentials; ImageRight user names and passwords are case-sensitive.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            1
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "(user ?name|password|log ?in|log ?on)\\b.{0,40}\\b(incorrect|invalid|wrong|failed)"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-2002",
+      "name": "AccountLocked",
+      "category": "auth",
+      "retryable": false,
+      "message": "The account is locked.",
+      "hint": "An administrator must unlock it; retrying with the same credentials keeps it locked.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            3,
+            1316
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "account\\b.{0,40}\\blocked"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-2003",
+      "name": "PasswordExpired",
+      "category": "auth",
+      "retryable": false,
+      "message": "The password has expired.",
+      "hint": "Set a new password (for example through the change-password operation) and sign in again.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            4
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "password\\b.{0,40}\\bexpired"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-2004",
+      "name": "TokenExpired",
+      "category": "auth",
+      "retryable": true,
+      "message": "The session token has expired.",
+      "hint": "Sign in again to get a fresh token, then repeat the call if it was a read.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            39
+          ]
+        },
+        "http": [
+          401
+        ],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-2005",
+      "name": "InvalidToken",
+      "category": "auth",
+      "retryable": false,
+      "message": "The session token was not accepted.",
+      "hint": "Check the auth mode and token format in the config; a freshly issued token being refused means the auth setup is wrong.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            9
+          ]
+        },
+        "http": [
+          401
+        ],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-2006",
+      "name": "TenantAccessForbidden",
+      "category": "auth",
+      "retryable": false,
+      "message": "The caller has no access to the requested tenant, or the tenant header is missing.",
+      "hint": "Check the tenant id sent with the request and the user's tenant membership.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            33,
+            40
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-2007",
+      "name": "SoapSessionExpired",
+      "category": "auth",
+      "retryable": false,
+      "message": "The SOAP session ended before the call finished.",
+      "hint": "The outcome of a write is unknown: verify the object's state before retrying. Reads are replayed automatically.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "(security ?token|session)\\b.{0,40}\\b(expired|timed? ?out|invalid|not valid)|not logged ?in"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-2008",
+      "name": "ApiKeyProblem",
+      "category": "auth",
+      "retryable": false,
+      "message": "The API key is missing, wrong, or not set up on the server.",
+      "hint": "Check the API key header and the server's API key configuration.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            34,
+            35,
+            36,
+            38
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-2009",
+      "name": "PasswordPolicy",
+      "category": "auth",
+      "retryable": false,
+      "message": "The new password breaks the password rules.",
+      "hint": "Pick a password that meets the complexity and history rules, or ask an administrator whether changes are allowed.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            5,
+            6,
+            7
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-2010",
+      "name": "AccountRecoveryFailed",
+      "category": "auth",
+      "retryable": false,
+      "message": "The password-reset request could not be completed.",
+      "hint": "Check that the user has an email and security questions set up, and that the reset link is fresh.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            1307,
+            1308,
+            1310,
+            1311,
+            1312,
+            1313,
+            1314,
+            1315
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-3001",
+      "name": "UnknownOperation",
+      "category": "catalog",
+      "retryable": false,
+      "message": "No operation matches that identifier.",
+      "hint": "Use ir_search_apis to find the operationId, or pick one of the suggestions.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-3002",
+      "name": "OperationNotAvailableInVersion",
+      "category": "catalog",
+      "retryable": false,
+      "message": "The operation does not exist in the selected version.",
+      "hint": "Check ir_check_availability for the versions that have it, or use a replacement.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-3003",
+      "name": "OperationDeprecated",
+      "category": "catalog",
+      "retryable": false,
+      "message": "The operation is deprecated.",
+      "hint": "Switch to the replacement listed by ir_list_deprecations.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1",
+      "severity": "warning"
+    },
+    {
+      "code": "IR-3004",
+      "name": "NoSurfaceAvailable",
+      "category": "catalog",
+      "retryable": false,
+      "message": "No enabled surface can serve this request in the selected version.",
+      "hint": "Check the surface preference and ir_check_availability.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-3005",
+      "name": "MissingRequiredParam",
+      "category": "catalog",
+      "retryable": false,
+      "message": "A required argument is missing.",
+      "hint": "Call ir_describe_api for {operationId} to see which arguments are required.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-3006",
+      "name": "InvalidParamValue",
+      "category": "catalog",
+      "retryable": false,
+      "message": "An argument has a value this tool cannot use.",
+      "hint": "Check the allowed values in the tool description or the suggestions.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-3007",
+      "name": "ParamNotAvailableInVersion",
+      "category": "catalog",
+      "retryable": false,
+      "message": "The parameter does not exist in the selected version.",
+      "hint": "Drop it, or check ir_check_availability for versions that accept it.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-3008",
+      "name": "WriteBlockedByPolicy",
+      "category": "catalog",
+      "retryable": false,
+      "message": "The configured write mode does not allow this call.",
+      "hint": "Change the write mode in the config if the change is intended, or use dry-run to preview it.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-3009",
+      "name": "PreviewMismatch",
+      "category": "catalog",
+      "retryable": false,
+      "message": "The confirmation does not match the previewed request.",
+      "hint": "Preview the call again and confirm with the new id.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-3010",
+      "name": "UnknownErrorReference",
+      "category": "catalog",
+      "retryable": false,
+      "message": "No IR code, native error code, error name or known fault text matches that input.",
+      "hint": "Pass an IR code (IR-4301), a native REST code (201), a native or IR error name, or the SOAP fault text.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4001",
+      "name": "ObjectNotFound",
+      "category": "not-found",
+      "retryable": false,
+      "message": "The {objectKind} was not found.",
+      "hint": "Check the id; it may have been deleted or may belong to another drawer or tenant.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            10,
+            23,
+            29,
+            121,
+            411,
+            905,
+            916,
+            1104,
+            1200,
+            1201,
+            1300,
+            1601,
+            1701,
+            1702,
+            2003,
+            2011,
+            2023,
+            2031,
+            2101,
+            2107
+          ]
+        },
+        "http": [
+          404
+        ],
+        "soap": {
+          "faultPatterns": [
+            "not found|does not exist|no such"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4002",
+      "name": "AccountNotFound",
+      "category": "not-found",
+      "retryable": false,
+      "message": "The user, group or role was not found.",
+      "hint": "Look the account up by name first and use the id it returns.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            11,
+            13,
+            18,
+            1304,
+            1402,
+            1403
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "(user|account|group|role)\\b.{0,40}\\bnot found"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4003",
+      "name": "WorkflowOrStepNotFound",
+      "category": "not-found",
+      "retryable": false,
+      "message": "The workflow, step or step link was not found.",
+      "hint": "List the workflow's steps and links to get valid ids.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            14,
+            300,
+            310,
+            311,
+            320
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "(workflow|step|flow)\\b.{0,40}\\bnot found"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4004",
+      "name": "TaskNotFound",
+      "category": "not-found",
+      "retryable": false,
+      "message": "The task was not found.",
+      "hint": "The task may have completed or been deleted; search tasks again to get a current id.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            200
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "task\\b.{0,40}\\bnot found"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4005",
+      "name": "PageNotFound",
+      "category": "not-found",
+      "retryable": false,
+      "message": "The page was not found.",
+      "hint": "List the document's pages to get current page ids.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            701
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "page\\b.{0,40}\\bnot found"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4006",
+      "name": "TypeNotFound",
+      "category": "not-found",
+      "retryable": false,
+      "message": "The type definition (file, folder, document, note type or drawer) was not found.",
+      "hint": "List the available types and use one of their ids.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            131,
+            800,
+            1002
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "(type|drawer)\\b.{0,40}\\bnot found"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4007",
+      "name": "AttributeNotFound",
+      "category": "not-found",
+      "retryable": false,
+      "message": "The attribute or attribute value was not found.",
+      "hint": "Check the attribute definitions for this {objectKind} type.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            210,
+            213,
+            600
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "attribute\\b.{0,40}\\bnot found"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4008",
+      "name": "ConfigPathNotFound",
+      "category": "not-found",
+      "retryable": false,
+      "message": "The configuration path was not found.",
+      "hint": "List the parent configuration node to see which paths exist.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            2303
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4101",
+      "name": "InvalidData",
+      "category": "invalid",
+      "retryable": false,
+      "message": "The request data is invalid or incomplete.",
+      "hint": "Compare the request with ir_describe_api for {operationId}; a field is empty, malformed or out of range.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            12,
+            24,
+            30,
+            32,
+            37,
+            130,
+            221,
+            222,
+            226,
+            400,
+            501,
+            702,
+            703,
+            1603,
+            1704,
+            1900,
+            1901,
+            2103,
+            2109,
+            2110,
+            2202,
+            2500
+          ]
+        },
+        "http": [
+          400
+        ],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4102",
+      "name": "AttributeRequired",
+      "category": "invalid",
+      "retryable": false,
+      "message": "A mandatory attribute has no value.",
+      "hint": "Call ir_describe_api for {operationId} to see mandatory attributes, then set them first.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            212,
+            601
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "(mandatory|required) attribute"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4103",
+      "name": "AttributeNotAllowed",
+      "category": "invalid",
+      "retryable": false,
+      "message": "The attribute or mark is not allowed on this {objectKind} type.",
+      "hint": "Use only the attributes and marks defined for the type.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            602,
+            1202,
+            1203
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4104",
+      "name": "AttributeValueInvalid",
+      "category": "invalid",
+      "retryable": false,
+      "message": "An attribute value has the wrong type or format.",
+      "hint": "Check the attribute's data type and allowed values.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            211,
+            603
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4105",
+      "name": "WrongObjectClass",
+      "category": "invalid",
+      "retryable": false,
+      "message": "The id points to a different kind of object than this call expects.",
+      "hint": "Check that the id is a {objectKind} and not, say, a folder or document id.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            20,
+            326,
+            403,
+            502,
+            801,
+            903,
+            913,
+            1000,
+            1001,
+            1004,
+            1102
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4106",
+      "name": "TemplateViolation",
+      "category": "invalid",
+      "retryable": false,
+      "message": "The change is not allowed by the file type's template.",
+      "hint": "Check which document and folder types the parent's template allows.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            110,
+            111,
+            405,
+            407,
+            408,
+            901,
+            1100,
+            1101
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4107",
+      "name": "InvalidTarget",
+      "category": "invalid",
+      "retryable": false,
+      "message": "The target of the move, copy or link is not valid.",
+      "hint": "Source and target must be in the same file where required, and the target must exist and be local.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            22,
+            27,
+            28,
+            402,
+            404,
+            412,
+            503,
+            704,
+            708
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4108",
+      "name": "ImageMissing",
+      "category": "invalid",
+      "retryable": false,
+      "message": "The page image is missing, empty or unreadable.",
+      "hint": "Send at least one non-empty image in a supported format.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            709,
+            904,
+            906,
+            914,
+            915
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4109",
+      "name": "SplitParamsInvalid",
+      "category": "invalid",
+      "retryable": false,
+      "message": "The task split parameters are missing or invalid.",
+      "hint": "Check the split parameters against the step's split settings.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            223,
+            224,
+            225
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4110",
+      "name": "AlreadyExists",
+      "category": "invalid",
+      "retryable": false,
+      "message": "An object with the same key or name already exists.",
+      "hint": "Look up the existing object and reuse it, or choose a different name.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            120,
+            500,
+            505,
+            900,
+            1003,
+            1105,
+            1301,
+            1306,
+            1400,
+            1401,
+            1600,
+            1700,
+            1801,
+            2001,
+            2021,
+            2032,
+            2102,
+            2200,
+            2201,
+            2302,
+            2600
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "already exists|duplicate"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4111",
+      "name": "ConfigNodeInvalid",
+      "category": "invalid",
+      "retryable": false,
+      "message": "The configuration change does not fit the node's type or position.",
+      "hint": "Read the target node first and match its type (section or key).",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            2300,
+            2301,
+            2304,
+            2305,
+            2306,
+            2307,
+            2308
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4112",
+      "name": "ReleaseMethodInvalid",
+      "category": "invalid",
+      "retryable": false,
+      "message": "The task cannot be released from this step with this release method.",
+      "hint": "Check the step's links and use the release call that matches them (single link, split, or default).",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            203,
+            321,
+            322,
+            323
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4201",
+      "name": "AccessDenied",
+      "category": "permission",
+      "retryable": false,
+      "message": "The user may not perform this action on this {objectKind}.",
+      "hint": "Use an account with the needed rights or ask an administrator to grant them.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            2,
+            227,
+            907
+          ]
+        },
+        "http": [
+          403
+        ],
+        "soap": {
+          "faultPatterns": [
+            "access (is )?denied|permission denied|not authori[sz]ed|insufficient (rights|permissions)"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4202",
+      "name": "ReadOnly",
+      "category": "permission",
+      "retryable": false,
+      "message": "The user has read-only rights here.",
+      "hint": "Ask for write rights on the drawer or file.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            401
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "read[- ]?only"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4203",
+      "name": "FunctionalityRightMissing",
+      "category": "permission",
+      "retryable": false,
+      "message": "The functionality right needed for this action is missing.",
+      "hint": "Check the user's functionality rights.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            1500
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4204",
+      "name": "OperationNotAllowed",
+      "category": "permission",
+      "retryable": false,
+      "message": "The server does not allow this action on this object or account.",
+      "hint": "This is a fixed rule, not a missing right; choose a different object or approach.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            8,
+            132,
+            1302,
+            1303,
+            2108
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4301",
+      "name": "LockedByAnotherUser",
+      "category": "concurrency",
+      "retryable": true,
+      "message": "The {objectKind} is locked by another user.",
+      "hint": "Wait and retry, or check who holds the lock before acting.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            100,
+            201,
+            409,
+            908,
+            909,
+            2002,
+            2004,
+            2104,
+            2105
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "locked by (another|other|a different) user|is locked by"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4302",
+      "name": "NotLocked",
+      "category": "concurrency",
+      "retryable": false,
+      "message": "The {objectKind} must be locked by you before this call.",
+      "hint": "Lock it first, make the change, then unlock it.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            102,
+            202,
+            902,
+            911,
+            2005,
+            2106
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "\\bnot locked\\b|must be locked"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4303",
+      "name": "VersionConflict",
+      "category": "concurrency",
+      "retryable": true,
+      "message": "Someone changed the {objectKind} since you read it.",
+      "hint": "Read it again and reapply your change to the current version.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            31,
+            101,
+            700,
+            1602,
+            1703
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "version mismatch|(modified|changed) by another"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4401",
+      "name": "TaskCompleted",
+      "category": "state",
+      "retryable": false,
+      "message": "The task is already completed.",
+      "hint": "Completed tasks cannot be changed; search for the follow-up task instead.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            205
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "task\\b.{0,40}\\b(is )?completed?\\b"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4402",
+      "name": "TaskInErrorState",
+      "category": "state",
+      "retryable": false,
+      "message": "The task is in an error or unexpected state.",
+      "hint": "Inspect the task's error details and fix the cause before releasing or changing it.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            204,
+            206
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4403",
+      "name": "FileFrozen",
+      "category": "state",
+      "retryable": false,
+      "message": "The file is frozen and cannot be changed.",
+      "hint": "Unfreeze the file first if you have the right to.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            504
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "\\bfrozen\\b"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4404",
+      "name": "HasDependentTasks",
+      "category": "state",
+      "retryable": false,
+      "message": "The {objectKind} still has tasks or diaries attached.",
+      "hint": "Complete or move the attached tasks first, or use the forced variant if the API offers one.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            410,
+            710,
+            711,
+            1103
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4405",
+      "name": "AlreadyDeleted",
+      "category": "state",
+      "retryable": false,
+      "message": "The {objectKind} is already deleted, cut or in deleted content.",
+      "hint": "Restore it from deleted content first if you need to work with it.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            406,
+            705,
+            706,
+            707,
+            712,
+            917,
+            2007,
+            2009
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "already (been )?deleted|marked (as )?deleted|in deleted content"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4406",
+      "name": "SubtasksNotCompleted",
+      "category": "state",
+      "retryable": false,
+      "message": "The task still has open subtasks.",
+      "hint": "Finish the subtasks before completing or releasing the parent.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            220
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4407",
+      "name": "StepCodeCheckFailed",
+      "category": "state",
+      "retryable": false,
+      "message": "The step's code check rejected the release.",
+      "hint": "Fix the values the step checks (often task attributes) and release again.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            324
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4408",
+      "name": "NotDeleted",
+      "category": "state",
+      "retryable": false,
+      "message": "The {objectKind} is not marked deleted, so it cannot be restored or purged.",
+      "hint": "Only deleted objects can be restored; check its status first.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            21,
+            2008
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4409",
+      "name": "InUse",
+      "category": "state",
+      "retryable": false,
+      "message": "The {objectKind} is still in use and cannot be removed.",
+      "hint": "Remove what depends on it first.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            19,
+            1604,
+            2006,
+            2022
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-4410",
+      "name": "InvalidObjectState",
+      "category": "state",
+      "retryable": false,
+      "message": "The {objectKind} is not in a state that allows this action.",
+      "hint": "Read its current state and bring it to the expected one first.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            1305,
+            1800
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-5001",
+      "name": "ServerError",
+      "category": "upstream",
+      "retryable": false,
+      "message": "The ImageRight server failed while handling the request.",
+      "hint": "Retrying rarely helps; check the server logs or contact the administrator if it persists.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            17,
+            25,
+            26,
+            910,
+            1309,
+            2000,
+            2012,
+            2013,
+            2033,
+            2100,
+            2400,
+            2401
+          ]
+        },
+        "http": [
+          500
+        ],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-5002",
+      "name": "DatabaseError",
+      "category": "upstream",
+      "retryable": true,
+      "message": "The ImageRight server hit a database error.",
+      "hint": "Retry once after a short wait; if it repeats, the server needs attention.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            16
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "database|sql ?exception|deadlock"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-5003",
+      "name": "SoapFaultUnmapped",
+      "category": "upstream",
+      "retryable": false,
+      "message": "The SOAP service returned a fault this server does not recognize.",
+      "hint": "Read the raw fault in error.native; ir_explain_error can look up the text.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-5004",
+      "name": "NetworkError",
+      "category": "upstream",
+      "retryable": true,
+      "message": "The ImageRight server could not be reached.",
+      "hint": "Check the URL, network and TLS settings, then retry.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [
+          502,
+          503
+        ],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-5005",
+      "name": "Timeout",
+      "category": "upstream",
+      "retryable": true,
+      "message": "The request timed out.",
+      "hint": "Retry reads; for writes, verify the state first because the change may have happened.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [
+          408,
+          504
+        ],
+        "soap": {
+          "faultPatterns": [
+            "timed? ?out|timeout"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-5006",
+      "name": "DataNotReady",
+      "category": "upstream",
+      "retryable": true,
+      "message": "The server is still preparing the data.",
+      "hint": "Wait a moment and call again.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            15
+          ]
+        },
+        "http": [
+          202
+        ],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-5007",
+      "name": "WorkflowProcessorUnreachable",
+      "category": "upstream",
+      "retryable": true,
+      "message": "The server could not reach the workflow processor.",
+      "hint": "Retry later; if it persists the workflow service needs attention.",
+      "mappings": {
+        "rest": {
+          "errorCodes": [
+            325
+          ]
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": [
+            "workflow processor"
+          ]
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-5008",
+      "name": "SoapOperationFailed",
+      "category": "upstream",
+      "retryable": false,
+      "message": "The SOAP operation reported failure in its result.",
+      "hint": "Read the failure message in error.native and fix the cause before retrying.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-5099",
+      "name": "UpstreamUnmapped",
+      "category": "upstream",
+      "retryable": false,
+      "message": "The server returned an error code this server does not know.",
+      "hint": "The native code is kept in error.native; ir_explain_error or the vendor docs may describe it.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-9001",
+      "name": "Internal",
+      "category": "internal",
+      "retryable": false,
+      "message": "Something went wrong inside imageright-mcp.",
+      "hint": "This is a bug in this server, not in your request; please report it with the tool name and arguments.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    },
+    {
+      "code": "IR-9002",
+      "name": "NormalizationFailed",
+      "category": "internal",
+      "retryable": false,
+      "message": "The upstream response could not be converted to the standard shape.",
+      "hint": "The raw response is kept where possible; please report it.",
+      "mappings": {
+        "rest": {
+          "errorCodes": []
+        },
+        "http": [],
+        "soap": {
+          "faultPatterns": []
+        }
+      },
+      "since": "0.0.1"
+    }
+  ]
+}

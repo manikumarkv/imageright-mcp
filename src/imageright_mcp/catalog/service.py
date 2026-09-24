@@ -17,11 +17,12 @@ from imageright_mcp.catalog.areas import AREAS, area_of, match_area
 from imageright_mcp.catalog.data import load_raw
 from imageright_mcp.catalog.search import SearchIndex
 from imageright_mcp.config import resolve_profile
+from imageright_mcp.errors.registry import get_registry
 
 SURFACES = ("rest-v1", "rest-v2", "soap")
 PRESENT = frozenset({"available", "changed", "deprecated"})
 ABSENT_PENALTY = 0.3
-IR_CODE_NOTE = "IR code mapping arrives with the error registry (milestone M3)."
+IR_CODE_NOTE = "irCode is the stable IR error code; ir_explain_error describes it."
 
 
 class CatalogError(Exception):
@@ -38,16 +39,11 @@ class CatalogError(Exception):
         self.suggestions = suggestions or []
 
     def to_error(self) -> dict[str, Any]:
-        error: dict[str, Any] = {
-            "code": self.code,
-            "name": self.name,
-            "category": "catalog" if self.code.startswith("IR-3") else "config",
-            "message": self.message,
-            "retryable": False,
-            "hint": self.hint,
-        }
-        if self.suggestions:
-            error["suggestions"] = self.suggestions
+        # Name stays as raised: to_envelope turns a code/name mismatch into IR-9001.
+        error = get_registry().error(
+            self.code, message=self.message, hint=self.hint, suggestions=self.suggestions
+        )
+        error["name"] = self.name
         return error
 
 
@@ -171,7 +167,7 @@ class Catalog:
     def _path_regex(path: str) -> str:
         return "^" + re.sub(r"\\\{[^}]*\\\}", r"[^/]+", re.escape(path.rstrip("/"))) + "/?$"
 
-    def _unknown_operation(self, ident: str) -> CatalogError:
+    def unknown_operation(self, ident: str) -> CatalogError:
         pool = list(self.ops) + list(self.capabilities)
         close = difflib.get_close_matches(ident, pool, n=5, cutoff=0.6)
         if not close:
@@ -257,7 +253,7 @@ class Catalog:
         capability = self.capabilities.get(ident.strip())
         if capability is not None:
             return self._preferred_implementation(capability, profile, preference), capability["id"]
-        raise self._unknown_operation(ident)
+        raise self.unknown_operation(ident)
 
     # ------------------------------------------------------------------ small views
 
@@ -276,11 +272,14 @@ class Catalog:
 
     def _error_entry(self, code: int) -> dict[str, Any]:
         entry = self.errors.get(str(code))
+        registry = get_registry()
+        ir_code = registry.for_native_rest(code)
         return {
             "nativeCode": code,
             "name": entry["name"] if entry else None,
             "family": entry["family"] if entry else None,
-            "irCode": None,
+            "irCode": ir_code,
+            "irName": registry.entry(ir_code)["name"],
         }
 
     def _schema(self, surface: str, name: str) -> dict[str, Any] | None:

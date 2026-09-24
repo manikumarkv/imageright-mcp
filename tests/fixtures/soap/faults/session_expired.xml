@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <soap:Fault>
+      <faultcode>soap:Server</faultcode>
+      <faultstring>System.Web.Services.Protocols.SoapException: Server was unable to process request. ---&gt; System.ApplicationException: The security token has expired.
+   at Example.Service.Handler.Invoke()
+   at Example.Service.Dispatcher.Run()</faultstring>
+      <detail></detail>
+    </soap:Fault>
+  </soap:Body>
+</soap:Envelope>

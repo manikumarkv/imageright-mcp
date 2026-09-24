@@ -1,0 +1,927 @@
+{
+  "codes": {
+    "1": {
+      "family": "auth-security-general",
+      "name": "UserNameOrPasswordIsIncorrect"
+    },
+    "10": {
+      "family": "auth-security-general",
+      "name": "ObjectNotFound"
+    },
+    "100": {
+      "family": "notes",
+      "name": "NoteLockedByAnotherUser"
+    },
+    "1000": {
+      "family": "object-types",
+      "name": "NotFileType"
+    },
+    "1001": {
+      "family": "object-types",
+      "name": "NotDrawerLocationType"
+    },
+    "1002": {
+      "family": "object-types",
+      "name": "TypeNotFound"
+    },
+    "1003": {
+      "family": "object-types",
+      "name": "TypeAlreadyExists"
+    },
+    "1004": {
+      "family": "object-types",
+      "name": "NotFileFolderType"
+    },
+    "101": {
+      "family": "notes",
+      "name": "NoteLockVersionMismatch"
+    },
+    "102": {
+      "family": "notes",
+      "name": "NoteIsNotLocked"
+    },
+    "11": {
+      "family": "auth-security-general",
+      "name": "AccountNotFound"
+    },
+    "110": {
+      "family": "notes",
+      "name": "RegularNoteTemplateValidationException"
+    },
+    "1100": {
+      "family": "folders",
+      "name": "FolderIsNotRepeatable"
+    },
+    "1101": {
+      "family": "folders",
+      "name": "FolderTypeNotValidForTemplate"
+    },
+    "1102": {
+      "family": "folders",
+      "name": "NotFolder"
+    },
+    "1103": {
+      "family": "folders",
+      "name": "DeleteFolderWithTasks"
+    },
+    "1104": {
+      "family": "folders",
+      "name": "FolderNotFound"
+    },
+    "1105": {
+      "family": "folders",
+      "name": "FolderDuplicated"
+    },
+    "111": {
+      "family": "notes",
+      "name": "CalculatedNoteTemplateValidationException"
+    },
+    "12": {
+      "family": "auth-security-general",
+      "name": "ModelEmpty"
+    },
+    "120": {
+      "family": "notes",
+      "name": "NoteContainerAlreadyExists"
+    },
+    "1200": {
+      "family": "marks",
+      "name": "FileMarkDefinitionNotFound"
+    },
+    "1201": {
+      "family": "marks",
+      "name": "PageMarkDefinitionNotFound"
+    },
+    "1202": {
+      "family": "marks",
+      "name": "PageMarkNotAllowedInFileType"
+    },
+    "1203": {
+      "family": "marks",
+      "name": "FileMarkNotAllowedInFileType"
+    },
+    "121": {
+      "family": "notes",
+      "name": "NoteContainerNotFound"
+    },
+    "13": {
+      "family": "auth-security-general",
+      "name": "AuthorizedUsersNotFound"
+    },
+    "130": {
+      "family": "notes",
+      "name": "NoteCollectionIsInvalid"
+    },
+    "1300": {
+      "family": "users",
+      "name": "ProfileNotFound"
+    },
+    "1301": {
+      "family": "users",
+      "name": "UserAlreadyExists"
+    },
+    "1302": {
+      "family": "users",
+      "name": "UnableToDisableEnableAdminUser"
+    },
+    "1303": {
+      "family": "users",
+      "name": "UnableToDisableEnableIRServerUser"
+    },
+    "1304": {
+      "family": "users",
+      "name": "UserNotFound"
+    },
+    "1305": {
+      "family": "users",
+      "name": "UserDisabled"
+    },
+    "1306": {
+      "family": "users",
+      "name": "DuplicateUsersFound"
+    },
+    "1307": {
+      "family": "users",
+      "name": "UserEmailMissing"
+    },
+    "1308": {
+      "family": "users",
+      "name": "ResetAttemptsExceeded"
+    },
+    "1309": {
+      "family": "users",
+      "name": "SendEmailFailed"
+    },
+    "131": {
+      "family": "notes",
+      "name": "NoteTypeNotFound"
+    },
+    "1310": {
+      "family": "users",
+      "name": "SecurityQuestionsNotSetUp"
+    },
+    "1311": {
+      "family": "users",
+      "name": "NoResetAttemptsInfo"
+    },
+    "1312": {
+      "family": "users",
+      "name": "InvalidLink"
+    },
+    "1313": {
+      "family": "users",
+      "name": "TokenExpired"
+    },
+    "1314": {
+      "family": "users",
+      "name": "ClientUrlMissing"
+    },
+    "1315": {
+      "family": "users",
+      "name": "SecurityQuestionAnswerIncorrect"
+    },
+    "1316": {
+      "family": "users",
+      "name": "QuestionAttemptsExceededAccountLocked"
+    },
+    "132": {
+      "family": "notes",
+      "name": "NoteWithScriptsAreForbidden"
+    },
+    "14": {
+      "family": "auth-security-general",
+      "name": "WorkflowNotFound"
+    },
+    "1400": {
+      "family": "groups-roles",
+      "name": "GroupAlreadyExists"
+    },
+    "1401": {
+      "family": "groups-roles",
+      "name": "RoleAlreadyExists"
+    },
+    "1402": {
+      "family": "groups-roles",
+      "name": "RoleNotFound"
+    },
+    "1403": {
+      "family": "groups-roles",
+      "name": "GroupNotFound"
+    },
+    "15": {
+      "family": "auth-security-general",
+      "name": "DataNotReady"
+    },
+    "1500": {
+      "family": "functionality-rights",
+      "name": "FunctionalityRightNotFound"
+    },
+    "16": {
+      "family": "auth-security-general",
+      "name": "DataBaseRequestError"
+    },
+    "1600": {
+      "family": "sla",
+      "name": "SlaAlreadyExists"
+    },
+    "1601": {
+      "family": "sla",
+      "name": "SlaNotFound"
+    },
+    "1602": {
+      "family": "sla",
+      "name": "SlaLastModifiedConditionFailed"
+    },
+    "1603": {
+      "family": "sla",
+      "name": "DuplicatedAgeBucket"
+    },
+    "1604": {
+      "family": "sla",
+      "name": "SlaRemoveConflict"
+    },
+    "17": {
+      "family": "auth-security-general",
+      "name": "GenericException"
+    },
+    "1700": {
+      "family": "dashboard",
+      "name": "ViewAlreadyExists"
+    },
+    "1701": {
+      "family": "dashboard",
+      "name": "ViewNotFound"
+    },
+    "1702": {
+      "family": "dashboard",
+      "name": "NotAllSlaSelectedInTheViewExist"
+    },
+    "1703": {
+      "family": "dashboard",
+      "name": "DashboardViewUpdateConflict"
+    },
+    "1704": {
+      "family": "dashboard",
+      "name": "DashboardViewInvalidUpdateException"
+    },
+    "18": {
+      "family": "auth-security-general",
+      "name": "ExternalAccountNotFound"
+    },
+    "1800": {
+      "family": "vsso",
+      "name": "VssoMigrationStateIsInValid"
+    },
+    "1801": {
+      "family": "vsso",
+      "name": "VssoAccountIsAlreadyMapped"
+    },
+    "19": {
+      "family": "auth-security-general",
+      "name": "FileContainerCannotBeRemoved"
+    },
+    "1900": {
+      "family": "data-validation",
+      "name": "IncorrectDrawer"
+    },
+    "1901": {
+      "family": "data-validation",
+      "name": "IncorrectFileType"
+    },
+    "2": {
+      "family": "auth-security-general",
+      "name": "AccessDenied"
+    },
+    "20": {
+      "family": "auth-security-general",
+      "name": "NotFileNotFolder"
+    },
+    "200": {
+      "family": "tasks",
+      "name": "TaskNotFound"
+    },
+    "2000": {
+      "family": "ocr",
+      "name": "OcrFormError"
+    },
+    "2001": {
+      "family": "ocr",
+      "name": "OcrFormAlreadyExists"
+    },
+    "2002": {
+      "family": "ocr",
+      "name": "OcrFormLockError"
+    },
+    "2003": {
+      "family": "ocr",
+      "name": "OcrFormNotFound"
+    },
+    "2004": {
+      "family": "ocr",
+      "name": "OcrFormLockedByAnotherUser"
+    },
+    "2005": {
+      "family": "ocr",
+      "name": "OcrFormNotLocked"
+    },
+    "2006": {
+      "family": "ocr",
+      "name": "UnableToDeleteLiveOcrForm"
+    },
+    "2007": {
+      "family": "ocr",
+      "name": "OcrFormAlreadyMarkedAsDeleted"
+    },
+    "2008": {
+      "family": "ocr",
+      "name": "OcrFormNotMarkedAsDeleted"
+    },
+    "2009": {
+      "family": "ocr",
+      "name": "OcrFormMarkedAsDeleted"
+    },
+    "201": {
+      "family": "tasks",
+      "name": "TaskLockedByAnotherUser"
+    },
+    "2011": {
+      "family": "ocr",
+      "name": "OcrFormVersionNotFound"
+    },
+    "2012": {
+      "family": "ocr",
+      "name": "OcrVersionUnableToCreate"
+    },
+    "2013": {
+      "family": "ocr",
+      "name": "OcrVersionUnableToUpdate"
+    },
+    "202": {
+      "family": "tasks",
+      "name": "TaskNotLocked"
+    },
+    "2021": {
+      "family": "ocr",
+      "name": "OcrFolderAlreadyExists"
+    },
+    "2022": {
+      "family": "ocr",
+      "name": "OcrFolderIsNotEmpty"
+    },
+    "2023": {
+      "family": "ocr",
+      "name": "OcrFolderNotFound"
+    },
+    "203": {
+      "family": "tasks",
+      "name": "TaskNotAvailableOnSpecifiedWorkFlowStep"
+    },
+    "2031": {
+      "family": "ocr",
+      "name": "OcrFieldNotFound"
+    },
+    "2032": {
+      "family": "ocr",
+      "name": "OcrFieldAlreadyExists"
+    },
+    "2033": {
+      "family": "ocr",
+      "name": "SearchRequestCouldNotBeCompleted"
+    },
+    "204": {
+      "family": "tasks",
+      "name": "TaskIsInErrorState"
+    },
+    "205": {
+      "family": "tasks",
+      "name": "TaskCompleted"
+    },
+    "206": {
+      "family": "tasks",
+      "name": "TaskWrongState"
+    },
+    "21": {
+      "family": "auth-security-general",
+      "name": "NotMarkedDeleted"
+    },
+    "210": {
+      "family": "tasks",
+      "name": "TaskAttributeNotFound"
+    },
+    "2100": {
+      "family": "redaction",
+      "name": "RedactionRulesError"
+    },
+    "2101": {
+      "family": "redaction",
+      "name": "RedactionRuleSetNotFound"
+    },
+    "2102": {
+      "family": "redaction",
+      "name": "RedactionRuleSetAlreadyExists"
+    },
+    "2103": {
+      "family": "redaction",
+      "name": "RedactionRulesAreEmpty"
+    },
+    "2104": {
+      "family": "redaction",
+      "name": "RedactionRuleSetLockedByAnotherUser"
+    },
+    "2105": {
+      "family": "redaction",
+      "name": "RedactionRuleSetLock"
+    },
+    "2106": {
+      "family": "redaction",
+      "name": "RedactionRuleSetNotLocked"
+    },
+    "2107": {
+      "family": "redaction",
+      "name": "RedactionRulesDrawerDoesNotExistException"
+    },
+    "2108": {
+      "family": "redaction",
+      "name": "RedactionRulesGlobalRuleSetDeleteForbiddenException"
+    },
+    "2109": {
+      "family": "redaction",
+      "name": "RedactionRulesFileTypeEmptyException"
+    },
+    "211": {
+      "family": "tasks",
+      "name": "TaskAttributeValueTypeIsInvalid"
+    },
+    "2110": {
+      "family": "redaction",
+      "name": "RedactionRulesFileTypeNotAllowedException"
+    },
+    "212": {
+      "family": "tasks",
+      "name": "TaskMandatoryAttributeIsNotSet"
+    },
+    "213": {
+      "family": "tasks",
+      "name": "TaskAttributeValueNotFound"
+    },
+    "22": {
+      "family": "auth-security-general",
+      "name": "ObjectNotOwned"
+    },
+    "220": {
+      "family": "tasks",
+      "name": "SubtasksNotCompleted"
+    },
+    "2200": {
+      "family": "document-filters",
+      "name": "DescriptionInUse"
+    },
+    "2201": {
+      "family": "document-filters",
+      "name": "DrawerFileTypeCombinationInUse"
+    },
+    "2202": {
+      "family": "document-filters",
+      "name": "DescriptionInvalidCharacter"
+    },
+    "221": {
+      "family": "tasks",
+      "name": "UserIdIsInvalid"
+    },
+    "222": {
+      "family": "tasks",
+      "name": "UserIdIsEmpty"
+    },
+    "223": {
+      "family": "tasks",
+      "name": "SplitParametersAreEmpty"
+    },
+    "224": {
+      "family": "tasks",
+      "name": "SplitParametersAreInvalid"
+    },
+    "225": {
+      "family": "tasks",
+      "name": "SplitParametersNotFound"
+    },
+    "226": {
+      "family": "tasks",
+      "name": "TaskIdEmpty"
+    },
+    "227": {
+      "family": "tasks",
+      "name": "TaskAccessDeniedException"
+    },
+    "23": {
+      "family": "auth-security-general",
+      "name": "ServerNotFound"
+    },
+    "2300": {
+      "family": "config",
+      "name": "ConfigValueInSectionNotAllowed"
+    },
+    "2301": {
+      "family": "config",
+      "name": "ConfigValueIsNull"
+    },
+    "2302": {
+      "family": "config",
+      "name": "ConfigDuplicateKey"
+    },
+    "2303": {
+      "family": "config",
+      "name": "ConfigPathNotFound"
+    },
+    "2304": {
+      "family": "config",
+      "name": "ConfigInvalidNodeType"
+    },
+    "2305": {
+      "family": "config",
+      "name": "ConfigChildrenInKeyNotAllowed"
+    },
+    "2306": {
+      "family": "config",
+      "name": "ConfigValueTypeIsEmpty"
+    },
+    "2307": {
+      "family": "config",
+      "name": "ConfigPathContainsKey"
+    },
+    "2308": {
+      "family": "config",
+      "name": "ConfigCannotChangeNodeType"
+    },
+    "24": {
+      "family": "auth-security-general",
+      "name": "UnsupportedType"
+    },
+    "2400": {
+      "family": "email",
+      "name": "UnableToOpenEmail"
+    },
+    "2401": {
+      "family": "email",
+      "name": "OutlookIsNotInstalled"
+    },
+    "25": {
+      "family": "auth-security-general",
+      "name": "MergeFailed"
+    },
+    "26": {
+      "family": "auth-security-general",
+      "name": "KeyNotAvailable"
+    },
+    "2600": {
+      "family": "annotations",
+      "name": "AnnotationTemplateAlreadyExists"
+    },
+    "27": {
+      "family": "auth-security-general",
+      "name": "TargetInvalid"
+    },
+    "28": {
+      "family": "auth-security-general",
+      "name": "TargetNotFound"
+    },
+    "29": {
+      "family": "auth-security-general",
+      "name": "PermissionNotFound"
+    },
+    "3": {
+      "family": "auth-security-general",
+      "name": "AccountIsLocked"
+    },
+    "30": {
+      "family": "auth-security-general",
+      "name": "InvalidData"
+    },
+    "300": {
+      "family": "workflow",
+      "name": "StepNotFound"
+    },
+    "31": {
+      "family": "auth-security-general",
+      "name": "LastModifiedConditionFailed"
+    },
+    "310": {
+      "family": "workflow",
+      "name": "StepAttributeNotFound"
+    },
+    "311": {
+      "family": "workflow",
+      "name": "StepLinksNotFound"
+    },
+    "32": {
+      "family": "auth-security-general",
+      "name": "LastModifiedHeaderNotFound"
+    },
+    "320": {
+      "family": "workflow",
+      "name": "LinkToStepNotFound"
+    },
+    "321": {
+      "family": "workflow",
+      "name": "ReleaseNotSingleLinkStepBySingleLinkMethod"
+    },
+    "322": {
+      "family": "workflow",
+      "name": "ReleaseNotSplitStepBySplitMethod"
+    },
+    "323": {
+      "family": "workflow",
+      "name": "ReleaseFromSplitByNotSplitMethod"
+    },
+    "324": {
+      "family": "workflow",
+      "name": "StepCodeCheckFails"
+    },
+    "325": {
+      "family": "workflow",
+      "name": "UnableToConnectToWfProcessor"
+    },
+    "326": {
+      "family": "workflow",
+      "name": "NotIndexingStep"
+    },
+    "33": {
+      "family": "auth-security-general",
+      "name": "TenantHeaderNotFound"
+    },
+    "34": {
+      "family": "auth-security-general",
+      "name": "ApiKeyHeaderNotFound"
+    },
+    "35": {
+      "family": "auth-security-general",
+      "name": "InvalidApiKey"
+    },
+    "36": {
+      "family": "auth-security-general",
+      "name": "ApiKeyNotConfigured"
+    },
+    "37": {
+      "family": "auth-security-general",
+      "name": "MissingParameters"
+    },
+    "38": {
+      "family": "auth-security-general",
+      "name": "IrVimApiKeyHeaderNotFound"
+    },
+    "39": {
+      "family": "auth-security-general",
+      "name": "ExpiredToken"
+    },
+    "4": {
+      "family": "auth-security-general",
+      "name": "PasswordExpired"
+    },
+    "40": {
+      "family": "auth-security-general",
+      "name": "TenantAccessForbidden"
+    },
+    "400": {
+      "family": "documents",
+      "name": "DocumentStructureException"
+    },
+    "401": {
+      "family": "documents",
+      "name": "ReadonlyPermissions"
+    },
+    "402": {
+      "family": "documents",
+      "name": "MultipleSourceFileIds"
+    },
+    "403": {
+      "family": "documents",
+      "name": "NotDocument"
+    },
+    "404": {
+      "family": "documents",
+      "name": "DocumentShouldBeLocal"
+    },
+    "405": {
+      "family": "documents",
+      "name": "IncompatibleDocumentTypes"
+    },
+    "406": {
+      "family": "documents",
+      "name": "MovedDeletedDocuments"
+    },
+    "407": {
+      "family": "documents",
+      "name": "DocTypeNotValidForTemplate"
+    },
+    "408": {
+      "family": "documents",
+      "name": "TargetDocTypeNotValidForTemplate"
+    },
+    "409": {
+      "family": "documents",
+      "name": "MoveDocumentWithLockedPages"
+    },
+    "410": {
+      "family": "documents",
+      "name": "DeleteDocumentWithTasks"
+    },
+    "411": {
+      "family": "documents",
+      "name": "DocumentNotFound"
+    },
+    "412": {
+      "family": "documents",
+      "name": "ObjectsNotBelongToSameFile"
+    },
+    "5": {
+      "family": "auth-security-general",
+      "name": "PasswordAlreadyUsed"
+    },
+    "500": {
+      "family": "files",
+      "name": "FileAlreadyExists"
+    },
+    "501": {
+      "family": "files",
+      "name": "FileNumberNotValidForFileTypeNumberFormat"
+    },
+    "502": {
+      "family": "files",
+      "name": "NotFile"
+    },
+    "503": {
+      "family": "files",
+      "name": "FileShouldBeLocal"
+    },
+    "504": {
+      "family": "files",
+      "name": "FileFrozen"
+    },
+    "505": {
+      "family": "files",
+      "name": "DuplicateFiles"
+    },
+    "6": {
+      "family": "auth-security-general",
+      "name": "PasswordPolicy"
+    },
+    "600": {
+      "family": "attributes",
+      "name": "AttributeNotFound"
+    },
+    "601": {
+      "family": "attributes",
+      "name": "AttributeRequired"
+    },
+    "602": {
+      "family": "attributes",
+      "name": "AttributeNotAllowed"
+    },
+    "603": {
+      "family": "attributes",
+      "name": "AttributeValueInvalid"
+    },
+    "7": {
+      "family": "auth-security-general",
+      "name": "PasswordChangeNotAllowed"
+    },
+    "700": {
+      "family": "pages",
+      "name": "VersionMismatch"
+    },
+    "701": {
+      "family": "pages",
+      "name": "PageNotFound"
+    },
+    "702": {
+      "family": "pages",
+      "name": "InconsistentPageId"
+    },
+    "703": {
+      "family": "pages",
+      "name": "UnsupportedRotationAngle"
+    },
+    "704": {
+      "family": "pages",
+      "name": "PageDoesNotBelongToDocument"
+    },
+    "705": {
+      "family": "pages",
+      "name": "PageCut"
+    },
+    "706": {
+      "family": "pages",
+      "name": "PageDeleted"
+    },
+    "707": {
+      "family": "pages",
+      "name": "PageInDeletedContent"
+    },
+    "708": {
+      "family": "pages",
+      "name": "PagesNotBelongToSameFile"
+    },
+    "709": {
+      "family": "pages",
+      "name": "NoPages"
+    },
+    "710": {
+      "family": "pages",
+      "name": "DeletePageWithTasks"
+    },
+    "711": {
+      "family": "pages",
+      "name": "DeletePageWithDiaries"
+    },
+    "712": {
+      "family": "pages",
+      "name": "PageAlreadyDeleted"
+    },
+    "8": {
+      "family": "auth-security-general",
+      "name": "NativeSecurityOperation"
+    },
+    "800": {
+      "family": "drawers",
+      "name": "DrawerNotFound"
+    },
+    "801": {
+      "family": "drawers",
+      "name": "NotDrawer"
+    },
+    "9": {
+      "family": "auth-security-general",
+      "name": "InvalidToken"
+    },
+    "900": {
+      "family": "general-objects",
+      "name": "AlreadyExists"
+    },
+    "901": {
+      "family": "general-objects",
+      "name": "TemplateValidationEx"
+    },
+    "902": {
+      "family": "general-objects",
+      "name": "ObjectNotLocked"
+    },
+    "903": {
+      "family": "general-objects",
+      "name": "UnsupportedObjectClass"
+    },
+    "904": {
+      "family": "general-objects",
+      "name": "UnableToLoadImage"
+    },
+    "905": {
+      "family": "general-objects",
+      "name": "ImageSetNotFound"
+    },
+    "906": {
+      "family": "general-objects",
+      "name": "ImageTypesMissing"
+    },
+    "907": {
+      "family": "general-objects",
+      "name": "PermissionDenied"
+    },
+    "908": {
+      "family": "general-objects",
+      "name": "LockedByAnotherUser"
+    },
+    "909": {
+      "family": "general-objects",
+      "name": "PageLockedByAnotherUser"
+    },
+    "910": {
+      "family": "general-objects",
+      "name": "WorkflowException"
+    },
+    "911": {
+      "family": "general-objects",
+      "name": "FlowNotLocked"
+    },
+    "913": {
+      "family": "general-objects",
+      "name": "InvalidObjectClass"
+    },
+    "914": {
+      "family": "general-objects",
+      "name": "ImageEmpty"
+    },
+    "915": {
+      "family": "general-objects",
+      "name": "ImageListEmpty"
+    },
+    "916": {
+      "family": "general-objects",
+      "name": "OcrDataSetNotFound"
+    },
+    "917": {
+      "family": "general-objects",
+      "name": "DocFolderInDeletedContent"
+    }
+  },
+  "count": 230,
+  "profile": "25.1",
+  "source": "OAS components.schemas.ErrorCodes (25.1, v1 and v2 identical)"
+}

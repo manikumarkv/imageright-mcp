@@ -3,8 +3,8 @@
 An [MCP](https://modelcontextprotocol.io) server that helps AI coding assistants work correctly against
 Vertafore ImageRight on your product version (24.x, 25.x, or 7.2).
 
-> **Status: pre-alpha (M2).** The offline API explorer and version-matrix tools work; the version-aware client,
-> custom error catalog, and dry-run previews are not here yet.
+> **Status: pre-alpha (M3).** The offline API explorer, version-matrix tools and error catalog work; the
+> version-aware client and dry-run previews are not here yet.
 
 ## Tools
 
@@ -21,6 +21,15 @@ All tools below work offline: no server, no credentials.
 | `ir_check_availability` | Is an operation, parameter, field or enum value present in each version? |
 | `ir_compare_versions` | Diff two versions |
 | `ir_list_deprecations` | Deprecated operations and their replacements |
+| `ir_explain_error` | Explain an IR code, native REST code or name, HTTP status, or SOAP fault text |
+
+## Errors
+
+Every tool returns the same envelope: `{ok, data, error, meta}`. Failures carry a stable
+`IR-CNNN` code (`data/errors/registry.json`) that says what to do next: about 230 native ImageRight error
+codes collapse into 75 IR codes, and the native detail is kept in `error.native`. Codes are append-only:
+never renumbered, renamed or reused. Arguments that fail the tool's input schema are rejected by the MCP SDK
+before the handler runs, so they come back as a plain-text error without the envelope.
 
 ## Install
 

@@ -47,6 +47,7 @@ packages = ["src/imageright_mcp"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "data/catalog" = "imageright_mcp/_data/catalog"
+"data/errors" = "imageright_mcp/_data/errors"
 
 [tool.ruff]
 line-length = 100

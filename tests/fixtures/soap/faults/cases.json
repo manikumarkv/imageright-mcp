@@ -1,0 +1,18 @@
+{
+  "note": "Hand-built SOAP fault fixtures (synthetic text, not recorded). File -> expected IR code.",
+  "cases": {
+    "session_expired.xml": "IR-2007",
+    "not_logged_in.xml": "IR-2007",
+    "bad_credentials.xml": "IR-2001",
+    "task_locked.xml": "IR-4301",
+    "page_not_found.xml": "IR-4005",
+    "user_not_found.xml": "IR-4002",
+    "generic_not_found.xml": "IR-4001",
+    "access_denied.xml": "IR-4201",
+    "database_deadlock.xml": "IR-5002",
+    "detail_only.xml": "IR-4302",
+    "soap12_duplicate.xml": "IR-4110",
+    "unmatched.xml": "IR-5003",
+    "stack_mentions_not_found.xml": "IR-5003"
+  }
+}
