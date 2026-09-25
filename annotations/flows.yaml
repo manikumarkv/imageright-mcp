@@ -1034,9 +1034,11 @@ flows:
     title: Create a document (creating the file if needed)
     composite: create_document
     purpose: >-
-      Create a document inside a file; optionally create the file first when it does not exist.
-      The file is found by its number and, when a drawer code is given, checked to sit in that
-      drawer. The document type code is turned into its id before the document is created.
+      Create a document inside a folder of a file; documents always live under a folder, never
+      directly in a file. The file is found by its number and, when a drawer code is given,
+      checked to sit in that drawer; the folder is found in that file by its description.
+      Optionally the file and the folder are created first when they do not exist. The document
+      type code is turned into its id before the document is created.
     surface: rest-v1
     inputs:
       - name: fileNumber
@@ -1045,6 +1047,12 @@ flows:
         meaning: >-
           First part of the file number (FileNumberPart1) of the file that receives the document.
           On the file-creation path it is also the number of the new file.
+      - name: folderName
+        type: string
+        required: true
+        meaning: >-
+          Description of the folder (inside the file) under which the document is created. On the
+          folder-creation path it is also the description of the new folder.
       - name: docTypeCode
         type: string
         required: true
@@ -1070,8 +1078,8 @@ flows:
         required: false
         default: false
         meaning: >-
-          When true and no file has the given number, the file is created first. When false (the
-          default), a missing file is an error.
+          When true, a missing file and a missing folder are created first. When false (the
+          default), a missing file or folder is an error.
       - name: fileTypeCode
         type: string
         required: false
@@ -1090,6 +1098,12 @@ flows:
         required: false
         default: ""
         meaning: File-creation path only. Label for the new file; sent as its Name.
+      - name: folderTypeName
+        type: string
+        required: false
+        meaning: >-
+          Folder-creation path only. Name of the folder type of the new folder. When the folder
+          must be created and this is missing, the user is asked for it (needs-input).
     steps:
       - op: POST /api/files/find
         purpose: Find the file that receives the document.
@@ -1146,6 +1160,42 @@ flows:
           When $input.createdByApplication is missing, the user is asked for it (needs-input)
           before this step; nothing is written. A file number that does not fit the file type's
           number format is the usual cause of a rejection.
+      - op: POST /api/folders/find
+        purpose: Find the folder, inside the file, that receives the document.
+        params:
+          FileId: $step1.Id when step 1 found the file, otherwise $step4.value (the created file)
+          Description: $input.folderName
+        select: the single match; its Id is the folder that receives the document
+        onError: >-
+          More than one match is an error - the flow stops with IR-4001 ("folder <folderName>
+          matches more than one folder in file <fileNumber>") rather than guessing. No match
+          branches on $input.forceCreate - when it is true the flow continues on the
+          folder-creation path (steps 6 and 7); otherwise it stops with IR-4001 (ObjectNotFound,
+          "file <fileNumber> has no folder <folderName>") and no document is created.
+      - op: GET /api/containers/{objectId}/allowedtypes
+        purpose: Turn the folder type name into the folder type id, limited to the types the file's template allows.
+        optional: only when step 5 found no folder and $input.forceCreate is true
+        params:
+          objectId: $step1.Id when step 1 found the file, otherwise $step4.value (the created file)
+        select: >-
+          the folder type whose Name equals $input.folderTypeName; its Id is the folder type id.
+          Validation needed - the list mixes folder and document types, and ClassId is assumed
+          to tell them apart.
+        onError: >-
+          When $input.folderTypeName is missing, the user is asked for it (needs-input) before
+          this step. A name that matches no allowed folder type is an error - the flow stops with
+          IR-4006 (TypeNotFound, "file <fileNumber> allows no folder type named
+          <folderTypeName>") and nothing more is created.
+      - op: POST /api/folders
+        purpose: Create the missing folder in the file.
+        optional: only when step 5 found no folder and $input.forceCreate is true
+        params:
+          FolderTypeId: $step6.Id
+          ParentId: $step1.Id when step 1 found the file, otherwise $step4.value (the created file)
+          Description: $input.folderName
+        onError: >-
+          The file's template must allow the folder type. Validation needed - some folder types
+          may mandate attributes, which this flow does not send.
       - op: GET /api/objecttypes/{standardObjectClass}
         purpose: Turn the document type code into the document type id.
         params:
@@ -1158,24 +1208,27 @@ flows:
           A code that matches no document type is an error - the flow stops with IR-4006
           (TypeNotFound, "no document type has code <docTypeCode>") and no document is created.
       - op: POST /api/documents
-        purpose: Create the document in the file.
+        purpose: Create the document in the folder.
         params:
-          ParentId: $step1.Id when step 1 found the file, otherwise $step4.value (the created file)
-          DocumentTypeId: $step5.Id
+          ParentId: $step5.Id when step 5 found the folder, otherwise $step7.value (the created folder)
+          DocumentTypeId: $step8.Id
           Description: $input.description
           DocumentDate: $input.documentDate, today when not given
         onError: >-
           The parent's template must allow the document type. Validation needed - some document
           types may mandate attributes, which this flow does not send.
     outputs:
-      documentId: $step6.value
+      documentId: $step9.value
     notes:
       - The file lookup must resolve to at most one file; more than one match is an error (IR-4001). No match is an error (IR-4001) unless forceCreate is true, in which case the file is created first (steps 3 and 4).
+      - Documents always live under a folder, never directly in a file. The folder is found inside the file by its description (folderName); more than one match is an error (IR-4001). No match is an error (IR-4001) unless forceCreate is true, in which case the folder is created first (steps 6 and 7). On a newly created file the folder is always missing, so it is created too.
+      - Validation needed - identifying the folder type by name (folderTypeName) is the owner's assumption and must be confirmed on a test server. Its id comes from the file's allowed types (GET /api/containers/{objectId}/allowedtypes), which list folder and document types together; which field (ClassId, Name) singles out a folder type by name is unconfirmed. On the folder-creation path folderTypeName is asked for when missing (needs-input) before anything is written.
+      - Validation needed - Description on POST /api/folders/find is assumed to be an exact match on the folder description; the server-side semantics are unconfirmed.
       - On the file-creation path drawerCode is required (a missing one is rejected as needs-input) and createdByApplication is asked for when missing (needs-input); both checks happen before anything is written.
       - The file type code defaults to the drawer code, because drawer code and file type code are usually the same in the owner's setup; fileTypeCode overrides it.
       - Drawers have no separate code field; the drawer code is assumed to be the drawer's Name, as in F9. When the file exists, the drawer check compares its DrawerId with the drawer's Id; a mismatch is an error (IR-4107).
       - Validation needed - which object type field holds a document or file type code is unconfirmed; it must be checked on a test server. An unknown code is an error (IR-4006) naming the code.
-      - Validation needed - document Attributes are out of scope for this flow, and some document types may mandate attributes; this must be checked against a test server.
+      - Validation needed - document and folder Attributes are out of scope for this flow, and some document or folder types may mandate attributes; this must be checked against a test server.
       - The file is created with IsTemporary false. FileNumberPart2 and FileNumberPart3 are never sent.
-      - Steps 4 (create file) and 6 (create document) are writes, so the standard write policy applies - previewed under writeMode dry-run (nothing is sent), blocked under deny, sent under allow. Neither is destructive, so no extra confirmation is needed beyond the standard write policy.
+      - Steps 4 (create file), 7 (create folder) and 9 (create document) are writes, so the standard write policy applies - previewed under writeMode dry-run (nothing is sent), blocked under deny, sent under allow. None is destructive, so no extra confirmation is needed beyond the standard write policy.
       - The create call returns the new document id (int64), which is the flow's output.

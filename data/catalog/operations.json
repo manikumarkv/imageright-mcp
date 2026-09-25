@@ -6017,6 +6017,9 @@
         602,
         603
       ],
+      "flows": [
+        "F15"
+      ],
       "gotchas": [],
       "id": "rest.v1.folders.createFolder",
       "key": "POST /api/folders",
@@ -6184,6 +6187,9 @@
         601,
         602,
         603
+      ],
+      "flows": [
+        "F15"
       ],
       "gotchas": [],
       "id": "rest.v1.folders.findFolders",
@@ -10233,7 +10239,8 @@
       "explanation": "The file type's template restricts which folder and document types can be placed inside it. Pick DocumentTypeId or FolderTypeId from this list to avoid template errors.",
       "flows": [
         "F1",
-        "F3"
+        "F3",
+        "F15"
       ],
       "gotchas": [],
       "id": "rest.v1.objecttypes.getAllowedTypesForContainer",
