@@ -3,7 +3,7 @@
 An [MCP](https://modelcontextprotocol.io) server that helps AI coding assistants work correctly against
 Vertafore ImageRight on your product version (24.x, 25.x, or 7.2).
 
-> **Status: pre-alpha (phase 2 complete: 24 tools — 15 API explorer + 9 composite workflow tools; 802
+> **Status: pre-alpha (phase 2 complete: 26 tools — 15 API explorer + 11 composite workflow tools; 865
 > tests green).** The offline API explorer, version-matrix tools, error catalog, the version-aware client
 > (`ir_call`, with dry-run previews) and the composite workflow tools work. Capability param mappings are
 > not yet verified against a live server; hardening and a live smoke suite follow in M7.
@@ -107,7 +107,7 @@ flowchart LR
   A[IR code / HTTP status /<br/>SOAP fault text] --> B[ir_explain_error] --> C[What it means +<br/>what to do]
 ```
 
-**`ir_list_flows`** / **`ir_describe_flow`**: 17 multi-step recipes (F1–F16, plus F8b). Describe
+**`ir_list_flows`** / **`ir_describe_flow`**: 19 multi-step recipes (F1–F18, plus F8b). Describe
 one flow to see its steps, inputs and errors.
 
 ```mermaid
@@ -176,6 +176,22 @@ flowchart LR
 ```mermaid
 flowchart LR
   A[Look up workflow, step,<br/>file IDs from names] --> B[If a document:<br/>find it in the folder] --> C[Create the task]
+```
+
+**`ir_find_workflows`**: lists the workflows you have rights on, or finds one by its name. Use it to
+get the exact `workflowName` for `ir_create_task`.
+
+```mermaid
+flowchart LR
+  A[Workflow name,<br/>or nothing] --> B[ir_find_workflows] --> C[Matching workflows,<br/>or the names that exist]
+```
+
+**`ir_find_steps`**: takes a workflow name and lists that workflow's production steps (the ones
+`ir_create_task` accepts), or finds one step by its name.
+
+```mermaid
+flowchart LR
+  A[Workflow name,<br/>optional step name] --> B[Look up the workflow] --> C[Its steps]
 ```
 
 **`ir_search_files`**: find files by number or a `%` pattern, by drawer, and by temporary or deleted state.

@@ -1,4 +1,4 @@
-"""The nine phase-2 composite tools (flows F1, F9-F16 in annotations/flows.yaml).
+"""The composite tools (flows F1, F9-F18 in annotations/flows.yaml).
 
 Argument names are the flows' input names. Every tool returns the standard envelope; see
 ``engine`` for the done / preview / needs-input / error shapes.
@@ -21,6 +21,7 @@ from imageright_mcp.composites.engine import Flow, Json, run_flow
 from imageright_mcp.composites.files import create_file, merge_files, search_files, update_file
 from imageright_mcp.composites.tasks import create_task
 from imageright_mcp.composites.upload import upload_document
+from imageright_mcp.composites.workflows import find_steps, find_workflows
 from imageright_mcp.runtime import Runtime
 
 WRITE_NOTE = (
@@ -102,6 +103,48 @@ def register_composite_tools(server: MCPServer, runtime: Runtime) -> None:
             )
 
         return await run_flow(runtime, "F1", "create_task", body, dry_run=dryRun, confirm=confirm)
+
+    @server.tool(
+        name="ir_find_workflows",
+        title="Find workflows by name",
+        description=(
+            "Flow F17. List the workflows the caller has rights on, or the one whose display "
+            "name is workflowName (exact, ignoring case). An unknown name is asked of the user "
+            "(needs-input) with the names that exist. Read-only."
+        ),
+        annotations=READ,
+    )
+    async def ir_find_workflows(
+        workflowName: Annotated[
+            str | None, Field(description="Display name of the workflow; omit to list all.")
+        ] = None,
+    ) -> CallToolResult:
+        async def body(flow: Flow) -> Json:
+            return await find_workflows(flow, workflowName=workflowName)
+
+        return await run_flow(runtime, "F17", "find_workflows", body)
+
+    @server.tool(
+        name="ir_find_steps",
+        title="Find the steps of a workflow",
+        description=(
+            "Flow F18. Resolve workflowName to its workflow and list its production steps (the "
+            "steps ir_create_task accepts), or the one named stepName (exact, ignoring case). An "
+            "unknown workflow or step name is asked of the user (needs-input) with the names "
+            "that exist. Read-only."
+        ),
+        annotations=READ,
+    )
+    async def ir_find_steps(
+        workflowName: Annotated[str, Field(description="Display name of the workflow.")],
+        stepName: Annotated[
+            str | None, Field(description="Display name of a step; omit to list all.")
+        ] = None,
+    ) -> CallToolResult:
+        async def body(flow: Flow) -> Json:
+            return await find_steps(flow, workflowName=workflowName, stepName=stepName)
+
+        return await run_flow(runtime, "F18", "find_steps", body)
 
     @server.tool(
         name="ir_search_files",

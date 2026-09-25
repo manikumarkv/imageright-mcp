@@ -25,9 +25,10 @@ async def test_lists_tools_in_memory() -> None:
         tools = (await client.list_tools()).tools
     names = [tool.name for tool in tools]
     assert names[0] == "ir_get_config"
-    assert len(names) == 24
+    assert len(names) == 26
     assert {"ir_call", "ir_configure", "ir_session", "ir_test_connection"} <= set(names)
     assert {"ir_create_task", "ir_upload_document", "ir_merge_files"} <= set(names)
+    assert {"ir_find_workflows", "ir_find_steps"} <= set(names)
     merge = next(tool for tool in tools if tool.name == "ir_merge_files").annotations
     assert merge is not None
     assert merge.destructive_hint is True

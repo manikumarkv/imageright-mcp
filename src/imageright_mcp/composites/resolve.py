@@ -21,6 +21,8 @@ FIND_DOCUMENTS = "rest.v1.documents.findDocuments"
 GET_DRAWERS = "rest.v1.drawers.getDrawers"
 GET_TYPES_FOR_CLASS = "rest.v1.objecttypes.getTypesForClass"
 GET_ALLOWED_TYPES = "rest.v1.objecttypes.getAllowedTypesForContainer"
+GET_WORKFLOWS = "rest.v1.workflow.getWorkflows"
+GET_STEPS = "rest.v1.workflow.getSteps"
 
 # How many candidates a needs-input question lists.
 MAX_OPTIONS = 50
@@ -42,6 +44,20 @@ def named(data: Any, name: str, key: str = "Name") -> list[Json]:
 def names(data: Any, key: str = "Name") -> list[str]:
     found = [str(item[key]) for item in items(data) if isinstance(item.get(key), str)]
     return sorted(dict.fromkeys(found))[:MAX_OPTIONS]
+
+
+def one_named(data: Any, name: str, input_name: str, what: str, key: str = "Name") -> Json:
+    """The single item named ``name``; none or several is a needs-input question that offers
+    the names in ``data``."""
+    matches = named(data, name, key)
+    if len(matches) == 1:
+        return matches[0]
+    question = (
+        f"No {what} is named {name}. Which {what} do you mean?"
+        if not matches
+        else f"{len(matches)} {what}s are named {name}. Which one do you mean?"
+    )
+    raise NeedsInput(input_name, question, names(data, key))
 
 
 def file_option(file: Json) -> Json:
@@ -268,3 +284,16 @@ async def resolve_folder_type_name(
         "Check the folder type name against the types the file's template allows.",
         allowedTypes=names(data),
     )
+
+
+# ------------------------------------------------------------------------------ workflows
+
+
+async def resolve_workflow(flow: Flow, step: int, name: str) -> Json:
+    """The workflow whose Name is ``name`` (F1, F18); none or several is asked of the user."""
+    return one_named(await flow.read(step, GET_WORKFLOWS), name, "workflowName", "workflow")
+
+
+async def production_steps(flow: Flow, step: int, workflow: Json) -> list[Json]:
+    """The production steps of ``workflow``: the steps tasks can be created on."""
+    return items(await flow.read(step, GET_STEPS, {"flowId": workflow["Id"], "flag": "Production"}))

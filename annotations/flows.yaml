@@ -1522,3 +1522,82 @@ flows:
       - If a page upload fails midway, the document holds the pages uploaded so far (as in F3); the flow reports which pages succeeded and which failed, and phase 2 decides on cleanup.
       - Outputs - pageIds collects the Id of each created page, in page order; pageCount is the number of pages uploaded (the number of pages in the PDF on success). The page count comes from the local split, not from an API response, so it is not a step output.
       - Steps 4 (create file), 7 (create folder), 9 (create document), 10 (open batch) and 11 (upload pages) are writes, so the standard write policy applies - previewed under writeMode dry-run (nothing is sent), blocked under deny, sent under allow. None is destructive, so no extra confirmation is needed beyond the standard write policy.
+
+  - id: F17
+    title: Find workflows by name
+    composite: find_workflows
+    purpose: >-
+      List the workflows the caller has rights on, or look one up by its display name. The
+      results feed other composites, for example F1's workflowName or F18's workflowName.
+    surface: rest-v1
+    inputs:
+      - name: workflowName
+        type: string
+        required: false
+        meaning: >-
+          Optional display name of the workflow (its Name). Matched exactly, ignoring case and
+          surrounding spaces. Without it every workflow the caller can see is returned.
+    steps:
+      - op: GET /api/workflows
+        purpose: List the workflows the caller has rights on.
+        params: {}
+        select: >-
+          every item whose Name equals $input.workflowName when given, otherwise all items
+        onError: >-
+          Ask the user when no workflow has that name; offer the workflow names returned. A
+          workflow the caller has no rights on is not returned, so it looks the same as a
+          missing one.
+    outputs:
+      workflows: $step1.value
+    notes:
+      - The name is matched exactly after trimming and ignoring case; there is no substring or wildcard search. Call without workflowName to see every name.
+      - Only workflows the caller has rights on are returned; a workflow hidden by rights cannot be told apart from one that does not exist.
+      - Every step is a read; no write policy applies.
+
+  - id: F18
+    title: Find the steps of a workflow
+    composite: find_steps
+    purpose: >-
+      Turn a workflow name into its id and list the workflow's production steps, or look one
+      step up by name. The results feed other composites, for example F1's stepName.
+    surface: rest-v1
+    inputs:
+      - name: workflowName
+        type: string
+        required: true
+        meaning: >-
+          Display name of the workflow (its Name), matched exactly, ignoring case and
+          surrounding spaces.
+      - name: stepName
+        type: string
+        required: false
+        meaning: >-
+          Optional display name of a step (its Name), matched the same way. Without it every
+          production step of the workflow is returned.
+    steps:
+      - op: GET /api/workflows
+        purpose: Find the workflow.
+        params: {}
+        select: the item whose Name equals $input.workflowName
+        onError: >-
+          Ask the user: no match means the workflow does not exist or the caller has no rights
+          on it; offer the workflow names returned. Several workflows with that name are asked
+          about too.
+      - op: GET /api/workflows/{flowId}/steps
+        purpose: List the workflow's steps.
+        params:
+          flowId: $step1.Id
+          flag: Production
+        select: >-
+          every item whose Name equals $input.stepName when given, otherwise all items
+        onError: >-
+          Ask the user when no step has that name; offer the step names returned. A server
+          refusal here (for example WorkflowNotFound) stops the flow with the mapped IR error.
+    outputs:
+      workflow: $step1.Id
+      steps: $step2.value
+    notes:
+      - Only production steps are listed (flag Production), the same steps F1 can create tasks on; debug and deleted steps are left out.
+      - Names are matched exactly after trimming and ignoring case; there is no substring or wildcard search. Call without stepName to see every step name.
+      - The workflow output carries the workflow's Id, Name, FlowProgName and Status as returned by step 1.
+      - Every step is a read; no write policy applies.

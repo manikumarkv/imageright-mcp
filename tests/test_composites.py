@@ -245,6 +245,72 @@ async def test_create_task_dry_run_previews_the_write(preview: Harness) -> None:
     assert not preview.fake.writes
 
 
+# ------------------------------------------------------------------------------ F17
+
+
+async def test_find_workflows_lists_all_without_a_name(h: Harness) -> None:
+    payload = await h.call("ir_find_workflows")
+    workflows = done(payload)["workflows"]
+    assert [w["Name"] for w in workflows] == ["Claims Intake", "Underwriting"]
+    assert statuses(payload) == [(1, "getWorkflows", "done")]
+
+
+async def test_find_workflows_matches_the_name_ignoring_case_and_spaces(h: Harness) -> None:
+    [workflow] = done(await h.call("ir_find_workflows", workflowName=" claims INTAKE "))[
+        "workflows"
+    ]
+    assert workflow["Id"] == 11
+
+
+async def test_find_workflows_asks_for_an_unknown_name(h: Harness) -> None:
+    question = needs(await h.call("ir_find_workflows", workflowName="Nope"), "workflowName")
+    assert question["options"] == ["Claims Intake", "Underwriting"]
+
+
+# ------------------------------------------------------------------------------ F18
+
+
+async def test_find_steps_lists_the_production_steps(h: Harness) -> None:
+    payload = await h.call("ir_find_steps", workflowName="Claims Intake")
+    outputs = done(payload)
+    assert outputs["workflow"] == {"Id": 11, "Name": "Claims Intake"}
+    assert [(s["Id"], s["Name"]) for s in outputs["steps"]] == [(21, "Review"), (22, "Approve")]
+    assert statuses(payload) == [(1, "getWorkflows", "done"), (2, "getSteps", "done")]
+    [steps_call] = h.mock.calls("GET", "/api/workflows/11/steps")
+    assert ("flag", "Production") in steps_call.query
+
+
+async def test_find_steps_narrows_to_one_step(h: Harness) -> None:
+    outputs = done(await h.call("ir_find_steps", workflowName="Claims Intake", stepName="approve"))
+    assert [s["Id"] for s in outputs["steps"]] == [22]
+
+
+@pytest.mark.parametrize(
+    ("args", "input_name", "options"),
+    [
+        ({"workflowName": "Nope"}, "workflowName", ["Claims Intake", "Underwriting"]),
+        ({"workflowName": "Claims Intake", "stepName": "Nope"}, "stepName", ["Approve", "Review"]),
+    ],
+)
+async def test_find_steps_asks_for_unknown_names(
+    h: Harness, args: dict[str, Any], input_name: str, options: list[str]
+) -> None:
+    question = needs(await h.call("ir_find_steps", **args), input_name)
+    assert question["options"] == options
+
+
+async def test_find_steps_reports_a_server_refusal_on_the_steps_call(h: Harness) -> None:
+    h.mock.add(
+        "GET",
+        "/api/workflows/11/steps",
+        MockReply(status=400, json={"ErrorCode": 14, "Message": "WorkflowNotFound"}),
+    )
+    payload = await h.call("ir_find_steps", workflowName="Claims Intake")
+    assert payload["ok"] is False
+    assert payload["error"]["code"] == "IR-4003"
+    assert payload["error"]["failedStep"] == 2
+
+
 # ------------------------------------------------------------------------------ F9
 
 
