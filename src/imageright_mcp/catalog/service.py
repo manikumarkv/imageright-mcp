@@ -47,6 +47,12 @@ class CatalogError(Exception):
         return error
 
 
+def flow_order(flow_id: str) -> tuple[int, str]:
+    """Sort key for flow ids: numeric part first, so F10 follows F9 (F8b stays after F8)."""
+    digits = re.match(r"F(\d+)", flow_id)
+    return (int(digits.group(1)) if digits else 0, flow_id)
+
+
 def warning(code: str, name: str, message: str) -> dict[str, str]:
     return {"code": code, "name": name, "message": message}
 
@@ -85,7 +91,10 @@ class Catalog:
         self.baseline: str = raw["operations"]["baseline"]
         self.schemas: dict[str, dict[str, dict[str, Any]]] = raw["schemas"]["schemas"]
         self.matrix = raw["matrix"]
-        self.flows: dict[str, dict[str, Any]] = raw["flows"]["flows"]
+        # flows.json has sorted keys (F1, F10, F2, ...); keep them in flow order.
+        self.flows: dict[str, dict[str, Any]] = dict(
+            sorted(raw["flows"]["flows"].items(), key=lambda kv: flow_order(kv[0]))
+        )
         self.capabilities: dict[str, dict[str, Any]] = raw["capabilities"]["capabilities"]
         self.errors: dict[str, dict[str, Any]] = raw["errors"]["rest"]
         self.diff: dict[str, dict[str, dict[str, Any]]] = raw["version_diff"]["diff"]
@@ -741,7 +750,7 @@ class Catalog:
                 "InvalidParamValue",
                 f"No flow named {flow_id!r}.",
                 "Call ir_list_flows to see the flow ids.",
-                sorted(self.flows),
+                list(self.flows),
             )
         return flow
 

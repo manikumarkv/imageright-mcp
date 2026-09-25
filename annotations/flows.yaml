@@ -631,3 +631,85 @@ flows:
       - FileNumberPart2 and FileNumberPart3 are never sent.
       - Zero matches returns an empty list, not an error.
       - Validation needed - whether the server honours % wildcards in FileNumberPart1 has not been confirmed against a real server.
+
+  - id: F10
+    title: Create a file in a drawer
+    composite: create_file
+    purpose: >-
+      Create a new file under a drawer, with duplicate protection. The drawer code and the file
+      type name are turned into ids, and a file number that is already in use is rejected
+      before anything is written.
+    surface: rest-v1
+    inputs:
+      - name: drawerCode
+        type: string
+        required: true
+        meaning: Code of the drawer that receives the new file.
+      - name: description
+        type: string
+        required: true
+        meaning: Label for the new file; sent as its Name.
+      - name: fileType
+        type: string
+        required: true
+        meaning: Name of the file type to create.
+      - name: fileNumber
+        type: string
+        required: false
+        meaning: >-
+          Optional first part of the file number (FileNumberPart1), sent exactly as given with no
+          pattern handling. When left out, the server generates it from the file type's number
+          format.
+      - name: createdByApplication
+        type: string
+        required: true
+        meaning: Free-text name of the creating application, supplied by the user and recorded for auditing.
+      - name: isTemporary
+        type: boolean
+        required: false
+        default: false
+        meaning: Marks the new file as temporary.
+    steps:
+      - op: GET /api/drawers
+        purpose: Turn the drawer code into the drawer id.
+        params: {}
+        select: the item whose Name (the drawer code) equals $input.drawerCode
+        onError: >-
+          Ask the user when no drawer has that code; offer the drawer codes returned.
+      - op: GET /api/objecttypes/{standardObjectClass}
+        purpose: Turn the file type name into its id.
+        params:
+          standardObjectClass: File
+        select: the item whose Name equals $input.fileType
+        onError: >-
+          Ask the user when no file type has that name; present the full list of file type names
+          returned.
+      - op: POST /api/files/find
+        purpose: Make sure the file number is not already in use.
+        optional: only when $input.fileNumber is given
+        params:
+          FileNumberPart1: $input.fileNumber
+        select: >-
+          any match means the number is taken; the flow stops with an error and nothing is
+          created
+        onError: >-
+          A duplicate file number is an error, not a question - the create step is never reached.
+      - op: POST /api/files
+        purpose: Create the file.
+        params:
+          FileTypeId: $step2.Id
+          ParentId: $step1.Id
+          Name: $input.description
+          FileNumberPart1: $input.fileNumber, left out when not given
+          IsTemporary: $input.isTemporary
+          CreatedByApplication: $input.createdByApplication
+        onError: >-
+          A file number that does not fit the file type's number format is the usual cause of a
+          rejection.
+    outputs:
+      fileId: $step4.value
+    notes:
+      - Drawers have no separate code field; the drawer code is assumed to be the drawer's Name, as in F9.
+      - A file number that matches an existing file is rejected as an error (duplicate protection); the file is not created.
+      - FileNumberPart1 is sent exactly as given; FileNumberPart2 and FileNumberPart3 are never sent. Without a fileNumber the server generates the number.
+      - The create step is a write, so the standard write policy applies - previewed under writeMode dry-run, blocked under deny, sent under allow.

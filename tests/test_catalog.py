@@ -161,8 +161,8 @@ def test_capabilities_route_only_to_live_operations() -> None:
 def test_flows_f1_to_f8_reference_known_operations() -> None:
     flows = load("flows.json")["flows"]
     assert {f"F{n}" for n in range(1, 9)} <= set(flows)
-    # F8b is the SOAP ingest variant of F8; F9 is the search_files composite
-    assert set(flows) - {f"F{n}" for n in range(1, 9)} == {"F8b", "F9"}
+    # F8b: SOAP ingest variant of F8; F9: search_files composite; F10: create_file composite
+    assert set(flows) - {f"F{n}" for n in range(1, 9)} == {"F8b", "F9", "F10"}
     for flow in flows.values():
         for step in flow["steps"]:
             assert step["operationId"] in operations()

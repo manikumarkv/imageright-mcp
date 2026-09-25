@@ -279,6 +279,160 @@
       "title": "Create a workflow task from names",
       "versionCaveats": []
     },
+    "F10": {
+      "composite": "create_file",
+      "id": "F10",
+      "inputs": [
+        {
+          "meaning": "Code of the drawer that receives the new file.",
+          "name": "drawerCode",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Label for the new file; sent as its Name.",
+          "name": "description",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Name of the file type to create.",
+          "name": "fileType",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Optional first part of the file number (FileNumberPart1), sent exactly as given with no pattern handling. When left out, the server generates it from the file type's number format.",
+          "name": "fileNumber",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "meaning": "Free-text name of the creating application, supplied by the user and recorded for auditing.",
+          "name": "createdByApplication",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "default": false,
+          "meaning": "Marks the new file as temporary.",
+          "name": "isTemporary",
+          "required": false,
+          "type": "boolean"
+        }
+      ],
+      "notes": [
+        "Drawers have no separate code field; the drawer code is assumed to be the drawer's Name, as in F9.",
+        "A file number that matches an existing file is rejected as an error (duplicate protection); the file is not created.",
+        "FileNumberPart1 is sent exactly as given; FileNumberPart2 and FileNumberPart3 are never sent. Without a fileNumber the server generates the number.",
+        "The create step is a write, so the standard write policy applies - previewed under writeMode dry-run, blocked under deny, sent under allow."
+      ],
+      "outputs": {
+        "fileId": {
+          "from": "$step4.value",
+          "type": "int64"
+        }
+      },
+      "purpose": "Create a new file under a drawer, with duplicate protection. The drawer code and the file type name are turned into ids, and a file number that is already in use is rejected before anything is written.",
+      "steps": [
+        {
+          "inputsFrom": [],
+          "n": 1,
+          "onError": "Ask the user when no drawer has that code; offer the drawer codes returned.",
+          "operationId": "rest.v1.drawers.getDrawers",
+          "output": {
+            "select": "the item whose Name (the drawer code) equals $input.drawerCode",
+            "type": "DrawerModel[]"
+          },
+          "params": {},
+          "purpose": "Turn the drawer code into the drawer id.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [],
+          "n": 2,
+          "onError": "Ask the user when no file type has that name; present the full list of file type names returned.",
+          "operationId": "rest.v1.objecttypes.getTypesForClass",
+          "output": {
+            "select": "the item whose Name equals $input.fileType",
+            "type": "ObjectTypeDataResult[]"
+          },
+          "params": {
+            "standardObjectClass": "File"
+          },
+          "purpose": "Turn the file type name into its id.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.fileNumber",
+              "type": "string"
+            }
+          ],
+          "n": 3,
+          "onError": "A duplicate file number is an error, not a question - the create step is never reached.",
+          "operationId": "rest.v1.files.findFiles",
+          "optional": "only when $input.fileNumber is given",
+          "output": {
+            "select": "any match means the number is taken; the flow stops with an error and nothing is created",
+            "type": "FileDataResult[]"
+          },
+          "params": {
+            "FileNumberPart1": "$input.fileNumber"
+          },
+          "purpose": "Make sure the file number is not already in use.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.createdByApplication",
+              "type": "string"
+            },
+            {
+              "ref": "$input.description",
+              "type": "string"
+            },
+            {
+              "ref": "$input.fileNumber",
+              "type": "string"
+            },
+            {
+              "ref": "$input.isTemporary",
+              "type": "boolean"
+            },
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            },
+            {
+              "ref": "$step2.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 4,
+          "onError": "A file number that does not fit the file type's number format is the usual cause of a rejection.",
+          "operationId": "rest.v1.files.createFile",
+          "output": {
+            "type": "int64"
+          },
+          "params": {
+            "CreatedByApplication": "$input.createdByApplication",
+            "FileNumberPart1": "$input.fileNumber, left out when not given",
+            "FileTypeId": "$step2.Id",
+            "IsTemporary": "$input.isTemporary",
+            "Name": "$input.description",
+            "ParentId": "$step1.Id"
+          },
+          "purpose": "Create the file.",
+          "safety": "write"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Create a file in a drawer",
+      "versionCaveats": []
+    },
     "F2": {
       "id": "F2",
       "inputs": [

@@ -4413,7 +4413,8 @@
       ],
       "explanation": "Drawers are the top-level cabinets that hold files. Use the result to pick where a file lives.",
       "flows": [
-        "F9"
+        "F9",
+        "F10"
       ],
       "gotchas": [],
       "id": "rest.v1.drawers.getDrawers",
@@ -5130,7 +5131,8 @@
       ],
       "explanation": "Check first with POST /api/files/find; a duplicate file number is rejected.",
       "flows": [
-        "F3"
+        "F3",
+        "F10"
       ],
       "gotchas": [],
       "id": "rest.v1.files.createFile",
@@ -5388,7 +5390,8 @@
         "F1",
         "F3",
         "F7",
-        "F9"
+        "F9",
+        "F10"
       ],
       "gotchas": [
         "When an attribute criterion carries both an id and a name, the id is used."
@@ -10764,6 +10767,9 @@
       "deprecation": null,
       "errors": [],
       "explanation": "Type ids are needed when creating files, folders and documents. Use this for a global list and GET /api/containers/{objectId}/allowedtypes to see what a specific parent accepts.",
+      "flows": [
+        "F10"
+      ],
       "gotchas": [],
       "id": "rest.v1.objecttypes.getTypesForClass",
       "key": "GET /api/objecttypes/{standardObjectClass}",

@@ -1319,7 +1319,7 @@ def build_flows(ctx: Context) -> Json:
         }
     for op in ctx.operations.values():
         if "flows" in op:
-            op["flows"] = sorted(op["flows"])
+            op["flows"] = sorted(op["flows"], key=lambda f: (int(re.sub(r"\D.*", "", f[1:])), f))
     return flows
 
 
