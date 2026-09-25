@@ -1308,6 +1308,7 @@ def build_flows(ctx: Context) -> Json:
         flows[fid] = {
             "id": fid,
             "title": flow["title"],
+            **({"composite": flow["composite"]} if "composite" in flow else {}),
             "purpose": flow["purpose"],
             "surface": flow["surface"],
             "inputs": flow.get("inputs", []),

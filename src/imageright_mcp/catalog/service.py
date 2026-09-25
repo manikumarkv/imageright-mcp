@@ -822,6 +822,7 @@ class Catalog:
         answer.data = {
             "flowId": flow["id"],
             "title": flow["title"],
+            **({"composite": flow["composite"]} if "composite" in flow else {}),
             "purpose": flow["purpose"],
             "version": profile,
             "surfaces": surfaces,

@@ -11,9 +11,11 @@
 flows:
   - id: F1
     title: Create a workflow task from names
+    composite: create_task
     purpose: >-
-      Turn a workflow name, a step name and a target object into ids, check who may receive the
-      task and which priorities are allowed, then create the task.
+      Turn a workflow name, a step name, an optional assignee and a file number (optionally
+      narrowed to one document) into ids, check the priority against the step's allowed list,
+      then create the task. Anything missing or ambiguous is asked of the user, not failed.
     surface: rest-v1
     inputs:
       - name: workflowName
@@ -24,59 +26,98 @@ flows:
         type: string
         required: true
         meaning: Display name of the step the task should start on.
-      - name: targetObjectId
-        type: int64
-        required: true
-        meaning: File, folder or document the task is about (see flow F7 to find it).
-      - name: priority
-        type: int64
-        required: true
-        meaning: Desired priority; must be in the list step 4 returns.
-      - name: availableDate
-        type: date-time
-        required: true
-        meaning: When the task becomes workable; use now for immediate work.
-      - name: assigneeName
-        type: string
-        required: false
-        meaning: Optional user to assign the task to.
       - name: description
         type: string
         required: false
         meaning: Optional task description.
+      - name: assigneeUsername
+        type: string
+        required: false
+        meaning: Optional user name of the person to assign the task to.
+      - name: fileNumber
+        type: string
+        required: true
+        meaning: Number of the file the task is about; the file itself is the target by default.
+      - name: targetDocumentType
+        type: string
+        required: false
+        meaning: Optional document type name; when given, the target is a document of this type in the file.
+      - name: identifier
+        type: string
+        required: false
+        meaning: Optional document description that picks one document when several share the type.
+      - name: priority
+        type: int64
+        required: false
+        default: 5
+        meaning: Priority from 1 to 5; must be in the list step 4 returns.
+      - name: availableDate
+        type: date-time
+        required: false
+        default: now
+        meaning: When the task becomes workable.
     steps:
       - op: GET /api/workflows
         purpose: Find the workflow.
         params: {}
         select: the item whose Name equals $input.workflowName
-        onError: No match means the workflow does not exist or the caller has no rights on it.
+        onError: >-
+          Ask the user: no match means the workflow does not exist or the caller has no rights
+          on it; offer the workflow names returned.
       - op: GET /api/workflows/{flowId}/steps
         purpose: Find the starting step inside that workflow.
         params:
           flowId: $step1.Id
           flag: Production
         select: the item whose Name equals $input.stepName
+        onError: Ask the user to pick a step when no step name matches; offer the step names returned.
         alternatives:
           - GET /api/workflows/{flowProgName}/{stepProgName}
       - op: GET /api/steps/{stepId}/users
         purpose: Resolve the assignee among the users the step allows.
-        optional: only when an assignee is wanted
+        optional: only when $input.assigneeUsername is given
         params:
           stepId: $step2.Id
-        select: the item whose Name or FriendlyName equals $input.assigneeName
+        select: the item whose Name equals $input.assigneeUsername
+        onError: >-
+          Ask the user when the user name is not among the step's assignable users; offer the
+          names returned.
       - op: GET /api/steps/{stepId}/priorities
-        purpose: Check that the requested priority is permitted on this step.
+        purpose: Check that the requested priority (default 5) is permitted on this step.
         params:
           stepId: $step2.Id
-      - op: GET /api/steps/{stepId}/attributes
-        purpose: See whether the step defines mandatory task attributes that must be supplied.
-        optional: when the step has attribute rules
+        select: $input.priority, which must appear in the list
+        onError: Ask the user to choose one of the returned priorities when the requested one is not allowed.
+      - op: POST /api/files/find
+        purpose: Find the file by its number.
         params:
-          stepId: $step2.Id
+          FileNumberPart1: $input.fileNumber
+        select: the single match; it is the task target unless $input.targetDocumentType is given
+        onError: Ask the user when no file matches (unknown file number) or several files match.
+      - op: GET /api/containers/{objectId}/allowedtypes
+        purpose: Turn the document type name into its id.
+        optional: only when $input.targetDocumentType is given
+        params:
+          objectId: $step5.Id
+        select: the item whose Name equals $input.targetDocumentType
+        onError: Ask the user when the file does not accept a document type of that name.
+      - op: POST /api/documents/find
+        purpose: List the file's documents of that type and pick the target document.
+        optional: only when $input.targetDocumentType is given
+        params:
+          FileId: $step5.Id
+          DocumentTypeIds: [$step6.Id]
+        select: >-
+          exactly one document -> it is the target; several and $input.identifier given -> the
+          single document whose Description equals $input.identifier; several without an
+          identifier -> ask the user to pick
+        onError: >-
+          Ask the user: zero documents means the file has no documents of that type; several
+          documents with no Description matching the identifier means the user must refine it.
       - op: POST /api/tasks
         purpose: Create the task.
         params:
-          ObjectId: $input.targetObjectId
+          ObjectId: $step7.Id when a document type was given, otherwise $step5.Id
           StepId: $step2.Id
           Priority: $input.priority
           AvailableDate: $input.availableDate
@@ -84,9 +125,11 @@ flows:
           Description: $input.description
         onError: Priority or assignee outside the step's lists are the usual causes of a rejection.
     outputs:
-      taskId: $step6.Id
+      taskId: $step8.Id
       stepId: $step2.Id
     notes:
+      - Missing or unresolvable data (unknown workflow, step, user or file, ambiguous document) makes the composite ask the user for that piece (needs-input) rather than fail.
+      - UserId is the assignee's user id (AssigneeId in the composite); leave it out when no assignee is given.
       - Using the diary step instead of a regular step creates a diary entry rather than a task.
 
   - id: F2

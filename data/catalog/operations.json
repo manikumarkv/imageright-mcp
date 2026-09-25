@@ -3799,6 +3799,7 @@
         603
       ],
       "flows": [
+        "F1",
         "F5",
         "F7"
       ],
@@ -5381,6 +5382,7 @@
       ],
       "explanation": "All criteria are optional, but an empty search can be slow on large systems; always narrow it.",
       "flows": [
+        "F1",
         "F3",
         "F7"
       ],
@@ -10205,6 +10207,7 @@
       ],
       "explanation": "The file type's template restricts which folder and document types can be placed inside it. Pick DocumentTypeId or FolderTypeId from this list to avoid template errors.",
       "flows": [
+        "F1",
         "F3"
       ],
       "gotchas": [],
@@ -21468,9 +21471,6 @@
         310
       ],
       "explanation": "Set mandatory attributes before releasing a task, or the release fails.",
-      "flows": [
-        "F1"
-      ],
       "gotchas": [],
       "id": "rest.v1.workflow.getStepAttributes",
       "key": "GET /api/steps/{stepId}/attributes",
