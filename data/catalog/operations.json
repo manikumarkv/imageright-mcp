@@ -4412,6 +4412,9 @@
         400
       ],
       "explanation": "Drawers are the top-level cabinets that hold files. Use the result to pick where a file lives.",
+      "flows": [
+        "F9"
+      ],
       "gotchas": [],
       "id": "rest.v1.drawers.getDrawers",
       "key": "GET /api/drawers",
@@ -5384,7 +5387,8 @@
       "flows": [
         "F1",
         "F3",
-        "F7"
+        "F7",
+        "F9"
       ],
       "gotchas": [
         "When an attribute criterion carries both an id and a name, the id is used."

@@ -564,3 +564,70 @@ flows:
       page: $step3.value
     notes:
       - AddConvertedPage accepts a batch id of -1 to create a batch on the fly; whether phase 2 needs it is still open.
+
+  - id: F9
+    title: Search files by number, pattern or drawer
+    composite: search_files
+    purpose: >-
+      Find the files that match any combination of number, number pattern, drawer and
+      temporary/deleted state. The results feed other composites, for example F1's fileNumber
+      or F5's source and target.
+    surface: rest-v1
+    inputs:
+      - name: fileNumber
+        type: string
+        required: false
+        meaning: >-
+          Exact first part of the file number (FileNumberPart1). Either this or filePattern is
+          required.
+      - name: filePattern
+        type: string
+        required: false
+        meaning: >-
+          SQL LIKE pattern on the first part of the file number, with % as the wildcard (e.g.
+          TEMP%). Either this or fileNumber is required.
+      - name: drawerCode
+        type: string
+        required: false
+        meaning: Optional drawer code that limits the search to one drawer.
+      - name: isTemp
+        type: boolean
+        required: false
+        default: false
+        meaning: >-
+          Tri-state. true or false filters on temporary files; an explicit null does not filter.
+      - name: isDeleted
+        type: boolean
+        required: false
+        default: false
+        meaning: >-
+          Tri-state. true or false filters on deleted files; an explicit null does not filter.
+    steps:
+      - op: GET /api/drawers
+        purpose: Turn the drawer code into the drawer id.
+        optional: only when $input.drawerCode is given
+        params: {}
+        select: the item whose Name (the drawer code) equals $input.drawerCode
+        onError: >-
+          Ask the user when no drawer has that code; offer the drawer codes returned.
+      - op: POST /api/files/find
+        purpose: Search for the files.
+        params:
+          FileNumberPart1: $input.fileNumber when given, otherwise $input.filePattern
+          ParentId: $step1.Id when $input.drawerCode is given, otherwise left out
+          IsTemporary: $input.isTemp, left out when null
+          IsDeleted: $input.isDeleted, left out when null
+        select: >-
+          all items, returned as the FileDataResult list; zero matches is a normal empty result,
+          not an error
+        onError: >-
+          A call with neither $input.fileNumber nor $input.filePattern is rejected before this
+          step as needs-input (ask the user for one of them). Validation needed - whether the
+          server honours % wildcards in FileNumberPart1 is unconfirmed against a real server.
+    outputs:
+      files: $step2.value
+    notes:
+      - fileNumber or filePattern is required; a call with neither is rejected as needs-input and no request is sent.
+      - FileNumberPart2 and FileNumberPart3 are never sent.
+      - Zero matches returns an empty list, not an error.
+      - Validation needed - whether the server honours % wildcards in FileNumberPart1 has not been confirmed against a real server.
