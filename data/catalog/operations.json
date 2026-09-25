@@ -5391,7 +5391,8 @@
         "F3",
         "F7",
         "F9",
-        "F10"
+        "F10",
+        "F11"
       ],
       "gotchas": [
         "When an attribute criterion carries both an id and a name, the id is used."
@@ -5820,6 +5821,9 @@
         603,
         901,
         1002
+      ],
+      "flows": [
+        "F11"
       ],
       "gotchas": [],
       "id": "rest.v1.files.updateFileProperties",

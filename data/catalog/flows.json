@@ -433,6 +433,124 @@
       "title": "Create a file in a drawer",
       "versionCaveats": []
     },
+    "F11": {
+      "composite": "update_file",
+      "id": "F11",
+      "inputs": [
+        {
+          "meaning": "Current first part of the file number (FileNumberPart1), used only to find the file.",
+          "name": "fileNumber",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "New first part of the file number (FileNumberPart1). Either this or newDescription is required.",
+          "name": "newFileNumber",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "meaning": "New label for the file; sent as its Name. Either this or newFileNumber is required.",
+          "name": "newDescription",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "notes": [
+        "newFileNumber or newDescription is required; a call with neither is rejected as needs-input and no request is sent.",
+        "Scope is the file number and description only; drawer, file type and attribute changes are not part of this flow.",
+        "A new file number that matches a different existing file is rejected as an error (duplicate protection); the file is not updated.",
+        "FileNumberPart1 is sent exactly as given; FileNumberPart2 and FileNumberPart3 are never sent.",
+        "The update step is a write, so the standard write policy applies - previewed under writeMode dry-run, blocked under deny, sent under allow.",
+        "The update call returns no body, so the flow outputs the id of the updated file (from step 1); fetch the file again to see its new values."
+      ],
+      "outputs": {
+        "fileId": {
+          "from": "$step1.Id",
+          "type": "int64"
+        }
+      },
+      "purpose": "Rename a file's number and/or description, with duplicate protection. The file is found by its current number, and a new number that another file already uses is rejected before anything is written.",
+      "steps": [
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.fileNumber",
+              "type": "string"
+            }
+          ],
+          "n": 1,
+          "onError": "Ask the user when nothing matches (wrong number?). Ask the user to pick one when more than one file matches.",
+          "operationId": "rest.v1.files.findFiles",
+          "output": {
+            "select": "the single match; its Id is the file to update",
+            "type": "FileDataResult[]"
+          },
+          "params": {
+            "FileNumberPart1": "$input.fileNumber"
+          },
+          "purpose": "Find the file to update.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.newFileNumber",
+              "type": "string"
+            }
+          ],
+          "n": 2,
+          "onError": "A duplicate file number is an error, not a question - the update step is never reached.",
+          "operationId": "rest.v1.files.findFiles",
+          "optional": "only when $input.newFileNumber is given",
+          "output": {
+            "select": "any match whose Id differs from $step1.Id means the number is taken; the flow stops with an error and nothing is updated",
+            "type": "FileDataResult[]"
+          },
+          "params": {
+            "FileNumberPart1": "$input.newFileNumber"
+          },
+          "purpose": "Make sure the new file number is not already in use by another file.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.newDescription",
+              "type": "string"
+            },
+            {
+              "ref": "$input.newFileNumber",
+              "type": "string"
+            },
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 3,
+          "onError": "A file number that does not fit the file type's number format is the usual cause of a rejection.",
+          "operationId": "rest.v1.files.updateFileProperties",
+          "output": {
+            "type": null
+          },
+          "params": {
+            "FileNumberPart1": "$input.newFileNumber, left out when not given",
+            "Name": "$input.newDescription, left out when not given",
+            "fileId": "$step1.Id"
+          },
+          "purpose": "Update the file's number and/or description.",
+          "safety": "write"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Update a file's number and/or description",
+      "versionCaveats": [
+        "Step 3 (rest.v1.files.updateFileProperties) is deprecated in 7.2.",
+        "Step 3 (rest.v1.files.updateFileProperties) is deprecated in 24.2.",
+        "Step 3 (rest.v1.files.updateFileProperties) is deprecated in 25.1."
+      ]
+    },
     "F2": {
       "id": "F2",
       "inputs": [

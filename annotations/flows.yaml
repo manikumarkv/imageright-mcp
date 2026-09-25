@@ -713,3 +713,65 @@ flows:
       - A file number that matches an existing file is rejected as an error (duplicate protection); the file is not created.
       - FileNumberPart1 is sent exactly as given; FileNumberPart2 and FileNumberPart3 are never sent. Without a fileNumber the server generates the number.
       - The create step is a write, so the standard write policy applies - previewed under writeMode dry-run, blocked under deny, sent under allow.
+
+  - id: F11
+    title: Update a file's number and/or description
+    composite: update_file
+    purpose: >-
+      Rename a file's number and/or description, with duplicate protection. The file is found by
+      its current number, and a new number that another file already uses is rejected before
+      anything is written.
+    surface: rest-v1
+    inputs:
+      - name: fileNumber
+        type: string
+        required: true
+        meaning: >-
+          Current first part of the file number (FileNumberPart1), used only to find the file.
+      - name: newFileNumber
+        type: string
+        required: false
+        meaning: >-
+          New first part of the file number (FileNumberPart1). Either this or newDescription is
+          required.
+      - name: newDescription
+        type: string
+        required: false
+        meaning: New label for the file; sent as its Name. Either this or newFileNumber is required.
+    steps:
+      - op: POST /api/files/find
+        purpose: Find the file to update.
+        params:
+          FileNumberPart1: $input.fileNumber
+        select: the single match; its Id is the file to update
+        onError: >-
+          Ask the user when nothing matches (wrong number?). Ask the user to pick one when more
+          than one file matches.
+      - op: POST /api/files/find
+        purpose: Make sure the new file number is not already in use by another file.
+        optional: only when $input.newFileNumber is given
+        params:
+          FileNumberPart1: $input.newFileNumber
+        select: >-
+          any match whose Id differs from $step1.Id means the number is taken; the flow stops
+          with an error and nothing is updated
+        onError: >-
+          A duplicate file number is an error, not a question - the update step is never reached.
+      - op: POST /api/files/{fileId}/properties
+        purpose: Update the file's number and/or description.
+        params:
+          fileId: $step1.Id
+          FileNumberPart1: $input.newFileNumber, left out when not given
+          Name: $input.newDescription, left out when not given
+        onError: >-
+          A file number that does not fit the file type's number format is the usual cause of a
+          rejection.
+    outputs:
+      fileId: $step1.Id
+    notes:
+      - newFileNumber or newDescription is required; a call with neither is rejected as needs-input and no request is sent.
+      - Scope is the file number and description only; drawer, file type and attribute changes are not part of this flow.
+      - A new file number that matches a different existing file is rejected as an error (duplicate protection); the file is not updated.
+      - FileNumberPart1 is sent exactly as given; FileNumberPart2 and FileNumberPart3 are never sent.
+      - The update step is a write, so the standard write policy applies - previewed under writeMode dry-run, blocked under deny, sent under allow.
+      - The update call returns no body, so the flow outputs the id of the updated file (from step 1); fetch the file again to see its new values.
