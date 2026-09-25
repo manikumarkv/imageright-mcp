@@ -3,8 +3,8 @@
 An [MCP](https://modelcontextprotocol.io) server that helps AI coding assistants work correctly against
 Vertafore ImageRight on your product version (24.x, 25.x, or 7.2).
 
-> **Status: pre-alpha (phase 2 complete: 26 tools — 15 API explorer + 11 composite workflow tools; 865
-> tests green).** The offline API explorer, version-matrix tools, error catalog, the version-aware client
+> **Status: pre-alpha (phase 2 complete: 26 tools — 15 API explorer + 11 composite workflow tools, plus 5
+> test prompts; 873 tests green).** The offline API explorer, version-matrix tools, error catalog, the version-aware client
 > (`ir_call`, with dry-run previews) and the composite workflow tools work. Capability param mappings are
 > not yet verified against a live server; hardening and a live smoke suite follow in M7.
 
@@ -263,6 +263,24 @@ bare error.
 
 **Errors.** Every failure carries a stable IR code, plus the server's original detail in
 `error.native` (`null` when the error happened locally). See [Errors](#errors).
+
+## Prompts
+
+Ready-made test scenarios. In a chat client (Claude Desktop, Claude Code) they appear as slash
+commands; pick one, fill in its arguments, and the model runs the tools in order. A prompt only
+writes instructions, it never calls a tool itself, so in the MCP Inspector you see the rendered
+text. Prompts that write always preview first (`dryRun: true`) and wait for your go-ahead.
+
+| Prompt | Arguments | What it does |
+|---|---|---|
+| `smoke_test` | `fileNumber` (optional) | Read-only check: config, connection, workflows and steps, one file search; a pass / fail table |
+| `create_task_guided` | `fileNumber`; `workflowName`, `stepName` (optional) | Find the workflow and step, preview the task, create it after you confirm |
+| `find_documents_in_file` | `fileNumber`; `folderName` (optional) | List the documents of one file (or one folder of it) |
+| `upload_document_guided` | `fileNumber`, `drawerCode`, `folderTypeName`, `docTypeCode`, `pdfFile`; `identifier` (optional) | Preview a PDF upload, upload it after you confirm |
+| `explain_error` | `errorCode` | Explain an IR code, native code, HTTP status or fault text |
+
+Actual writes also need `IMAGERIGHT_WRITE_MODE=allow`; otherwise the confirmed call stays a
+preview and the prompt tells you so.
 
 ## Errors
 
