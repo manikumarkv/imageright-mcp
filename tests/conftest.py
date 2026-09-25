@@ -275,7 +275,9 @@ class FakeImageRight:
                 status=201, json={"Id": self.new_id(), "Pagenumber": self.pages_created}
             )
         if op == "rest.v1.tasks.createTask":
-            return MockReply(json={"Id": self.new_id(), **body})
+            # The created task echoes a Code of its own; a 200 body is never an error model.
+            new_id = self.new_id()
+            return MockReply(json={"Id": new_id, "Code": f"T-{new_id}", **body})
         if op == "rest.v1.documents.moveDocument":
             return MockReply(json={"FailedDocumentMoves": self.move_failures, "DocumentIdMap": {}})
         if op == "rest.v2.documents.copyDocumentV2":

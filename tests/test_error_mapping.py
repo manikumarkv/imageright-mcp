@@ -292,6 +292,17 @@ def test_202_is_data_not_ready_only_on_ops_that_raise_it(mapper: ErrorMapper) ->
     assert mapper.from_rest(201, 5) is None
 
 
+@pytest.mark.parametrize(
+    "body",
+    [{"id": 8001, "code": "T-8001"}, {"Id": 8001, "Code": 205}, {"ErrorCode": "Whatever"}],
+)
+def test_success_bodies_with_a_code_field_are_not_errors(
+    mapper: ErrorMapper, body: dict[str, Any]
+) -> None:
+    for status in (200, 201):
+        assert mapper.from_rest(status, body) is None
+
+
 def test_hint_templates_use_operation_context(mapper: ErrorMapper) -> None:
     error = mapper.from_rest(
         400, {"ErrorCode": 212}, ErrorContext(operation_id="rest.v1.taskactions.releaseTask")
