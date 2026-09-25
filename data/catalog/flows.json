@@ -825,6 +825,142 @@
       "title": "Move or copy file content by document type",
       "versionCaveats": []
     },
+    "F14": {
+      "composite": "find_documents",
+      "id": "F14",
+      "inputs": [
+        {
+          "meaning": "First part of the file number (FileNumberPart1) of the file to search in.",
+          "name": "fileNumber",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Optional drawer code; when given, the file must sit in this drawer or the flow stops with an error.",
+          "name": "drawerCode",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "meaning": "Optional document type codes (codes, not names or ids); only documents of these types are returned. Every code must resolve to a document type.",
+          "name": "docTypeCodes",
+          "required": false,
+          "type": "string[]"
+        },
+        {
+          "meaning": "Optional text matched against the document description as a contains (substring) match, not an exact match.",
+          "name": "identifier",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "notes": [
+        "The file lookup must resolve to exactly one file; no match or more than one match is an error (IR-4001). The user is not asked to pick.",
+        "Drawers have no separate code field; the drawer code is assumed to be the drawer's Name, as in F9. The drawer check compares the found file's DrawerId with the drawer's Id; a mismatch is an error (IR-4107), not an empty result.",
+        "Validation needed - found documents only carry DocumentTypeId and DocumentTypeDescription, so type codes are turned into ids via GET /api/objecttypes/Document; which object type field holds the code must be confirmed on a test server. An unknown code is an error (IR-4006) naming the code.",
+        "Validation needed - identifier is meant as a contains (substring) match on the document description, but the server-side semantics of Description (exact vs contains) are unconfirmed on a real server. If the server matches exactly, the composite must filter client-side instead.",
+        "Deleted documents are never returned (Deleted is always sent as false).",
+        "Zero matching documents returns an empty list, not an error.",
+        "Every step is a read; no write policy applies."
+      ],
+      "outputs": {
+        "documents": {
+          "from": "$step4.value",
+          "type": "DocumentDataResult[]"
+        }
+      },
+      "purpose": "Find the documents inside one file, optionally narrowed to certain document type codes and/or a description substring. The file is found by its number and, when a drawer code is given, checked to sit in that drawer.",
+      "steps": [
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.fileNumber",
+              "type": "string"
+            }
+          ],
+          "n": 1,
+          "onError": "No match is an error, not a question - the flow stops with IR-4001 (ObjectNotFound, \"no file has number <fileNumber>\") and no documents are searched. More than one match is also an error - the flow stops with IR-4001 (\"file number <fileNumber> matches more than one file\") rather than guessing which file to search.",
+          "operationId": "rest.v1.files.findFiles",
+          "output": {
+            "select": "the single match; its Id is the file to search in",
+            "type": "FileDataResult[]"
+          },
+          "params": {
+            "FileNumberPart1": "$input.fileNumber"
+          },
+          "purpose": "Find the file to search in.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [],
+          "n": 2,
+          "onError": "No drawer with that code is an error - the flow stops with IR-4001 (ObjectNotFound, \"no drawer has code <drawerCode>\"). A file whose DrawerId differs from the drawer's Id is also an error - the flow stops with IR-4107 (InvalidTarget, \"file <fileNumber> is not in drawer <drawerCode>\") and no documents are searched.",
+          "operationId": "rest.v1.drawers.getDrawers",
+          "optional": "only when $input.drawerCode is given",
+          "output": {
+            "select": "the item whose Name (the drawer code) equals $input.drawerCode; its Id must equal $step1.DrawerId",
+            "type": "DrawerModel[]"
+          },
+          "params": {},
+          "purpose": "Turn the drawer code into the drawer id and check the file sits in that drawer.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [],
+          "n": 3,
+          "onError": "A code that matches no document type is an error - the flow stops with IR-4006 (TypeNotFound, \"no document type has code <code>\", naming every unknown code) and no documents are searched.",
+          "operationId": "rest.v1.objecttypes.getTypesForClass",
+          "optional": "only when $input.docTypeCodes is given",
+          "output": {
+            "select": "for each code in $input.docTypeCodes, the item whose code matches it; their Ids are the document type ids to filter on. Validation needed - which ObjectTypeDataResult field (Name, Description or AutomationId) holds the type code is unconfirmed.",
+            "type": "ObjectTypeDataResult[]"
+          },
+          "params": {
+            "standardObjectClass": "Document"
+          },
+          "purpose": "Turn the document type codes into document type ids.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.docTypeCodes",
+              "type": "string[]"
+            },
+            {
+              "ref": "$input.identifier",
+              "type": "string"
+            },
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            },
+            {
+              "ref": "$step3.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 4,
+          "onError": "Validation needed - whether the server treats Description as a contains or an exact match is unconfirmed; if it matches exactly, the composite leaves Description out and keeps only the documents whose Description contains $input.identifier as a substring.",
+          "operationId": "rest.v1.documents.findDocuments",
+          "output": {
+            "select": "all items, returned as the DocumentDataResult list; zero matches is a normal empty result, not an error",
+            "type": "DocumentDataResult[]"
+          },
+          "params": {
+            "Deleted": false,
+            "Description": "$input.identifier, left out when not given",
+            "DocumentTypeIds": "$step3.Id of every resolved type when $input.docTypeCodes is given, otherwise left out",
+            "FileId": "$step1.Id"
+          },
+          "purpose": "Search the file for matching documents.",
+          "safety": "read"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Find documents in a file",
+      "versionCaveats": []
+    },
     "F2": {
       "id": "F2",
       "inputs": [

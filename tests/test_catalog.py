@@ -162,8 +162,16 @@ def test_flows_f1_to_f8_reference_known_operations() -> None:
     flows = load("flows.json")["flows"]
     assert {f"F{n}" for n in range(1, 9)} <= set(flows)
     # F8b: SOAP ingest variant; F9: search_files; F10: create_file; F11: update_file;
-    # F12: merge_files; F13: move_file_content
-    assert set(flows) - {f"F{n}" for n in range(1, 9)} == {"F8b", "F9", "F10", "F11", "F12", "F13"}
+    # F12: merge_files; F13: move_file_content; F14: find_documents
+    assert set(flows) - {f"F{n}" for n in range(1, 9)} == {
+        "F8b",
+        "F9",
+        "F10",
+        "F11",
+        "F12",
+        "F13",
+        "F14",
+    }
     for flow in flows.values():
         for step in flow["steps"]:
             assert step["operationId"] in operations()
