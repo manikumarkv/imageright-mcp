@@ -190,6 +190,10 @@ class ErrorMapper:
     ) -> dict[str, Any] | None:
         """Classify a REST response; None when it is a success."""
         context = context or ErrorContext()
+        if 200 <= status < 300 and status != 202:
+            # A success body is the result, never an error model: a created object may well
+            # carry its own "code" field. Only 202 can carry DataNotReady.
+            return None
         if isinstance(body, bytes | str):
             try:
                 body = json.loads(body) if body else None
