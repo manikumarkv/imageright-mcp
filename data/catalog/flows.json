@@ -42,6 +42,12 @@
           "type": "string"
         },
         {
+          "meaning": "Description of the folder (inside the file) that holds the target document. Required when targetDocumentType is given, because documents always live under a folder; ignored otherwise.",
+          "name": "folderName",
+          "required": false,
+          "type": "string"
+        },
+        {
           "meaning": "Optional document description that picks one document when several share the type.",
           "name": "identifier",
           "required": false,
@@ -63,7 +69,8 @@
         }
       ],
       "notes": [
-        "Missing or unresolvable data (unknown workflow, step, user or file, ambiguous document) makes the composite ask the user for that piece (needs-input) rather than fail.",
+        "Missing or unresolvable data (unknown workflow, step, user or file, ambiguous document) makes the composite ask the user for that piece (needs-input) rather than fail. The folder is the exception - when a document is the target, a folder that is missing or matches more than once is an error (IR-4001).",
+        "Documents always live under a folder, never directly in a file. When targetDocumentType is given, folderName is required and the document search is scoped to that folder (ParentId); without targetDocumentType the file is the target and folderName is ignored.",
         "UserId is the assignee's user id (AssigneeId in the composite); leave it out when no assignee is given.",
         "Using the diary step instead of a regular step creates a diary entry rather than a task."
       ],
@@ -73,11 +80,11 @@
           "type": "int64"
         },
         "taskId": {
-          "from": "$step8.Id",
+          "from": "$step9.Id",
           "type": "int64"
         }
       },
-      "purpose": "Turn a workflow name, a step name, an optional assignee and a file number (optionally narrowed to one document) into ids, check the priority against the step's allowed list, then create the task. Anything missing or ambiguous is asked of the user, not failed.",
+      "purpose": "Turn a workflow name, a step name, an optional assignee and a file number (optionally narrowed to one document inside a named folder) into ids, check the priority against the step's allowed list, then create the task. Anything missing or ambiguous is asked of the user, not failed.",
       "steps": [
         {
           "inputsFrom": [],
@@ -180,11 +187,37 @@
         {
           "inputsFrom": [
             {
+              "ref": "$input.folderName",
+              "type": "string"
+            },
+            {
               "ref": "$step5.Id",
               "type": "int64"
             }
           ],
           "n": 6,
+          "onError": "A missing folderName is asked of the user (needs-input) before this step. No match is an error - the flow stops with IR-4001 (ObjectNotFound, \"file <fileNumber> has no folder <folderName>\") and no task is created. More than one match is also an error - the flow stops with IR-4001 (\"folder <folderName> matches more than one folder in file <fileNumber>\") rather than guessing.",
+          "operationId": "rest.v1.folders.findFolders",
+          "optional": "only when $input.targetDocumentType is given",
+          "output": {
+            "select": "the single match; its Id is the folder the document search is scoped to",
+            "type": "FolderDataResult[]"
+          },
+          "params": {
+            "Description": "$input.folderName",
+            "FileId": "$step5.Id"
+          },
+          "purpose": "Find the folder, inside the file, that holds the target document.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step5.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 7,
           "onError": "Ask the user when the file does not accept a document type of that name.",
           "operationId": "rest.v1.objecttypes.getAllowedTypesForContainer",
           "optional": "only when $input.targetDocumentType is given",
@@ -207,9 +240,13 @@
             {
               "ref": "$step6.Id",
               "type": "int64"
+            },
+            {
+              "ref": "$step7.Id",
+              "type": "int64"
             }
           ],
-          "n": 7,
+          "n": 8,
           "onError": "Ask the user: zero documents means the file has no documents of that type; several documents with no Description matching the identifier means the user must refine it.",
           "operationId": "rest.v1.documents.findDocuments",
           "optional": "only when $input.targetDocumentType is given",
@@ -219,11 +256,12 @@
           },
           "params": {
             "DocumentTypeIds": [
-              "$step6.Id"
+              "$step7.Id"
             ],
-            "FileId": "$step5.Id"
+            "FileId": "$step5.Id",
+            "ParentId": "$step6.Id"
           },
-          "purpose": "List the file's documents of that type and pick the target document.",
+          "purpose": "List the folder's documents of that type and pick the target document.",
           "safety": "read"
         },
         {
@@ -253,11 +291,11 @@
               "type": "int64"
             },
             {
-              "ref": "$step7.Id",
+              "ref": "$step8.Id",
               "type": "int64"
             }
           ],
-          "n": 8,
+          "n": 9,
           "onError": "Priority or assignee outside the step's lists are the usual causes of a rejection.",
           "operationId": "rest.v1.tasks.createTask",
           "output": {
@@ -266,7 +304,7 @@
           "params": {
             "AvailableDate": "$input.availableDate",
             "Description": "$input.description",
-            "ObjectId": "$step7.Id when a document type was given, otherwise $step5.Id",
+            "ObjectId": "$step8.Id when a document type was given, otherwise $step5.Id",
             "Priority": "$input.priority",
             "StepId": "$step2.Id",
             "UserId": "$step3.Id"
@@ -669,6 +707,12 @@
           "type": "string"
         },
         {
+          "meaning": "Description of the folder (inside the target file) that receives the documents; documents always live under a folder, never directly in a file.",
+          "name": "targetFolderName",
+          "required": true,
+          "type": "string"
+        },
+        {
           "default": [
             "All"
           ],
@@ -687,8 +731,9 @@
       ],
       "notes": [
         "Both lookups must resolve to exactly one file; no match or more than one match is an error (IR-4001) and no document is transferred. The user is not asked to pick.",
+        "Documents always live under a folder, never directly in a file. The documents go into the folder of the target file whose description is targetFolderName; no match or more than one match is an error (IR-4001) and nothing is transferred. The source side is not narrowed by folder.",
         "The source file is never deleted. Move mode relocates its documents and leaves the file empty; copy mode leaves it untouched.",
-        "Exactly one of steps 4 and 5 runs, chosen by mode, so exactly one of moveResult (DocumentMoveResult) and copyResult (DocumentActionResult) is set. Both carry DocumentIdMap and PageIdMap (old id to new id).",
+        "Exactly one of steps 5 and 6 runs, chosen by mode, so exactly one of moveResult (DocumentMoveResult) and copyResult (DocumentActionResult) is set. Both carry DocumentIdMap and PageIdMap (old id to new id).",
         "Copying only exists in REST v2 (POST /api/v2/documents/copy); there is no v1 copy call. Moving uses the v1 call, with POST /api/v2/documents/move as the version alternative.",
         "The copy step leaves CopyOption out, so the server's default copy kind applies (Logical reference or physical copy). Validation needed - that default is unconfirmed.",
         "Validation needed - document type matching is by type code, not name, but a found document only carries DocumentTypeId and DocumentTypeDescription. Turning codes into DocumentTypeIds (e.g. from GET /api/objecttypes/{standardObjectClass} with Document) and filtering on those is a likely route, but it is unconfirmed which object type field holds the code.",
@@ -696,15 +741,15 @@
       ],
       "outputs": {
         "copyResult": {
-          "from": "$step5.value",
+          "from": "$step6.value",
           "type": "DocumentActionResult"
         },
         "moveResult": {
-          "from": "$step4.value",
+          "from": "$step5.value",
           "type": "DocumentMoveResult"
         }
       },
-      "purpose": "Transfer documents from a source file to a target file, optionally only those of certain document types, by moving or copying them. The source file itself always stays in place - a move leaves it empty, a copy leaves it untouched. Unlike F12 (merge), nothing is deleted.",
+      "purpose": "Transfer documents from a source file into a named folder of a target file, optionally only those of certain document types, by moving or copying them. The source file itself always stays in place - a move leaves it empty, a copy leaves it untouched. Unlike F12 (merge), nothing is deleted.",
       "steps": [
         {
           "inputsFrom": [
@@ -749,11 +794,36 @@
         {
           "inputsFrom": [
             {
-              "ref": "$step1.Id",
+              "ref": "$input.targetFolderName",
+              "type": "string"
+            },
+            {
+              "ref": "$step2.Id",
               "type": "int64"
             }
           ],
           "n": 3,
+          "onError": "No match is an error - the flow stops with IR-4001 (ObjectNotFound, \"file <targetFileNumber> has no folder <targetFolderName>\") and nothing is transferred. More than one match is also an error - the flow stops with IR-4001 (\"folder <targetFolderName> matches more than one folder in file <targetFileNumber>\") rather than guessing.",
+          "operationId": "rest.v1.folders.findFolders",
+          "output": {
+            "select": "the single match; its Id is the target folder",
+            "type": "FolderDataResult[]"
+          },
+          "params": {
+            "Description": "$input.targetFolderName",
+            "FileId": "$step2.Id"
+          },
+          "purpose": "Find the folder, inside the target file, that receives the documents.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 4,
           "onError": "When no document is left after filtering, the flow stops before the write step and reports that there is nothing to transfer (an empty result, not an error).",
           "operationId": "rest.v1.documents.findDocuments",
           "output": {
@@ -773,15 +843,15 @@
           ],
           "inputsFrom": [
             {
-              "ref": "$step2.Id",
+              "ref": "$step3.Id",
               "type": "int64"
             },
             {
-              "ref": "$step3.Id",
+              "ref": "$step4.Id",
               "type": "int64"
             }
           ],
-          "n": 4,
+          "n": 5,
           "onError": "The call can partly succeed. Check FailedDocumentMoves (and Error) in the result and report every document that failed alongside the ones that moved - never drop failures silently.",
           "operationId": "rest.v1.documents.moveDocument",
           "optional": "only when $input.mode is move",
@@ -789,24 +859,24 @@
             "type": "DocumentMoveResult"
           },
           "params": {
-            "DocumentIds": "$step3.Id",
-            "TargetParentId": "$step2.Id"
+            "DocumentIds": "$step4.Id",
+            "TargetParentId": "$step3.Id"
           },
-          "purpose": "Move the selected documents into the target file.",
+          "purpose": "Move the selected documents into the target folder.",
           "safety": "write"
         },
         {
           "inputsFrom": [
             {
-              "ref": "$step2.Id",
+              "ref": "$step3.Id",
               "type": "int64"
             },
             {
-              "ref": "$step3.Id",
+              "ref": "$step4.Id",
               "type": "int64"
             }
           ],
-          "n": 5,
+          "n": 6,
           "onError": "The call can partly succeed. Check FailedObjects in the result and report every document that failed alongside the ones that were copied - never drop failures silently.",
           "operationId": "rest.v2.documents.copyDocumentV2",
           "optional": "only when $input.mode is copy",
@@ -814,10 +884,10 @@
             "type": "DocumentActionResult"
           },
           "params": {
-            "DocumentIds": "$step3.Id",
-            "TargetId": "$step2.Id"
+            "DocumentIds": "$step4.Id",
+            "TargetId": "$step3.Id"
           },
-          "purpose": "Copy the selected documents into the target file.",
+          "purpose": "Copy the selected documents into the target folder.",
           "safety": "write"
         }
       ],
@@ -842,6 +912,12 @@
           "type": "string"
         },
         {
+          "meaning": "Optional description of a folder inside the file; when given, only documents in that folder are returned and the folder must exist.",
+          "name": "folderName",
+          "required": false,
+          "type": "string"
+        },
+        {
           "meaning": "Optional document type codes (codes, not names or ids); only documents of these types are returned. Every code must resolve to a document type.",
           "name": "docTypeCodes",
           "required": false,
@@ -856,6 +932,7 @@
       ],
       "notes": [
         "The file lookup must resolve to exactly one file; no match or more than one match is an error (IR-4001). The user is not asked to pick.",
+        "When folderName is given, the search is narrowed to that folder (ParentId); a folder that is missing or matches more than once is an error (IR-4001). Without folderName the whole file is searched.",
         "Drawers have no separate code field; the drawer code is assumed to be the drawer's Name, as in F9. The drawer check compares the found file's DrawerId with the drawer's Id; a mismatch is an error (IR-4107), not an empty result.",
         "Validation needed - found documents only carry DocumentTypeId and DocumentTypeDescription, so type codes are turned into ids via GET /api/objecttypes/Document; which object type field holds the code must be confirmed on a test server. An unknown code is an error (IR-4006) naming the code.",
         "Validation needed - identifier is meant as a contains (substring) match on the document description, but the server-side semantics of Description (exact vs contains) are unconfirmed on a real server. If the server matches exactly, the composite must filter client-side instead.",
@@ -865,11 +942,11 @@
       ],
       "outputs": {
         "documents": {
-          "from": "$step4.value",
+          "from": "$step5.value",
           "type": "DocumentDataResult[]"
         }
       },
-      "purpose": "Find the documents inside one file, optionally narrowed to certain document type codes and/or a description substring. The file is found by its number and, when a drawer code is given, checked to sit in that drawer.",
+      "purpose": "Find the documents inside one file, optionally narrowed to one folder, certain document type codes and/or a description substring. The file is found by its number and, when a drawer code is given, checked to sit in that drawer.",
       "steps": [
         {
           "inputsFrom": [
@@ -906,8 +983,34 @@
           "safety": "read"
         },
         {
-          "inputsFrom": [],
+          "inputsFrom": [
+            {
+              "ref": "$input.folderName",
+              "type": "string"
+            },
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            }
+          ],
           "n": 3,
+          "onError": "No match is an error - the flow stops with IR-4001 (ObjectNotFound, \"file <fileNumber> has no folder <folderName>\") and no documents are searched. More than one match is also an error - the flow stops with IR-4001 (\"folder <folderName> matches more than one folder in file <fileNumber>\") rather than guessing.",
+          "operationId": "rest.v1.folders.findFolders",
+          "optional": "only when $input.folderName is given",
+          "output": {
+            "select": "the single match; its Id is the folder to search in",
+            "type": "FolderDataResult[]"
+          },
+          "params": {
+            "Description": "$input.folderName",
+            "FileId": "$step1.Id"
+          },
+          "purpose": "Find the folder, inside the file, that the search is narrowed to.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [],
+          "n": 4,
           "onError": "A code that matches no document type is an error - the flow stops with IR-4006 (TypeNotFound, \"no document type has code <code>\", naming every unknown code) and no documents are searched.",
           "operationId": "rest.v1.objecttypes.getTypesForClass",
           "optional": "only when $input.docTypeCodes is given",
@@ -928,6 +1031,10 @@
               "type": "string[]"
             },
             {
+              "ref": "$input.folderName",
+              "type": "string"
+            },
+            {
               "ref": "$input.identifier",
               "type": "string"
             },
@@ -938,9 +1045,13 @@
             {
               "ref": "$step3.Id",
               "type": "int64"
+            },
+            {
+              "ref": "$step4.Id",
+              "type": "int64"
             }
           ],
-          "n": 4,
+          "n": 5,
           "onError": "Validation needed - whether the server treats Description as a contains or an exact match is unconfirmed; if it matches exactly, the composite leaves Description out and keeps only the documents whose Description contains $input.identifier as a substring.",
           "operationId": "rest.v1.documents.findDocuments",
           "output": {
@@ -950,8 +1061,9 @@
           "params": {
             "Deleted": false,
             "Description": "$input.identifier, left out when not given",
-            "DocumentTypeIds": "$step3.Id of every resolved type when $input.docTypeCodes is given, otherwise left out",
-            "FileId": "$step1.Id"
+            "DocumentTypeIds": "$step4.Id of every resolved type when $input.docTypeCodes is given, otherwise left out",
+            "FileId": "$step1.Id",
+            "ParentId": "$step3.Id when $input.folderName is given, otherwise left out"
           },
           "purpose": "Search the file for matching documents.",
           "safety": "read"
@@ -1434,6 +1546,12 @@
           "type": "string"
         },
         {
+          "meaning": "Description of the folder (inside the file) under which the document is created; documents always live under a folder, never directly in a file.",
+          "name": "folderName",
+          "required": true,
+          "type": "string"
+        },
+        {
           "meaning": "Name of the document type to create.",
           "name": "documentTypeName",
           "required": true,
@@ -1466,24 +1584,24 @@
         }
       ],
       "notes": [
-        "To place the document in a folder, find the folder with POST /api/folders/find and use it as ParentId.",
+        "Documents always live under a folder, never directly in a file. The folder is found inside the file by its description (folderName); no match or more than one match is an error (IR-4001) and nothing is created.",
         "If a page upload fails midway, the document holds the pages uploaded so far; phase 2 decides on cleanup."
       ],
       "outputs": {
         "batchId": {
-          "from": "$step4.value",
+          "from": "$step5.value",
           "type": "int64"
         },
         "documentId": {
-          "from": "$step3.value",
+          "from": "$step4.value",
           "type": "int64"
         },
         "pageId": {
-          "from": "$step5.Id",
+          "from": "$step6.Id",
           "type": "int64"
         }
       },
-      "purpose": "Locate the file, check which document types it accepts, create the document, open a capture batch and upload each page image.",
+      "purpose": "Locate the file and the folder inside it, check which document types the file accepts, create the document in the folder, open a capture batch and upload each page image.",
       "steps": [
         {
           "alternatives": [
@@ -1510,11 +1628,36 @@
         {
           "inputsFrom": [
             {
+              "ref": "$input.folderName",
+              "type": "string"
+            },
+            {
               "ref": "$step1.Id",
               "type": "int64"
             }
           ],
           "n": 2,
+          "onError": "No match is an error - the flow stops with IR-4001 (ObjectNotFound, \"file <fileNumber> has no folder <folderName>\") and no document is created. More than one match is also an error - the flow stops with IR-4001 (\"folder <folderName> matches more than one folder in file <fileNumber>\") rather than guessing.",
+          "operationId": "rest.v1.folders.findFolders",
+          "output": {
+            "select": "the single match; its Id is the folder that receives the document",
+            "type": "FolderDataResult[]"
+          },
+          "params": {
+            "Description": "$input.folderName",
+            "FileId": "$step1.Id"
+          },
+          "purpose": "Find the folder, inside the file, that receives the document.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 3,
           "operationId": "rest.v1.objecttypes.getAllowedTypesForContainer",
           "output": {
             "select": "the item whose Name equals $input.documentTypeName",
@@ -1537,15 +1680,15 @@
               "type": "date"
             },
             {
-              "ref": "$step1.Id",
+              "ref": "$step2.Id",
               "type": "int64"
             },
             {
-              "ref": "$step2.Id",
+              "ref": "$step3.Id",
               "type": "int64"
             }
           ],
-          "n": 3,
+          "n": 4,
           "operationId": "rest.v1.documents.createDocument",
           "output": {
             "type": "int64"
@@ -1553,10 +1696,10 @@
           "params": {
             "Description": "$input.description",
             "DocumentDate": "$input.documentDate",
-            "DocumentTypeId": "$step2.Id",
-            "ParentId": "$step1.Id"
+            "DocumentTypeId": "$step3.Id",
+            "ParentId": "$step2.Id"
           },
-          "purpose": "Create the empty document.",
+          "purpose": "Create the empty document in the folder.",
           "safety": "write"
         },
         {
@@ -1566,7 +1709,7 @@
               "type": "ApiApplicationId"
             }
           ],
-          "n": 4,
+          "n": 5,
           "operationId": "rest.v1.batches.createBatch",
           "output": {
             "type": "int64"
@@ -1587,25 +1730,25 @@
               "type": "file[]"
             },
             {
-              "ref": "$step3.value",
+              "ref": "$step4.value",
               "type": "int64"
             },
             {
-              "ref": "$step4.value",
+              "ref": "$step5.value",
               "type": "int64"
             }
           ],
-          "n": 5,
+          "n": 6,
           "operationId": "rest.v1.pages.createPage",
           "output": {
             "type": "PageModel"
           },
           "params": {
-            "BatchId": "$step4.value",
-            "DocId": "$step3.value",
+            "BatchId": "$step5.value",
+            "DocId": "$step4.value",
             "PageCreateData": {
-              "batchId": "$step4.value",
-              "docId": "$step3.value"
+              "batchId": "$step5.value",
+              "docId": "$step4.value"
             },
             "image0": "$input.pageFiles"
           },

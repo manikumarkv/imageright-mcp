@@ -14,7 +14,7 @@ flows:
     composite: create_task
     purpose: >-
       Turn a workflow name, a step name, an optional assignee and a file number (optionally
-      narrowed to one document) into ids, check the priority against the step's allowed list,
+      narrowed to one document inside a named folder) into ids, check the priority against the step's allowed list,
       then create the task. Anything missing or ambiguous is asked of the user, not failed.
     surface: rest-v1
     inputs:
@@ -42,6 +42,13 @@ flows:
         type: string
         required: false
         meaning: Optional document type name; when given, the target is a document of this type in the file.
+      - name: folderName
+        type: string
+        required: false
+        meaning: >-
+          Description of the folder (inside the file) that holds the target document. Required
+          when targetDocumentType is given, because documents always live under a folder; ignored
+          otherwise.
       - name: identifier
         type: string
         required: false
@@ -94,6 +101,19 @@ flows:
           FileNumberPart1: $input.fileNumber
         select: the single match; it is the task target unless $input.targetDocumentType is given
         onError: Ask the user when no file matches (unknown file number) or several files match.
+      - op: POST /api/folders/find
+        purpose: Find the folder, inside the file, that holds the target document.
+        optional: only when $input.targetDocumentType is given
+        params:
+          FileId: $step5.Id
+          Description: $input.folderName
+        select: the single match; its Id is the folder the document search is scoped to
+        onError: >-
+          A missing folderName is asked of the user (needs-input) before this step. No match is
+          an error - the flow stops with IR-4001 (ObjectNotFound, "file <fileNumber> has no folder
+          <folderName>") and no task is created. More than one match is also an error - the flow
+          stops with IR-4001 ("folder <folderName> matches more than one folder in file
+          <fileNumber>") rather than guessing.
       - op: GET /api/containers/{objectId}/allowedtypes
         purpose: Turn the document type name into its id.
         optional: only when $input.targetDocumentType is given
@@ -102,11 +122,12 @@ flows:
         select: the item whose Name equals $input.targetDocumentType
         onError: Ask the user when the file does not accept a document type of that name.
       - op: POST /api/documents/find
-        purpose: List the file's documents of that type and pick the target document.
+        purpose: List the folder's documents of that type and pick the target document.
         optional: only when $input.targetDocumentType is given
         params:
           FileId: $step5.Id
-          DocumentTypeIds: [$step6.Id]
+          ParentId: $step6.Id
+          DocumentTypeIds: [$step7.Id]
         select: >-
           exactly one document -> it is the target; several and $input.identifier given -> the
           single document whose Description equals $input.identifier; several without an
@@ -117,7 +138,7 @@ flows:
       - op: POST /api/tasks
         purpose: Create the task.
         params:
-          ObjectId: $step7.Id when a document type was given, otherwise $step5.Id
+          ObjectId: $step8.Id when a document type was given, otherwise $step5.Id
           StepId: $step2.Id
           Priority: $input.priority
           AvailableDate: $input.availableDate
@@ -125,10 +146,11 @@ flows:
           Description: $input.description
         onError: Priority or assignee outside the step's lists are the usual causes of a rejection.
     outputs:
-      taskId: $step8.Id
+      taskId: $step9.Id
       stepId: $step2.Id
     notes:
-      - Missing or unresolvable data (unknown workflow, step, user or file, ambiguous document) makes the composite ask the user for that piece (needs-input) rather than fail.
+      - Missing or unresolvable data (unknown workflow, step, user or file, ambiguous document) makes the composite ask the user for that piece (needs-input) rather than fail. The folder is the exception - when a document is the target, a folder that is missing or matches more than once is an error (IR-4001).
+      - Documents always live under a folder, never directly in a file. When targetDocumentType is given, folderName is required and the document search is scoped to that folder (ParentId); without targetDocumentType the file is the target and folderName is ignored.
       - UserId is the assignee's user id (AssigneeId in the composite); leave it out when no assignee is given.
       - Using the diary step instead of a regular step creates a diary entry rather than a task.
 
@@ -185,14 +207,20 @@ flows:
   - id: F3
     title: Ingest a document page by page
     purpose: >-
-      Locate the file, check which document types it accepts, create the document, open a
-      capture batch and upload each page image.
+      Locate the file and the folder inside it, check which document types the file accepts,
+      create the document in the folder, open a capture batch and upload each page image.
     surface: rest-v1
     inputs:
       - name: fileNumber
         type: string
         required: true
         meaning: First part of the number of the file that receives the document.
+      - name: folderName
+        type: string
+        required: true
+        meaning: >-
+          Description of the folder (inside the file) under which the document is created;
+          documents always live under a folder, never directly in a file.
       - name: documentTypeName
         type: string
         required: true
@@ -222,16 +250,27 @@ flows:
         select: the single match; zero or several matches need a human decision
         alternatives:
           - POST /api/files
+      - op: POST /api/folders/find
+        purpose: Find the folder, inside the file, that receives the document.
+        params:
+          FileId: $step1.Id
+          Description: $input.folderName
+        select: the single match; its Id is the folder that receives the document
+        onError: >-
+          No match is an error - the flow stops with IR-4001 (ObjectNotFound, "file <fileNumber>
+          has no folder <folderName>") and no document is created. More than one match is also an
+          error - the flow stops with IR-4001 ("folder <folderName> matches more than one folder
+          in file <fileNumber>") rather than guessing.
       - op: GET /api/containers/{objectId}/allowedtypes
         purpose: List the document types this file's template permits.
         params:
           objectId: $step1.Id
         select: the item whose Name equals $input.documentTypeName
       - op: POST /api/documents
-        purpose: Create the empty document.
+        purpose: Create the empty document in the folder.
         params:
-          ParentId: $step1.Id
-          DocumentTypeId: $step2.Id
+          ParentId: $step2.Id
+          DocumentTypeId: $step3.Id
           Description: $input.description
           DocumentDate: $input.documentDate
       - op: POST /api/batches
@@ -242,18 +281,18 @@ flows:
         purpose: Upload one page.
         repeat: once per entry of $input.pageFiles, in order
         params:
-          DocId: $step3.value
-          BatchId: $step4.value
-          PageCreateData: {docId: $step3.value, batchId: $step4.value}
+          DocId: $step4.value
+          BatchId: $step5.value
+          PageCreateData: {docId: $step4.value, batchId: $step5.value}
           image0: $input.pageFiles
         alternatives:
           - POST /api/v2/pages
     outputs:
-      documentId: $step3.value
-      batchId: $step4.value
-      pageId: $step5.Id
+      documentId: $step4.value
+      batchId: $step5.value
+      pageId: $step6.Id
     notes:
-      - To place the document in a folder, find the folder with POST /api/folders/find and use it as ParentId.
+      - Documents always live under a folder, never directly in a file. The folder is found inside the file by its description (folderName); no match or more than one match is an error (IR-4001) and nothing is created.
       - If a page upload fails midway, the document holds the pages uploaded so far; phase 2 decides on cleanup.
 
   - id: F4
@@ -838,8 +877,8 @@ flows:
     title: Move or copy file content by document type
     composite: move_file_content
     purpose: >-
-      Transfer documents from a source file to a target file, optionally only those of certain
-      document types, by moving or copying them. The source file itself always stays in place -
+      Transfer documents from a source file into a named folder of a target file, optionally only
+      those of certain document types, by moving or copying them. The source file itself always stays in place -
       a move leaves it empty, a copy leaves it untouched. Unlike F12 (merge), nothing is deleted.
     surface: rest-v1
     inputs:
@@ -853,6 +892,12 @@ flows:
         required: true
         meaning: >-
           First part of the file number (FileNumberPart1) of the file that receives the documents.
+      - name: targetFolderName
+        type: string
+        required: true
+        meaning: >-
+          Description of the folder (inside the target file) that receives the documents;
+          documents always live under a folder, never directly in a file.
       - name: documentTypes
         type: string[]
         required: false
@@ -889,6 +934,18 @@ flows:
           "no file has number <targetFileNumber>") and nothing is transferred. More than one
           match is also an error - the flow stops with IR-4001 ("file number <targetFileNumber>
           matches more than one file") rather than guessing which file receives the documents.
+      - op: POST /api/folders/find
+        purpose: Find the folder, inside the target file, that receives the documents.
+        params:
+          FileId: $step2.Id
+          Description: $input.targetFolderName
+        select: the single match; its Id is the target folder
+        onError: >-
+          No match is an error - the flow stops with IR-4001 (ObjectNotFound, "file
+          <targetFileNumber> has no folder <targetFolderName>") and nothing is transferred. More
+          than one match is also an error - the flow stops with IR-4001 ("folder
+          <targetFolderName> matches more than one folder in file <targetFileNumber>") rather than
+          guessing.
       - op: POST /api/documents/find
         purpose: Collect the source file's documents and keep the ones of the requested types.
         params:
@@ -904,11 +961,11 @@ flows:
           When no document is left after filtering, the flow stops before the write step and
           reports that there is nothing to transfer (an empty result, not an error).
       - op: POST /api/documents/move
-        purpose: Move the selected documents into the target file.
+        purpose: Move the selected documents into the target folder.
         optional: only when $input.mode is move
         params:
-          DocumentIds: $step3.Id
-          TargetParentId: $step2.Id
+          DocumentIds: $step4.Id
+          TargetParentId: $step3.Id
         alternatives:
           - POST /api/v2/documents/move
         onError: >-
@@ -916,22 +973,23 @@ flows:
           report every document that failed alongside the ones that moved - never drop failures
           silently.
       - op: POST /api/v2/documents/copy
-        purpose: Copy the selected documents into the target file.
+        purpose: Copy the selected documents into the target folder.
         optional: only when $input.mode is copy
         params:
-          DocumentIds: $step3.Id
-          TargetId: $step2.Id
+          DocumentIds: $step4.Id
+          TargetId: $step3.Id
         onError: >-
           The call can partly succeed. Check FailedObjects in the result and report every
           document that failed alongside the ones that were copied - never drop failures
           silently.
     outputs:
-      moveResult: $step4.value
-      copyResult: $step5.value
+      moveResult: $step5.value
+      copyResult: $step6.value
     notes:
       - Both lookups must resolve to exactly one file; no match or more than one match is an error (IR-4001) and no document is transferred. The user is not asked to pick.
+      - Documents always live under a folder, never directly in a file. The documents go into the folder of the target file whose description is targetFolderName; no match or more than one match is an error (IR-4001) and nothing is transferred. The source side is not narrowed by folder.
       - The source file is never deleted. Move mode relocates its documents and leaves the file empty; copy mode leaves it untouched.
-      - Exactly one of steps 4 and 5 runs, chosen by mode, so exactly one of moveResult (DocumentMoveResult) and copyResult (DocumentActionResult) is set. Both carry DocumentIdMap and PageIdMap (old id to new id).
+      - Exactly one of steps 5 and 6 runs, chosen by mode, so exactly one of moveResult (DocumentMoveResult) and copyResult (DocumentActionResult) is set. Both carry DocumentIdMap and PageIdMap (old id to new id).
       - Copying only exists in REST v2 (POST /api/v2/documents/copy); there is no v1 copy call. Moving uses the v1 call, with POST /api/v2/documents/move as the version alternative.
       - The copy step leaves CopyOption out, so the server's default copy kind applies (Logical reference or physical copy). Validation needed - that default is unconfirmed.
       - Validation needed - document type matching is by type code, not name, but a found document only carries DocumentTypeId and DocumentTypeDescription. Turning codes into DocumentTypeIds (e.g. from GET /api/objecttypes/{standardObjectClass} with Document) and filtering on those is a likely route, but it is unconfirmed which object type field holds the code.
@@ -941,8 +999,8 @@ flows:
     title: Find documents in a file
     composite: find_documents
     purpose: >-
-      Find the documents inside one file, optionally narrowed to certain document type codes
-      and/or a description substring. The file is found by its number and, when a drawer code is
+      Find the documents inside one file, optionally narrowed to one folder, certain document
+      type codes and/or a description substring. The file is found by its number and, when a drawer code is
       given, checked to sit in that drawer.
     surface: rest-v1
     inputs:
@@ -957,6 +1015,12 @@ flows:
         meaning: >-
           Optional drawer code; when given, the file must sit in this drawer or the flow stops
           with an error.
+      - name: folderName
+        type: string
+        required: false
+        meaning: >-
+          Optional description of a folder inside the file; when given, only documents in that
+          folder are returned and the folder must exist.
       - name: docTypeCodes
         type: string[]
         required: false
@@ -992,6 +1056,18 @@ flows:
           drawer has code <drawerCode>"). A file whose DrawerId differs from the drawer's Id is
           also an error - the flow stops with IR-4107 (InvalidTarget, "file <fileNumber> is not
           in drawer <drawerCode>") and no documents are searched.
+      - op: POST /api/folders/find
+        purpose: Find the folder, inside the file, that the search is narrowed to.
+        optional: only when $input.folderName is given
+        params:
+          FileId: $step1.Id
+          Description: $input.folderName
+        select: the single match; its Id is the folder to search in
+        onError: >-
+          No match is an error - the flow stops with IR-4001 (ObjectNotFound, "file <fileNumber>
+          has no folder <folderName>") and no documents are searched. More than one match is also
+          an error - the flow stops with IR-4001 ("folder <folderName> matches more than one
+          folder in file <fileNumber>") rather than guessing.
       - op: GET /api/objecttypes/{standardObjectClass}
         purpose: Turn the document type codes into document type ids.
         optional: only when $input.docTypeCodes is given
@@ -1009,7 +1085,8 @@ flows:
         purpose: Search the file for matching documents.
         params:
           FileId: $step1.Id
-          DocumentTypeIds: $step3.Id of every resolved type when $input.docTypeCodes is given, otherwise left out
+          ParentId: $step3.Id when $input.folderName is given, otherwise left out
+          DocumentTypeIds: $step4.Id of every resolved type when $input.docTypeCodes is given, otherwise left out
           Description: $input.identifier, left out when not given
           Deleted: false
         select: >-
@@ -1020,9 +1097,10 @@ flows:
           match is unconfirmed; if it matches exactly, the composite leaves Description out and
           keeps only the documents whose Description contains $input.identifier as a substring.
     outputs:
-      documents: $step4.value
+      documents: $step5.value
     notes:
       - The file lookup must resolve to exactly one file; no match or more than one match is an error (IR-4001). The user is not asked to pick.
+      - When folderName is given, the search is narrowed to that folder (ParentId); a folder that is missing or matches more than once is an error (IR-4001). Without folderName the whole file is searched.
       - Drawers have no separate code field; the drawer code is assumed to be the drawer's Name, as in F9. The drawer check compares the found file's DrawerId with the drawer's Id; a mismatch is an error (IR-4107), not an empty result.
       - Validation needed - found documents only carry DocumentTypeId and DocumentTypeDescription, so type codes are turned into ids via GET /api/objecttypes/Document; which object type field holds the code must be confirmed on a test server. An unknown code is an error (IR-4006) naming the code.
       - Validation needed - identifier is meant as a contains (substring) match on the document description, but the server-side semantics of Description (exact vs contains) are unconfirmed on a real server. If the server matches exactly, the composite must filter client-side instead.
