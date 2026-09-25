@@ -833,3 +833,106 @@ flows:
       - The request body of the merge call is just the target file id as a bare JSON number.
       - The merge step is a destructive write, so the standard write policy applies - previewed under writeMode dry-run (nothing is sent), blocked under deny, sent under allow; and because it is destructive it also needs explicit confirmation (confirm=<previewId> from a prior preview, while requireConfirm is on, the default).
       - The merge call returns no body, so the flow outputs the id of the target file (from step 2); fetch the file again to see its merged content.
+
+  - id: F13
+    title: Move or copy file content by document type
+    composite: move_file_content
+    purpose: >-
+      Transfer documents from a source file to a target file, optionally only those of certain
+      document types, by moving or copying them. The source file itself always stays in place -
+      a move leaves it empty, a copy leaves it untouched. Unlike F12 (merge), nothing is deleted.
+    surface: rest-v1
+    inputs:
+      - name: sourceFileNumber
+        type: string
+        required: true
+        meaning: >-
+          First part of the file number (FileNumberPart1) of the file the documents come from.
+      - name: targetFileNumber
+        type: string
+        required: true
+        meaning: >-
+          First part of the file number (FileNumberPart1) of the file that receives the documents.
+      - name: documentTypes
+        type: string[]
+        required: false
+        default: [All]
+        meaning: >-
+          Document type codes to transfer. The default ["All"] means no filtering (every
+          document). "All" must be the only entry - a list that mixes "All" with specific codes
+          is rejected as invalid input before any request is sent.
+      - name: mode
+        type: string
+        required: false
+        default: copy
+        meaning: >-
+          Either "move" or "copy" (the default); any other value is rejected as invalid input
+          before any request is sent.
+    steps:
+      - op: POST /api/files/find
+        purpose: Find the source file.
+        params:
+          FileNumberPart1: $input.sourceFileNumber
+        select: the single match; its Id is the source file
+        onError: >-
+          No match is an error, not a question - the flow stops with IR-4001 (ObjectNotFound,
+          "no file has number <sourceFileNumber>") and nothing is transferred. More than one
+          match is also an error - the flow stops with IR-4001 ("file number <sourceFileNumber>
+          matches more than one file") rather than guessing which file to take documents from.
+      - op: POST /api/files/find
+        purpose: Find the target file.
+        params:
+          FileNumberPart1: $input.targetFileNumber
+        select: the single match; its Id is the target file
+        onError: >-
+          No match is an error, not a question - the flow stops with IR-4001 (ObjectNotFound,
+          "no file has number <targetFileNumber>") and nothing is transferred. More than one
+          match is also an error - the flow stops with IR-4001 ("file number <targetFileNumber>
+          matches more than one file") rather than guessing which file receives the documents.
+      - op: POST /api/documents/find
+        purpose: Collect the source file's documents and keep the ones of the requested types.
+        params:
+          FileId: $step1.Id
+          Deleted: false
+        select: >-
+          all items when $input.documentTypes is ["All"], otherwise only the documents whose
+          document type code is in $input.documentTypes; their Ids are the documents to transfer.
+          Validation needed - DocumentDataResult carries DocumentTypeId and
+          DocumentTypeDescription but no type code field, so how a code is matched against a
+          found document is unconfirmed.
+        onError: >-
+          When no document is left after filtering, the flow stops before the write step and
+          reports that there is nothing to transfer (an empty result, not an error).
+      - op: POST /api/documents/move
+        purpose: Move the selected documents into the target file.
+        optional: only when $input.mode is move
+        params:
+          DocumentIds: $step3.Id
+          TargetParentId: $step2.Id
+        alternatives:
+          - POST /api/v2/documents/move
+        onError: >-
+          The call can partly succeed. Check FailedDocumentMoves (and Error) in the result and
+          report every document that failed alongside the ones that moved - never drop failures
+          silently.
+      - op: POST /api/v2/documents/copy
+        purpose: Copy the selected documents into the target file.
+        optional: only when $input.mode is copy
+        params:
+          DocumentIds: $step3.Id
+          TargetId: $step2.Id
+        onError: >-
+          The call can partly succeed. Check FailedObjects in the result and report every
+          document that failed alongside the ones that were copied - never drop failures
+          silently.
+    outputs:
+      moveResult: $step4.value
+      copyResult: $step5.value
+    notes:
+      - Both lookups must resolve to exactly one file; no match or more than one match is an error (IR-4001) and no document is transferred. The user is not asked to pick.
+      - The source file is never deleted. Move mode relocates its documents and leaves the file empty; copy mode leaves it untouched.
+      - Exactly one of steps 4 and 5 runs, chosen by mode, so exactly one of moveResult (DocumentMoveResult) and copyResult (DocumentActionResult) is set. Both carry DocumentIdMap and PageIdMap (old id to new id).
+      - Copying only exists in REST v2 (POST /api/v2/documents/copy); there is no v1 copy call. Moving uses the v1 call, with POST /api/v2/documents/move as the version alternative.
+      - The copy step leaves CopyOption out, so the server's default copy kind applies (Logical reference or physical copy). Validation needed - that default is unconfirmed.
+      - Validation needed - document type matching is by type code, not name, but a found document only carries DocumentTypeId and DocumentTypeDescription. Turning codes into DocumentTypeIds (e.g. from GET /api/objecttypes/{standardObjectClass} with Document) and filtering on those is a likely route, but it is unconfirmed which object type field holds the code.
+      - The move or copy step is a write, so the standard write policy applies - previewed under writeMode dry-run (nothing is sent), blocked under deny, sent under allow. Move mode is not destructive to the source file itself (only its documents relocate), so no destructive confirmation is needed beyond the standard write policy.

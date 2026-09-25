@@ -290,7 +290,22 @@ async def test_describe_type_unknown() -> None:
 async def test_list_flows() -> None:
     data = await ok("ir_list_flows", {})
     ids = [f["flowId"] for f in data["flows"]]
-    assert ids == ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F8b", "F9", "F10", "F11", "F12"]
+    assert ids == [
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F6",
+        "F7",
+        "F8",
+        "F8b",
+        "F9",
+        "F10",
+        "F11",
+        "F12",
+        "F13",
+    ]
     assert all(f["usableInVersion"] for f in data["flows"])
     soap = await ok("ir_list_flows", {"surface": "soap"})
     assert [f["flowId"] for f in soap["flows"]] == ["F8", "F8b"]
