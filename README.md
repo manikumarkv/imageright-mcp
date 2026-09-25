@@ -3,8 +3,9 @@
 An [MCP](https://modelcontextprotocol.io) server that helps AI coding assistants work correctly against
 Vertafore ImageRight on your product version (24.x, 25.x, or 7.2).
 
-> **Status: pre-alpha (M3).** The offline API explorer, version-matrix tools and error catalog work; the
-> version-aware client and dry-run previews are not here yet.
+> **Status: pre-alpha (M6, phase 1 feature-complete).** The offline API explorer, version-matrix tools,
+> error catalog and the version-aware client (`ir_call`, with dry-run previews) work. Capability param
+> mappings are not yet verified against a live server; hardening and a live smoke suite follow in M7.
 
 ## Tools
 
@@ -22,6 +23,15 @@ All tools below work offline: no server, no credentials.
 | `ir_compare_versions` | Diff two versions |
 | `ir_list_deprecations` | Deprecated operations and their replacements |
 | `ir_explain_error` | Explain an IR code, native REST code or name, HTTP status, or SOAP fault text |
+
+These talk to your server (or preview what they would send):
+
+| Tool | What it does |
+|---|---|
+| `ir_call` | Execute or preview one `operationId`, or a `capabilityId` routed to REST v2, REST v1 or SOAP by version and preference (`meta.route` says why). Capability results use canonical File / Folder / Document / Page / Task / Workflow / Step / User shapes |
+| `ir_test_connection` | Reachability, authentication, server-reported version vs. configured version (IR-1004), latency |
+| `ir_session` | Auth session status, re-login, logout (SOAP `UserLogoff`) |
+| `ir_configure` | Session-scoped override of non-secret settings. Secrets are refused; moving an endpoint to another host withholds the environment credentials |
 
 ## Errors
 
@@ -84,17 +94,13 @@ Values come from environment variables first, then an optional JSON config file,
 | `maxRetries` | `IMAGERIGHT_MAX_RETRIES` (GET/HEAD only; writes are never retried) | `2` |
 | `outputDir` | `IMAGERIGHT_OUTPUT_DIR`: where binary responses are written | system temp dir |
 | `fileRoots` | `IMAGERIGHT_FILE_ROOTS` (`os.pathsep`-separated): folders uploads may be read from | working directory |
+| `strictVersion` | `IMAGERIGHT_STRICT_VERSION`: a server version that maps to another profile is an error, not a warning | `false` |
+| `requireVerifiedMappings` | `IMAGERIGHT_REQUIRE_VERIFIED_MAPPINGS`: route capabilities only to fixture-verified mappings | `false` |
 
 Set `IMAGERIGHT_CONFIG_FILE` to the path of a JSON file whose keys are the setting names above. The file may
 **not** hold secrets; it can only name the environment variables that do (`secretEnv`, `extraHeaders`).
 Credentials are read from the environment only, are never accepted as tool arguments, are held in memory
 only, and are always redacted in output. User info in `restBaseUrl` (`https://user:pw@host`) is ignored.
-
-## Tools
-
-| Tool | Description |
-|---|---|
-| `ir_get_config` | Effective configuration with secrets redacted, the catalog profile the version maps to, and the source of each value |
 
 ## Development
 

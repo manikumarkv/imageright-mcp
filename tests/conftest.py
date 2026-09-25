@@ -10,7 +10,8 @@ from typing import Any
 import pytest
 
 from imageright_mcp.client import BodySink, MockReply, MockTransport, RestClient
-from imageright_mcp.config import load_config
+from imageright_mcp.config import EffectiveConfig, load_config
+from imageright_mcp.runtime import Runtime
 
 BASE = "https://ir.example.test/ImageRight"
 USER = "svc-imageright"
@@ -83,3 +84,25 @@ def make_client(tmp_path: Path) -> ClientFactory:
         return client, mock
 
     return factory
+
+
+def mock_runtime(
+    env: dict[str, str], mock: MockTransport, *, clock: FakeClock | None = None
+) -> Runtime:
+    """A Runtime whose clients all talk to ``mock`` (the tools' view of ``make_client``)."""
+
+    def factory(config: EffectiveConfig, previous: RestClient | None) -> RestClient:
+        return RestClient(
+            config,
+            transport=mock,
+            clock=clock or FakeClock(),
+            sleep=no_sleep,
+            redactor=previous.redactor if previous else None,
+        )
+
+    return Runtime(env, client_factory=factory)
+
+
+def script_rest_login(mock: MockTransport) -> None:
+    mock.add("POST", "/api/authenticate", MockReply(json=TOKEN), sticky=True)
+    mock.add("POST", "/api/validto", MockReply(json=FAR_FUTURE), sticky=True)

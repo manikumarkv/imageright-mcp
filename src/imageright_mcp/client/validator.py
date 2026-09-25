@@ -18,6 +18,8 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from typing import Any
 
+from imageright_mcp.client.models import FileBase64
+
 INT_RANGES = {
     "int16": (-(2**15), 2**15 - 1),
     "int32": (-(2**31), 2**31 - 1),
@@ -286,6 +288,8 @@ class Validator:
         if type_name == "char":
             return [] if isinstance(value, str) and len(value) == 1 else bad
         if type_name == "base64Binary":
+            if isinstance(value, FileBase64):
+                return []
             if not isinstance(value, str):
                 return bad
             try:

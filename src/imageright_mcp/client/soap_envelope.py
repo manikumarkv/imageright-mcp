@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from imageright_mcp.client.builder import BuildError
-from imageright_mcp.client.models import PreparedRequest
+from imageright_mcp.client.models import FileBase64, PreparedRequest
 from imageright_mcp.config import REDACTED
 from imageright_mcp.errors import get_registry
 
@@ -128,7 +128,15 @@ class EnvelopeBuilder:
     def __init__(self, table: SoapTable) -> None:
         self.table = table
 
-    def build(self, op: Mapping[str, Any], params: Mapping[str, Any], url: str | None) -> SoapCall:
+    def build(
+        self,
+        op: Mapping[str, Any],
+        params: Mapping[str, Any],
+        url: str | None,
+        *,
+        inline_files: bool = True,
+    ) -> SoapCall:
+        """``inline_files=False`` renders local-file base64 values as a placeholder (previews)."""
         entry = self.table.op(str(op["id"]))
         name = str(entry["requestElement"])
         head = [
@@ -160,6 +168,7 @@ class EnvelopeBuilder:
                 3,
                 nullable=False,
                 repeated=bool(arg.get("repeated")),
+                inline=inline_files,
             )
         closing = [f"{INDENT * 2}</{name}>", f"{INDENT}</soap:Body>", "</soap:Envelope>", ""]
         lines.extend(closing)
@@ -204,10 +213,13 @@ class EnvelopeBuilder:
         *,
         nullable: bool,
         repeated: bool = False,
+        inline: bool = True,
     ) -> None:
         if repeated and isinstance(value, list | tuple):
             for item in value:
-                self._write(out, name, type_name, kind, item, depth, nullable=nullable)
+                self._write(
+                    out, name, type_name, kind, item, depth, nullable=nullable, inline=inline
+                )
             return
         pad = INDENT * depth
         if value is None:
@@ -229,6 +241,7 @@ class EnvelopeBuilder:
                     element,
                     depth + 1,
                     nullable=bool(item.get("nullable")),
+                    inline=inline,
                 )
             _wrap(out, pad, name, children)
         elif kind == "complex" and isinstance(value, Mapping):
@@ -246,13 +259,14 @@ class EnvelopeBuilder:
                     depth + 1,
                     nullable=bool(spec.get("nullable")),
                     repeated=bool(spec.get("repeated")),
+                    inline=inline,
                 )
             _wrap(out, pad, name, children)
         elif kind == "any":
             xsi_type, text = _any_value(value)
             out.append(f'{pad}<{name} xsi:type="{xsi_type}">{escape(text, name)}</{name}>')
         else:
-            text = escape(_scalar(type_name, kind, value), name)
+            text = escape(_scalar(type_name, kind, value, inline), name)
             out.append(f"{pad}<{name}>{text}</{name}>" if text else f"{pad}<{name} />")
 
 
@@ -274,7 +288,7 @@ def _array_items(value: Any, item_name: str) -> list[Any]:
     return [value]
 
 
-def _scalar(type_name: str, kind: str, value: Any) -> str:
+def _scalar(type_name: str, kind: str, value: Any, inline: bool = True) -> str:
     """Text for a primitive, enum or flags value. The validator has already checked types;
     anything else is rendered as text so a failed validation still gets a readable preview."""
     if kind == "flags" and isinstance(value, list | tuple):
@@ -283,6 +297,8 @@ def _scalar(type_name: str, kind: str, value: Any) -> str:
         return "true" if value else "false"
     if type_name == "char" and isinstance(value, str) and len(value) == 1:
         return str(ord(value))  # .NET serializes System.Char as its UTF-16 code
+    if isinstance(value, FileBase64):
+        return value.encode() if inline else value.placeholder()
     if type_name == "base64Binary" and isinstance(value, bytes | bytearray):
         return base64.b64encode(bytes(value)).decode("ascii")
     return str(value)

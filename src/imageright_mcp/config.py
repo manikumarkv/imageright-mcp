@@ -17,7 +17,7 @@ from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import BaseModel, ConfigDict, Field
 
-Source = Literal["env", "file", "default"]
+Source = Literal["env", "file", "default", "runtime"]
 WriteMode = Literal["deny", "dry-run", "allow"]
 AuthMode = Literal["password", "jwt", "saml"]
 Surface = Literal["rest-v2", "rest-v1", "soap"]
@@ -54,6 +54,8 @@ _SETTINGS: dict[str, str] = {
     "maxRetries": "MAX_RETRIES",
     "outputDir": "OUTPUT_DIR",
     "fileRoots": "FILE_ROOTS",
+    "strictVersion": "STRICT_VERSION",
+    "requireVerifiedMappings": "REQUIRE_VERIFIED_MAPPINGS",
 }
 
 # Secrets are env-only; a config file may not contain them. ``secretEnv`` can rename the
@@ -64,7 +66,7 @@ _SECRETS: dict[str, str] = {
     "jwtPrivateKey": "JWT_PRIVATE_KEY",
     "samlToken": "SAML_TOKEN",
 }
-_BOOLS = {"dryRun", "requireConfirm", "verifyTls"}
+_BOOLS = {"dryRun", "requireConfirm", "verifyTls", "strictVersion", "requireVerifiedMappings"}
 _INTS = {"jwtTtlSeconds", "maxRetries"}
 _FLOATS = {"timeoutSeconds", "soapInactivityMinutes"}
 _MAPPINGS = {"extraHeaders", "secretEnv"}
@@ -96,6 +98,8 @@ _DEFAULTS: dict[str, Any] = {
     "maxRetries": 2,
     "outputDir": None,
     "fileRoots": [],
+    "strictVersion": False,
+    "requireVerifiedMappings": False,
 }
 
 _KNOWN_PROFILES: dict[tuple[int, int], str] = {(25, 1): "25.1", (24, 2): "24.2", (7, 2): "7.2"}
@@ -145,6 +149,11 @@ class EffectiveConfig(BaseModel):
     maxRetries: int = Field(ge=0, le=5)
     outputDir: str | None
     fileRoots: list[str]
+    # A server version that disagrees with irVersion is an error (IR-1004), not a warning.
+    strictVersion: bool
+    # Route capabilities only to implementations whose param mapping is verified (plan §4.3);
+    # an explicit ``surface`` still reaches an unverified one.
+    requireVerifiedMappings: bool
     password: str | None = Field(default=None, repr=False)
     jwt: str | None = Field(default=None, repr=False)
     jwtPrivateKey: str | None = Field(default=None, repr=False)

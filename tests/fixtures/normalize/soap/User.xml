@@ -1,0 +1,11 @@
+<SecurityAccount>
+  <AccountType>user</AccountType>
+  <Description>Claims adjuster</Description>
+  <Disabled>false</Disabled>
+  <Id><ExternalId>S-1-5-21-1001</ExternalId><Id>101</Id><HasId>true</HasId></Id>
+  <Name>jdoe</Name>
+</SecurityAccount>
+<AccountActivate>2020-01-01T00:00:00</AccountActivate>
+<ProfileName>Adjusters</ProfileName>
+<Email>jdoe@example.test</Email>
+<FullName>Jane Doe</FullName>

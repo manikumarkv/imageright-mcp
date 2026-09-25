@@ -15,10 +15,11 @@ from pydantic import Field
 
 from imageright_mcp.catalog import Answer, Catalog, CatalogError, get_catalog
 from imageright_mcp.catalog.service import warning
-from imageright_mcp.config import ConfigError, load_config
+from imageright_mcp.config import ConfigError, EffectiveConfig, load_config
 from imageright_mcp.envelope import internal_error, to_envelope
 from imageright_mcp.errors import get_registry
 from imageright_mcp.errors.explain import ErrorExplainer
+from imageright_mcp.runtime import ConfigureError
 
 SurfaceArg = Literal["rest-v1", "rest-v2", "soap", "any"]
 VersionArg = Annotated[
@@ -35,11 +36,11 @@ OFFLINE = ToolAnnotations(read_only_hint=True, open_world_hint=False, idempotent
 class _Defaults:
     """Configured version and surface preference, falling back to catalog defaults."""
 
-    def __init__(self, env: Mapping[str, str] | None, catalog: Catalog) -> None:
+    def __init__(self, load: Callable[[], EffectiveConfig], catalog: Catalog) -> None:
         self.warnings: list[dict[str, str]] = []
         try:
-            config = load_config(env)
-        except ConfigError as exc:
+            config = load()
+        except (ConfigError, ConfigureError) as exc:
             self.version = catalog.baseline
             self.preference = ["rest-v2", "rest-v1", "soap"]
             self.warnings.append(
@@ -61,10 +62,19 @@ def _respond(run: Callable[[], Answer], extra_warnings: list[dict[str, str]]) ->
     return to_envelope(data=answer.data, meta=meta)
 
 
-def register_catalog_tools(server: MCPServer, env: Mapping[str, str] | None = None) -> None:
+def register_catalog_tools(
+    server: MCPServer,
+    env: Mapping[str, str] | None = None,
+    *,
+    load: Callable[[], EffectiveConfig] | None = None,
+) -> None:
+    """``load`` supplies the effective config (the Runtime's, so ir_configure overrides of
+    irVersion and surfacePreference apply here too); default: ``load_config(env)``."""
+    loader = load or (lambda: load_config(env))
+
     def context() -> tuple[Catalog, _Defaults]:
         catalog = get_catalog()
-        return catalog, _Defaults(env, catalog)
+        return catalog, _Defaults(loader, catalog)
 
     def profile_of(
         catalog: Catalog, defaults: _Defaults, version: str | None, warnings: list[dict[str, str]]

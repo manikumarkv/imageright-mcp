@@ -1,0 +1,12 @@
+<DateCreated>2024-01-05T09:05:00</DateCreated>
+<DateLastModified>2024-03-03T11:00:00</DateLastModified>
+<Description>Claims</Description>
+<ParentId><Id>File</Id><RefId>4001</RefId></ParentId>
+<Id><Id>Folder</Id><RefId>5001</RefId></Id>
+<ObjType><Id><RefId>12</RefId></Id><Name>Claims</Name><OverlayId>0</OverlayId><Versioned>0</Versioned><DateCreated>2020-01-01T00:00:00</DateCreated><LastModified>2020-01-01T00:00:00</LastModified></ObjType>
+<CachedCopy>false</CachedCopy>
+<DeleteIndicator>None</DeleteIndicator>
+<EffectivePermissions>7</EffectivePermissions>
+<Type>Folder</Type>
+<MaxDocCreateDateUTC>2024-03-02T10:15:00</MaxDocCreateDateUTC>
+<MaxDocDateUTC>2024-03-01T00:00:00</MaxDocDateUTC>

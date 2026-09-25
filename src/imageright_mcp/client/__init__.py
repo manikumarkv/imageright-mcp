@@ -1,4 +1,4 @@
-"""IrClient building blocks for REST (plan §4, M4): transport, auth, validation, write policy."""
+"""The IrClient (plan §4, §9): routing, transport, auth, validation, write policy, normalizers."""
 
 from imageright_mcp.client.auth import AuthError, AuthManager, AuthSettings
 from imageright_mcp.client.builder import BuildError, RequestBuilder
@@ -13,6 +13,7 @@ from imageright_mcp.client.models import (
 from imageright_mcp.client.policy import PreviewLedger, decide, preview_id
 from imageright_mcp.client.redact import Redactor
 from imageright_mcp.client.rest import CallOutcome, RestClient
+from imageright_mcp.client.router import Route, RouteError, Router
 from imageright_mcp.client.transport import (
     BodySink,
     MockReply,
@@ -24,6 +25,9 @@ from imageright_mcp.client.transport import (
 )
 from imageright_mcp.client.validator import Validation, Validator
 
+# The programmatic entry point phase-2 composites build on: ``IrClient(config).call(...)``.
+IrClient = RestClient
+
 __all__ = [
     "AuthError",
     "AuthManager",
@@ -33,6 +37,7 @@ __all__ = [
     "BuildError",
     "CallOutcome",
     "FilePart",
+    "IrClient",
     "JsonPart",
     "MockReply",
     "MockTransport",
@@ -44,6 +49,9 @@ __all__ = [
     "RestClient",
     "RestTransport",
     "RetryPolicy",
+    "Route",
+    "RouteError",
+    "Router",
     "Transport",
     "TransportFailure",
     "Validation",

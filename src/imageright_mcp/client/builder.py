@@ -147,6 +147,10 @@ class RequestBuilder:
                 )
         return tuple(parts)
 
+    def file_part(self, name: str, raw_path: str) -> FilePart:
+        """Resolve a local upload inside the allowed roots (IR-1007 outside, IR-3006 missing)."""
+        return self._file(name, raw_path)
+
     def _file(self, name: str, raw_path: str) -> FilePart:
         registry = get_registry()
         path = Path(raw_path).expanduser()

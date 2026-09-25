@@ -7,9 +7,11 @@ from mcp.client.client import Client
 from mcp.types import TextContent
 
 from imageright_mcp.catalog import Catalog
+from imageright_mcp.client import MockReply, MockTransport
 from imageright_mcp.envelope import to_envelope
 from imageright_mcp.errors import get_registry
 from imageright_mcp.server import create_server
+from tests.conftest import BASE, PASSWORD, USER, mock_runtime, script_rest_login
 
 ERROR_KEYS = {"code", "name", "category", "message", "retryable", "hint", "native"}
 
@@ -26,6 +28,13 @@ BAD_CALLS: dict[str, tuple[dict[str, Any], dict[str, str]]] = {
     "ir_compare_versions": ({"fromVersion": "99.9", "toVersion": "25.x"}, {}),
     "ir_list_deprecations": ({"version": "99.9"}, {}),
     "ir_explain_error": ({"query": "IR-7777"}, {}),
+    "ir_call": ({"capabilityId": "no.such.capability"}, {}),
+    "ir_test_connection": ({}, {}),
+    "ir_session": (
+        {"action": "login", "surface": "rest"},
+        {"IMAGERIGHT_REST_BASE_URL": "https://ir.example.test"},
+    ),
+    "ir_configure": ({"settings": {"password": "hunter2-not-accepted"}}, {}),
 }
 GOOD_CALLS: dict[str, dict[str, Any]] = {
     "ir_get_config": {},
@@ -39,7 +48,28 @@ GOOD_CALLS: dict[str, dict[str, Any]] = {
     "ir_compare_versions": {"fromVersion": "24.x", "toVersion": "25.x"},
     "ir_list_deprecations": {},
     "ir_explain_error": {"query": "IR-4301"},
+    "ir_call": {"capabilityId": "document.get", "params": {"documentId": 7}, "dryRun": True},
+    "ir_test_connection": {},
+    "ir_session": {"action": "status"},
+    "ir_configure": {"settings": {"writeMode": "allow"}},
 }
+# Tools that need a server for a success case run against a MockTransport.
+LIVE_ENV = {
+    "IMAGERIGHT_REST_BASE_URL": BASE,
+    "IMAGERIGHT_USERNAME": USER,
+    "IMAGERIGHT_PASSWORD": PASSWORD,
+    "IMAGERIGHT_VERSION": "24.x",
+}
+
+
+def live_server() -> Any:
+    mock = MockTransport()
+    script_rest_login(mock)
+    mock.add("GET", "/api/health", MockReply(body=b"", headers={"Content-Type": "text/plain"}))
+    mock.add(
+        "GET", "/api/integration/version", MockReply(json={"Major": 24, "Minor": 2, "Build": 115})
+    )
+    return create_server(runtime=mock_runtime(LIVE_ENV, mock))
 
 
 async def tool_names() -> list[str]:
@@ -47,8 +77,11 @@ async def tool_names() -> list[str]:
         return [t.name for t in (await client.list_tools()).tools]
 
 
-async def envelope(name: str, args: dict[str, Any], env: dict[str, str] | None = None) -> Any:
-    async with Client(create_server(env or {})) as client:
+async def envelope(
+    name: str, args: dict[str, Any], env: dict[str, str] | None = None, *, live: bool = False
+) -> Any:
+    server = live_server() if live else create_server(env or {})
+    async with Client(server) as client:
         result = await client.call_tool(name, args)
     payload = result.structured_content
     assert isinstance(payload, dict), f"{name} did not return an envelope"
@@ -95,7 +128,7 @@ async def test_errors_share_one_shape(name: str) -> None:
 
 @pytest.mark.parametrize("name", sorted(GOOD_CALLS))
 async def test_successes_share_one_shape(name: str) -> None:
-    payload = await envelope(name, GOOD_CALLS[name])
+    payload = await envelope(name, GOOD_CALLS[name], live=name == "ir_test_connection")
     assert payload["ok"] is True, payload["error"]
     assert payload["error"] is None
     assert isinstance(payload["meta"]["warnings"], list)

@@ -10,6 +10,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import hashlib
+import ipaddress
 import json
 import logging
 import mimetypes
@@ -22,6 +23,7 @@ from contextlib import ExitStack
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, BinaryIO, Protocol
+from urllib.request import getproxies
 
 import httpx2
 
@@ -98,6 +100,50 @@ class BodySink:
         )
 
 
+def _no_proxy_key(host: str) -> str | None:
+    """The httpx mount pattern for one NO_PROXY entry (curl semantics), or None if unusable."""
+    if "://" in host:
+        return host
+    bare = host[1:-1] if host.startswith("[") and host.endswith("]") else host
+    address, _, subnet = bare.partition("/")
+    try:
+        ip = ipaddress.ip_address(address)
+    except ValueError:
+        ip = None
+    if ip is not None and ip.version == 6:
+        return f"all://[{address}]" + (f"/{subnet}" if subnet else "")
+    if ip is not None or bare.lower() == "localhost":
+        return f"all://{bare}"
+    return f"all://*{bare}"
+
+
+def environment_proxy_mounts(
+    verify: bool | ssl.SSLContext,
+) -> dict[str, httpx2.AsyncBaseTransport | None]:
+    """HTTP(S)_PROXY / ALL_PROXY / NO_PROXY as httpx mounts, skipping entries httpx rejects."""
+    info = getproxies()
+    mounts: dict[str, httpx2.AsyncBaseTransport | None] = {}
+    for entry in info.get("no", "").split(","):
+        host = entry.strip()
+        if host == "*":
+            return {}
+        key = _no_proxy_key(host) if host else None
+        if key is None:
+            continue
+        try:
+            httpx2.URL(key)
+        except httpx2.InvalidURL:
+            logger.warning("ignoring unusable NO_PROXY entry %r", host)
+            continue
+        mounts[key] = None
+    for scheme in ("http", "https", "all"):
+        url = info.get(scheme)
+        if url:
+            proxy = url if "://" in url else f"http://{url}"
+            mounts[f"{scheme}://"] = httpx2.AsyncHTTPTransport(proxy=proxy, verify=verify)
+    return mounts
+
+
 class RestTransport:
     """HTTP transport over httpx2: JSON, text/plain, multipart streamed from disk, binary to
     file, custom CA bundle, per-request id header."""
@@ -117,13 +163,26 @@ class RestTransport:
         tls: bool | ssl.SSLContext = (
             ssl.create_default_context(cafile=verify) if isinstance(verify, str) else verify
         )
-        self._client = httpx2.AsyncClient(
-            timeout=timeout,
-            verify=tls,
-            transport=http_transport,
-            follow_redirects=False,
-            trust_env=True,
-        )
+        try:
+            self._client = httpx2.AsyncClient(
+                timeout=timeout,
+                verify=tls,
+                transport=http_transport,
+                follow_redirects=False,
+                trust_env=True,
+            )
+        except httpx2.InvalidURL:
+            # httpx2 rejects some valid NO_PROXY spellings (a bracketed IPv6 such as "[::1]");
+            # build the proxy routing from the environment ourselves instead of failing.
+            logger.warning("proxy environment not understood by httpx2; parsing it here")
+            self._client = httpx2.AsyncClient(
+                timeout=timeout,
+                verify=tls,
+                transport=http_transport,
+                follow_redirects=False,
+                trust_env=False,
+                mounts=environment_proxy_mounts(tls),
+            )
 
     async def aclose(self) -> None:
         await self._client.aclose()

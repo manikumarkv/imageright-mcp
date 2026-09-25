@@ -1,0 +1,15 @@
+<DateCreated>2024-01-05T09:00:00</DateCreated>
+<DateLastModified>2024-03-03T11:00:00</DateLastModified>
+<Description>ACME Corp</Description>
+<ParentId><Id>Drawer</Id><RefId>21</RefId></ParentId>
+<Id><Id>File</Id><RefId>4001</RefId></Id>
+<ObjType><Id><RefId>11</RefId></Id><Name>Policy</Name><OverlayId>0</OverlayId><Versioned>0</Versioned><DateCreated>2020-01-01T00:00:00</DateCreated><LastModified>0001-01-01T00:00:00</LastModified></ObjType>
+<CachedCopy>false</CachedCopy>
+<DeleteIndicator>None</DeleteIndicator>
+<EffectivePermissions>7</EffectivePermissions>
+<Type>File</Type>
+<DateLastOpened>2024-03-03T11:30:00</DateLastOpened>
+<FileNumber1>POL-1</FileNumber1>
+<FileNumber2>2024</FileNumber2>
+<FileNumber3>A</FileNumber3>
+<Filename>ACME Corp</Filename>

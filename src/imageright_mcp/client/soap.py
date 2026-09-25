@@ -33,7 +33,12 @@ from typing import Any
 from imageright_mcp.catalog import Catalog
 from imageright_mcp.client.auth import AuthError
 from imageright_mcp.client.builder import BuildError
-from imageright_mcp.client.models import PreparedRequest, RawResponse, TransportFailure
+from imageright_mcp.client.models import (
+    FileBase64,
+    PreparedRequest,
+    RawResponse,
+    TransportFailure,
+)
 from imageright_mcp.client.pipeline import CallOutcome, policy_gate
 from imageright_mcp.client.policy import PreviewLedger
 from imageright_mcp.client.redact import Redactor
@@ -51,7 +56,7 @@ from imageright_mcp.client.transport import (
     Transport,
     send_with_retries,
 )
-from imageright_mcp.client.validator import Validator
+from imageright_mcp.client.validator import Issue, Validator
 from imageright_mcp.config import EffectiveConfig, strip_userinfo
 from imageright_mcp.errors import ErrorContext, ErrorMapper, get_registry
 from imageright_mcp.errors.mapper import MAX_RAW
@@ -152,6 +157,7 @@ class SoapSession:
         self._last_used: float | None = None
         self.connection = settings.connection
         self.logins = 0
+        self.rotations = 0
         self.notes: list[str] = []
         redactor.add(settings.password)
 
@@ -182,6 +188,11 @@ class SoapSession:
             exchange.relogged = relogged
             return exchange
 
+    async def login(self) -> None:
+        """Log in now (``ir_session`` refresh, ``ir_test_connection``); replaces any token."""
+        async with self._queue:
+            await self._login()
+
     async def available_connections(self) -> list[str]:
         """Connection names for ``UserLogin`` (``ir_test_connection`` lists them)."""
         async with self._queue:
@@ -204,6 +215,7 @@ class SoapSession:
             "authenticated": self._token is not None,
             "connection": self.connection,
             "logins": self.logins,
+            "tokenRotations": self.rotations,
             "idleTimeoutSeconds": self.settings.inactivity_seconds,
             "notes": list(self.notes),
         }
@@ -310,6 +322,8 @@ class SoapSession:
         """Make ``token`` current; keep a bounded window of older ones registered as secrets."""
         self.redactor.add(token)
         if token != self._token:
+            if self._token is not None:
+                self.rotations += 1
             self._recent.append(token)
             while len(self._recent) > REDACTED_TOKEN_WINDOW:
                 self.redactor.discard(self._recent.popleft())
@@ -396,6 +410,16 @@ class SoapSession:
         return dict(ref.to_dict())
 
 
+def _has_local_files(value: Any) -> bool:
+    if isinstance(value, FileBase64):
+        return True
+    if isinstance(value, Mapping):
+        return any(_has_local_files(v) for v in value.values())
+    if isinstance(value, list | tuple):
+        return any(_has_local_files(v) for v in value)
+    return False
+
+
 class SoapClient:
     """Pipeline steps 3-8 for SOAP operations; created and driven by ``RestClient.call``."""
 
@@ -447,9 +471,12 @@ class SoapClient:
         *,
         dry_run: bool | None,
         confirm: str | None,
+        route: list[dict[str, Any]] | None = None,
+        extra_issues: list[Issue] | None = None,
     ) -> CallOutcome:
         registry = get_registry()
-        route = [{"surface": "soap", "chosen": True, "reason": "explicit operationId"}]
+        if route is None:
+            route = [{"surface": "soap", "chosen": True, "reason": "explicit operationId"}]
         meta["route"] = route
         if str(op["id"]) in SESSION_OPS:
             error = registry.error(
@@ -465,9 +492,11 @@ class SoapClient:
                 self.redactor.add(value)  # e.g. ChangeUserPassword.newPassword
         profile = str(meta["profile"])
         validation = self.validator.validate(op, profile, params, files)
+        validation.issues[:0] = extra_issues or []
         meta["warnings"].extend(validation.warnings)
         try:
-            call = self.builder.build(op, params, self.session.settings.url)
+            # Local files sent as base64 show as a placeholder in the preview (and its hash).
+            call = self.builder.build(op, params, self.session.settings.url, inline_files=False)
         except BuildError as exc:
             return CallOutcome(error=exc.error, meta=meta)
         if self.url_had_credentials:
@@ -499,6 +528,14 @@ class SoapClient:
         if self.config.soapUrl is None:
             error = registry.error("IR-1003", message="soapUrl is not configured.")
             return CallOutcome(error=error, meta=meta)
+        if _has_local_files(params):
+            try:
+                call = self.builder.build(op, params, self.session.settings.url)
+            except OSError as exc:
+                error = registry.error(
+                    "IR-3006", message=f"Cannot read the image file: {type(exc).__name__}."
+                )
+                return CallOutcome(error=error, meta=meta)
         return await self._execute(call, meta)
 
     async def _execute(self, call: SoapCall, meta: dict[str, Any]) -> CallOutcome:

@@ -1,0 +1,12 @@
+<DateCreated>2024-03-02T10:15:00</DateCreated>
+<DateLastModified>2024-03-03T11:00:00</DateLastModified>
+<Description>Claim letter</Description>
+<ParentId><Id>Folder</Id><RefId>5001</RefId></ParentId>
+<Id><Id>Document</Id><RefId>9007199254740993</RefId></Id>
+<ObjType><Id><RefId>31</RefId></Id><Name>CORR</Name><ProgrammaticName>CORR</ProgrammaticName><OverlayId>0</OverlayId><Versioned>0</Versioned><DateCreated>2020-01-01T00:00:00</DateCreated><Description>Correspondence</Description><LastModified>2020-01-01T00:00:00</LastModified></ObjType>
+<CachedCopy>false</CachedCopy>
+<DeleteIndicator>None</DeleteIndicator>
+<EffectivePermissions>7</EffectivePermissions>
+<Type>Document</Type>
+<PageCount>3</PageCount>
+<DocumentDate>2024-03-01T00:00:00</DocumentDate>

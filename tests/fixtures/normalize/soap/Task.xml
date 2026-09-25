@@ -1,0 +1,19 @@
+<Stack />
+<AssignedTo><ExternalId>S-1-5-21-1001</ExternalId><Id>101</Id><HasId>true</HasId></AssignedTo>
+<DateAvailable>2024-03-04T08:00:00</DateAvailable>
+<DateInitiated>2024-03-03T12:00:00</DateInitiated>
+<Deadline>2024-03-10T17:00:00</Deadline>
+<Debug>false</Debug>
+<Defered>false</Defered>
+<Description>Check letter</Description>
+<ErrorCode>None</ErrorCode>
+<TaskId><Id>Task</Id><RefId>8001</RefId></TaskId>
+<LockedBy><Id>102</Id><HasId>true</HasId></LockedBy>
+<ObjId>9007199254740993</ObjId>
+<Priority>3</Priority>
+<Status>Ready</Status>
+<StepId><StepProgrammaticName>REVIEW</StepProgrammaticName><FlowProgrammaticName>CLAIMS</FlowProgrammaticName><RefId>62</RefId></StepId>
+<NotesId>-1</NotesId>
+<File><RefId>4001</RefId></File>
+<PageId><RefId>7001</RefId></PageId>
+<Pagenumber>7001</Pagenumber>

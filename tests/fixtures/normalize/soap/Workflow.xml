@@ -1,0 +1,10 @@
+<Workflow>
+  <Steps />
+  <GUID>9b1e0000-0000-0000-0000-000000000061</GUID>
+  <Name>Claims intake</Name>
+  <ProgrammaticName>CLAIMS</ProgrammaticName>
+  <Status>Active</Status>
+  <DateCreated>2020-01-01T00:00:00</DateCreated>
+  <DateLastModified>2020-01-01T00:00:00</DateLastModified>
+  <Id><ProgrammaticName>CLAIMS</ProgrammaticName><RefId>61</RefId></Id>
+</Workflow>

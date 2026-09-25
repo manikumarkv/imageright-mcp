@@ -6,6 +6,7 @@ assert on it through ``MockTransport``.
 
 from __future__ import annotations
 
+import base64
 import hashlib
 from dataclasses import dataclass, field, replace
 from pathlib import Path
@@ -48,6 +49,22 @@ class FilePart:
 
 
 MultipartPart = JsonPart | FilePart
+
+
+@dataclass(frozen=True)
+class FileBase64:
+    """A local file sent inline as base64 (SOAP images). Previews show ``placeholder()``; the
+    bytes are read only when the real envelope is built."""
+
+    path: Path
+    size: int
+    sha256: str
+
+    def placeholder(self) -> str:
+        return f"[base64 of {self.path.name}: {self.size} bytes, sha256 {self.sha256}]"
+
+    def encode(self) -> str:
+        return base64.b64encode(self.path.read_bytes()).decode("ascii")
 
 
 @dataclass(frozen=True)

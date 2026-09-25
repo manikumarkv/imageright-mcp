@@ -1,0 +1,34 @@
+{
+  "Document": {
+    "truth": {"id": 9007199254740993, "description": "Claim letter", "documentTypeId": 31, "documentTypeName": "Correspondence", "documentDate": "2024-03-01T00:00:00", "parentId": 5001, "pageCount": 3, "dateCreated": "2024-03-02T10:15:00", "dateLastModified": "2024-03-03T11:00:00", "deleted": false},
+    "absent": {}
+  },
+  "File": {
+    "truth": {"id": 4001, "description": "ACME Corp", "fileNumber1": "POL-1", "fileNumber2": "2024", "fileNumber3": "A", "fileTypeId": 11, "fileTypeName": "Policy", "drawerId": 21, "dateCreated": "2024-01-05T09:00:00", "dateLastModified": "2024-03-03T11:00:00", "deleted": false},
+    "absent": {}
+  },
+  "Folder": {
+    "truth": {"id": 5001, "description": "Claims", "folderTypeId": 12, "folderTypeName": "Claims", "fileId": 4001, "parentId": 4001, "dateCreated": "2024-01-05T09:05:00", "dateLastModified": "2024-03-03T11:00:00", "deleted": false},
+    "absent": {"soap": ["fileId"]}
+  },
+  "Page": {
+    "truth": {"id": 7001, "documentId": 9007199254740993, "pageNumber": 1, "description": "p1", "version": 2, "extension": "tif", "deleted": false},
+    "absent": {"soap": ["documentId"]}
+  },
+  "Task": {
+    "truth": {"id": 8001, "objectId": 9007199254740993, "fileId": 4001, "pageId": 7001, "workflowId": 61, "workflowName": "Claims intake", "stepId": 62, "stepName": "Review", "status": "Ready", "priority": 3, "description": "Check letter", "availableDate": "2024-03-04T08:00:00", "deadline": "2024-03-10T17:00:00", "dateInitiated": "2024-03-03T12:00:00", "assignedToId": 101, "lockedById": 102, "pageDescription": "p1"},
+    "absent": {"rest-v1": ["pageDescription"], "soap": ["workflowId", "workflowName", "stepName", "pageDescription"]}
+  },
+  "Workflow": {
+    "truth": {"id": 61, "name": "Claims intake", "programmaticName": "CLAIMS", "status": "Active"},
+    "absent": {}
+  },
+  "Step": {
+    "truth": {"id": 62, "workflowId": 61, "name": "Review", "programmaticName": "REVIEW", "status": "Normal", "isStart": false},
+    "absent": {"soap": ["isStart"]}
+  },
+  "User": {
+    "truth": {"id": 101, "name": "jdoe", "fullName": "Jane Doe", "description": "Claims adjuster", "enabled": true, "externalId": "S-1-5-21-1001"},
+    "absent": {"rest-v1:UserAccount": ["description", "externalId"]}
+  }
+}

@@ -1,0 +1,1822 @@
+{
+ "batch.create": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  }
+ },
+ "container.allowedTypes": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  }
+ },
+ "container.content": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "document.copy": {
+  "24.2": {
+   "rest-v1": null,
+   "rest-v1>rest-v2>soap": "rest-v2",
+   "rest-v1>soap>rest-v2": "rest-v2",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v2",
+   "soap>rest-v2>rest-v1": "rest-v2"
+  },
+  "25.1": {
+   "rest-v1": null,
+   "rest-v1>rest-v2>soap": "rest-v2",
+   "rest-v1>soap>rest-v2": "rest-v2",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v2",
+   "soap>rest-v2>rest-v1": "rest-v2"
+  },
+  "7.2": {
+   "rest-v1": null,
+   "rest-v1>rest-v2>soap": "rest-v2",
+   "rest-v1>soap>rest-v2": "rest-v2",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v2",
+   "soap>rest-v2>rest-v1": "rest-v2"
+  }
+ },
+ "document.create": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "document.delete": {
+  "24.2": {
+   "rest-v1": null,
+   "rest-v1>rest-v2>soap": "rest-v2",
+   "rest-v1>soap>rest-v2": "soap",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": null,
+   "rest-v1>rest-v2>soap": "rest-v2",
+   "rest-v1>soap>rest-v2": "soap",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": null,
+   "rest-v1>rest-v2>soap": "rest-v2",
+   "rest-v1>soap>rest-v2": "soap",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "document.find": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  }
+ },
+ "document.get": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "document.move": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v2"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v2"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v2"
+  }
+ },
+ "document.updateProperties": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  }
+ },
+ "drawer.list": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "file.create": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "file.find": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  }
+ },
+ "file.get": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "file.merge": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  }
+ },
+ "file.tasks": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "file.updateProperties": {
+  "24.2": {
+   "rest-v1": null,
+   "rest-v1>rest-v2>soap": "rest-v2",
+   "rest-v1>soap>rest-v2": "rest-v2",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v2",
+   "soap>rest-v2>rest-v1": "rest-v2"
+  },
+  "25.1": {
+   "rest-v1": null,
+   "rest-v1>rest-v2>soap": "rest-v2",
+   "rest-v1>soap>rest-v2": "rest-v2",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v2",
+   "soap>rest-v2>rest-v1": "rest-v2"
+  },
+  "7.2": {
+   "rest-v1": null,
+   "rest-v1>rest-v2>soap": "rest-v2",
+   "rest-v1>soap>rest-v2": "rest-v2",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v2",
+   "soap>rest-v2>rest-v1": "rest-v2"
+  }
+ },
+ "folder.create": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "folder.find": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "folder.get": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "note.list": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  }
+ },
+ "object.attributes": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "object.pathToFile": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "page.create": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "page.get": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "page.list": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "page.lock": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "page.move": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v2"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v2"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v2"
+  }
+ },
+ "page.refreshLock": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  }
+ },
+ "page.unlock": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "page.updateContent": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": "rest-v2",
+   "rest-v2>rest-v1>soap": "rest-v2",
+   "rest-v2>soap>rest-v1": "rest-v2",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "page.updateDescription": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "pages.delete": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  }
+ },
+ "server.version": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "step.assignableUsers": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "step.get": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "step.links": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "step.list": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "step.priorities": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  }
+ },
+ "task.cancel": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "task.create": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "task.find": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  }
+ },
+ "task.get": {
+  "24.2": {
+   "rest-v1": null,
+   "rest-v1>rest-v2>soap": "soap",
+   "rest-v1>soap>rest-v2": "soap",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "soap",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": null,
+   "rest-v1>rest-v2>soap": "soap",
+   "rest-v1>soap>rest-v2": "soap",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "soap",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": null,
+   "rest-v1>rest-v2>soap": "soap",
+   "rest-v1>soap>rest-v2": "soap",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "soap",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "task.lock": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "task.refreshLock": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "rest-v1",
+   "soap": null,
+   "soap>rest-v1>rest-v2": "rest-v1",
+   "soap>rest-v2>rest-v1": "rest-v1"
+  }
+ },
+ "task.release": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "task.route": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "task.unlock": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "task.update": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "user.current": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "user.get": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ },
+ "workflow.list": {
+  "24.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "25.1": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  },
+  "7.2": {
+   "rest-v1": "rest-v1",
+   "rest-v1>rest-v2>soap": "rest-v1",
+   "rest-v1>soap>rest-v2": "rest-v1",
+   "rest-v2": null,
+   "rest-v2>rest-v1>soap": "rest-v1",
+   "rest-v2>soap>rest-v1": "soap",
+   "soap": "soap",
+   "soap>rest-v1>rest-v2": "soap",
+   "soap>rest-v2>rest-v1": "soap"
+  }
+ }
+}

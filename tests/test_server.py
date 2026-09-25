@@ -25,7 +25,8 @@ async def test_lists_tools_in_memory() -> None:
         tools = (await client.list_tools()).tools
     names = [tool.name for tool in tools]
     assert names[0] == "ir_get_config"
-    assert len(names) == 11
+    assert len(names) == 15
+    assert {"ir_call", "ir_configure", "ir_session", "ir_test_connection"} <= set(names)
     annotations = tools[0].annotations
     assert annotations is not None
     assert annotations.read_only_hint is True
