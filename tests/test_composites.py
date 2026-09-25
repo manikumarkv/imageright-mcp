@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -34,10 +35,23 @@ WRITE_OPS = {
 }
 
 
+def camel_keys(value: Any) -> Any:
+    if isinstance(value, list):
+        return [camel_keys(item) for item in value]
+    if isinstance(value, dict):
+        return {k[:1].lower() + k[1:]: camel_keys(v) for k, v in value.items()}
+    return value
+
+
 class Harness:
-    def __init__(self, tmp_path: Path, write_mode: str = "allow", **env: str) -> None:
+    def __init__(
+        self, tmp_path: Path, write_mode: str = "allow", *, camel: bool = False, **env: str
+    ) -> None:
         self.fake = FakeImageRight()
         self.mock = fake_ir_mock(self.fake)
+        if camel:
+            # A server configured for camelCase JSON: same data, lower-case first letters.
+            self.mock.handler = lambda request: camel_reply(self.fake.handler(request))
         self.env = {
             "IMAGERIGHT_REST_BASE_URL": BASE,
             "IMAGERIGHT_USERNAME": USER,
@@ -61,9 +75,13 @@ class Harness:
         return [r.json for r in self.mock.calls(method, path)]
 
 
-@pytest.fixture
-def h(tmp_path: Path) -> Harness:
-    return Harness(tmp_path)
+def camel_reply(reply: MockReply) -> MockReply:
+    return replace(reply, json=camel_keys(reply.json))
+
+
+@pytest.fixture(params=["PascalCase", "camelCase"])
+def h(tmp_path: Path, request: pytest.FixtureRequest) -> Harness:
+    return Harness(tmp_path, camel=request.param == "camelCase")
 
 
 @pytest.fixture
