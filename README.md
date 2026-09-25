@@ -3,9 +3,10 @@
 An [MCP](https://modelcontextprotocol.io) server that helps AI coding assistants work correctly against
 Vertafore ImageRight on your product version (24.x, 25.x, or 7.2).
 
-> **Status: pre-alpha (M6, phase 1 feature-complete).** The offline API explorer, version-matrix tools,
-> error catalog and the version-aware client (`ir_call`, with dry-run previews) work. Capability param
-> mappings are not yet verified against a live server; hardening and a live smoke suite follow in M7.
+> **Status: pre-alpha (phase 2 complete: 24 tools — 15 API explorer + 9 composite workflow tools; 802
+> tests green).** The offline API explorer, version-matrix tools, error catalog, the version-aware client
+> (`ir_call`, with dry-run previews) and the composite workflow tools work. Capability param mappings are
+> not yet verified against a live server; hardening and a live smoke suite follow in M7.
 
 ## Tools
 
