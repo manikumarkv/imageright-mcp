@@ -551,6 +551,107 @@
         "Step 3 (rest.v1.files.updateFileProperties) is deprecated in 25.1."
       ]
     },
+    "F12": {
+      "composite": "merge_files",
+      "id": "F12",
+      "inputs": [
+        {
+          "meaning": "First part of the file number (FileNumberPart1) of the file that is merged away.",
+          "name": "sourceFileNumber",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "First part of the file number (FileNumberPart1) of the file that survives and receives the content.",
+          "name": "targetFileNumber",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "notes": [
+        "Destructive - the source file is gone after the merge and this cannot be undone.",
+        "Both lookups must resolve to exactly one file; no match or more than one match is an error (IR-4001) and the merge step is never reached. The user is not asked to pick.",
+        "The request body of the merge call is just the target file id as a bare JSON number.",
+        "The merge step is a destructive write, so the standard write policy applies - previewed under writeMode dry-run (nothing is sent), blocked under deny, sent under allow; and because it is destructive it also needs explicit confirmation (confirm=<previewId> from a prior preview, while requireConfirm is on, the default).",
+        "The merge call returns no body, so the flow outputs the id of the target file (from step 2); fetch the file again to see its merged content."
+      ],
+      "outputs": {
+        "fileId": {
+          "from": "$step2.Id",
+          "type": "int64"
+        }
+      },
+      "purpose": "Merge a source file's content into a target file. Both files are found by their file number; the source file is gone afterwards and only the target remains. This is destructive and cannot be undone.",
+      "steps": [
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.sourceFileNumber",
+              "type": "string"
+            }
+          ],
+          "n": 1,
+          "onError": "No match is an error, not a question - the flow stops with IR-4001 (ObjectNotFound, \"no file has number <sourceFileNumber>\") and nothing is merged. More than one match is also an error - the flow stops with IR-4001 (\"file number <sourceFileNumber> matches more than one file\") rather than guessing which file to merge away.",
+          "operationId": "rest.v1.files.findFiles",
+          "output": {
+            "select": "the single match; its Id is the source file",
+            "type": "FileDataResult[]"
+          },
+          "params": {
+            "FileNumberPart1": "$input.sourceFileNumber"
+          },
+          "purpose": "Find the source file.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.targetFileNumber",
+              "type": "string"
+            }
+          ],
+          "n": 2,
+          "onError": "No match is an error, not a question - the flow stops with IR-4001 (ObjectNotFound, \"no file has number <targetFileNumber>\") and nothing is merged. More than one match is also an error - the flow stops with IR-4001 (\"file number <targetFileNumber> matches more than one file\") rather than guessing which file receives the content.",
+          "operationId": "rest.v1.files.findFiles",
+          "output": {
+            "select": "the single match; its Id is the target file",
+            "type": "FileDataResult[]"
+          },
+          "params": {
+            "FileNumberPart1": "$input.targetFileNumber"
+          },
+          "purpose": "Find the target file.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            },
+            {
+              "ref": "$step2.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 3,
+          "onError": "Nothing is merged when the call is rejected; check that both files still exist and that the caller may modify them.",
+          "operationId": "rest.v1.files.mergeFiles",
+          "output": {
+            "type": null
+          },
+          "params": {
+            "sourceFileId": "$step1.Id",
+            "targetFileId": "$step2.Id"
+          },
+          "purpose": "Merge the source file into the target file.",
+          "safety": "destructive"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Merge one file into another",
+      "versionCaveats": []
+    },
     "F2": {
       "id": "F2",
       "inputs": [

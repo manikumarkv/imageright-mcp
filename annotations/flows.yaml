@@ -775,3 +775,61 @@ flows:
       - FileNumberPart1 is sent exactly as given; FileNumberPart2 and FileNumberPart3 are never sent.
       - The update step is a write, so the standard write policy applies - previewed under writeMode dry-run, blocked under deny, sent under allow.
       - The update call returns no body, so the flow outputs the id of the updated file (from step 1); fetch the file again to see its new values.
+
+  - id: F12
+    title: Merge one file into another
+    composite: merge_files
+    purpose: >-
+      Merge a source file's content into a target file. Both files are found by their file
+      number; the source file is gone afterwards and only the target remains. This is destructive
+      and cannot be undone.
+    surface: rest-v1
+    inputs:
+      - name: sourceFileNumber
+        type: string
+        required: true
+        meaning: >-
+          First part of the file number (FileNumberPart1) of the file that is merged away.
+      - name: targetFileNumber
+        type: string
+        required: true
+        meaning: >-
+          First part of the file number (FileNumberPart1) of the file that survives and receives
+          the content.
+    steps:
+      - op: POST /api/files/find
+        purpose: Find the source file.
+        params:
+          FileNumberPart1: $input.sourceFileNumber
+        select: the single match; its Id is the source file
+        onError: >-
+          No match is an error, not a question - the flow stops with IR-4001 (ObjectNotFound,
+          "no file has number <sourceFileNumber>") and nothing is merged. More than one match is
+          also an error - the flow stops with IR-4001 ("file number <sourceFileNumber> matches
+          more than one file") rather than guessing which file to merge away.
+      - op: POST /api/files/find
+        purpose: Find the target file.
+        params:
+          FileNumberPart1: $input.targetFileNumber
+        select: the single match; its Id is the target file
+        onError: >-
+          No match is an error, not a question - the flow stops with IR-4001 (ObjectNotFound,
+          "no file has number <targetFileNumber>") and nothing is merged. More than one match is
+          also an error - the flow stops with IR-4001 ("file number <targetFileNumber> matches
+          more than one file") rather than guessing which file receives the content.
+      - op: POST /api/files/{sourceFileId}/merge
+        purpose: Merge the source file into the target file.
+        params:
+          sourceFileId: $step1.Id
+          targetFileId: $step2.Id
+        onError: >-
+          Nothing is merged when the call is rejected; check that both files still exist and that
+          the caller may modify them.
+    outputs:
+      fileId: $step2.Id
+    notes:
+      - Destructive - the source file is gone after the merge and this cannot be undone.
+      - Both lookups must resolve to exactly one file; no match or more than one match is an error (IR-4001) and the merge step is never reached. The user is not asked to pick.
+      - The request body of the merge call is just the target file id as a bare JSON number.
+      - The merge step is a destructive write, so the standard write policy applies - previewed under writeMode dry-run (nothing is sent), blocked under deny, sent under allow; and because it is destructive it also needs explicit confirmation (confirm=<previewId> from a prior preview, while requireConfirm is on, the default).
+      - The merge call returns no body, so the flow outputs the id of the target file (from step 2); fetch the file again to see its merged content.

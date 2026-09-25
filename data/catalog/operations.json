@@ -5392,7 +5392,8 @@
         "F7",
         "F9",
         "F10",
-        "F11"
+        "F11",
+        "F12"
       ],
       "gotchas": [
         "When an attribute criterion carries both an id and a name, the id is used."
@@ -5727,6 +5728,9 @@
         603,
         901,
         1002
+      ],
+      "flows": [
+        "F12"
       ],
       "gotchas": [
         "The request body is just the target file id as a bare JSON number."
