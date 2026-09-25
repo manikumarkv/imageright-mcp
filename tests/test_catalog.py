@@ -163,7 +163,7 @@ def test_flows_f1_to_f8_reference_known_operations() -> None:
     assert {f"F{n}" for n in range(1, 9)} <= set(flows)
     # F8b: SOAP ingest variant; F9: search_files; F10: create_file; F11: update_file;
     # F12: merge_files; F13: move_file_content; F14: find_documents;
-    # F15: create_document
+    # F15: create_document; F16: upload_document
     assert set(flows) - {f"F{n}" for n in range(1, 9)} == {
         "F8b",
         "F9",
@@ -173,6 +173,7 @@ def test_flows_f1_to_f8_reference_known_operations() -> None:
         "F13",
         "F14",
         "F15",
+        "F16",
     }
     for flow in flows.values():
         for step in flow["steps"]:

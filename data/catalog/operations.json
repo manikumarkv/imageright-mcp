@@ -1842,7 +1842,8 @@
       "errors": [],
       "explanation": "Batches group pages for capture reporting. Create one per ingest run and reuse its id for each page.",
       "flows": [
-        "F3"
+        "F3",
+        "F16"
       ],
       "gotchas": [],
       "id": "rest.v1.batches.createBatch",
@@ -3667,7 +3668,8 @@
       "explanation": "A document is a container for pages. Create it, create a batch, then upload each page with POST /api/pages (flow F3).",
       "flows": [
         "F3",
-        "F15"
+        "F15",
+        "F16"
       ],
       "gotchas": [],
       "id": "rest.v1.documents.createDocument",
@@ -4420,7 +4422,8 @@
         "F9",
         "F10",
         "F14",
-        "F15"
+        "F15",
+        "F16"
       ],
       "gotchas": [],
       "id": "rest.v1.drawers.getDrawers",
@@ -5139,7 +5142,8 @@
       "flows": [
         "F3",
         "F10",
-        "F15"
+        "F15",
+        "F16"
       ],
       "gotchas": [],
       "id": "rest.v1.files.createFile",
@@ -5403,7 +5407,8 @@
         "F12",
         "F13",
         "F14",
-        "F15"
+        "F15",
+        "F16"
       ],
       "gotchas": [
         "When an attribute criterion carries both an id and a name, the id is used."
@@ -6018,7 +6023,8 @@
         603
       ],
       "flows": [
-        "F15"
+        "F15",
+        "F16"
       ],
       "gotchas": [],
       "id": "rest.v1.folders.createFolder",
@@ -6193,7 +6199,8 @@
         "F3",
         "F13",
         "F14",
-        "F15"
+        "F15",
+        "F16"
       ],
       "gotchas": [],
       "id": "rest.v1.folders.findFolders",
@@ -10244,7 +10251,8 @@
       "flows": [
         "F1",
         "F3",
-        "F15"
+        "F15",
+        "F16"
       ],
       "gotchas": [],
       "id": "rest.v1.objecttypes.getAllowedTypesForContainer",
@@ -10799,7 +10807,8 @@
       "flows": [
         "F10",
         "F14",
-        "F15"
+        "F15",
+        "F16"
       ],
       "gotchas": [],
       "id": "rest.v1.objecttypes.getTypesForClass",
@@ -12926,7 +12935,8 @@
       ],
       "explanation": "Send a multipart form with two parts: the page settings as JSON and the image bytes. Call it once per page, in order.",
       "flows": [
-        "F3"
+        "F3",
+        "F16"
       ],
       "gotchas": [
         "The OAS describes the body as plain JSON, but the server expects multipart form data.",
@@ -24109,7 +24119,8 @@
         914
       ],
       "flows": [
-        "F3"
+        "F3",
+        "F16"
       ],
       "gotchas": [
         "The image part is called Image here, not image0 as in REST v1.",

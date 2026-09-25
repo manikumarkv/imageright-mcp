@@ -1310,3 +1310,215 @@ flows:
       - The file is created with IsTemporary false. FileNumberPart2 and FileNumberPart3 are never sent.
       - Steps 4 (create file), 7 (create folder) and 9 (create document) are writes, so the standard write policy applies - previewed under writeMode dry-run (nothing is sent), blocked under deny, sent under allow. None is destructive, so no extra confirmation is needed beyond the standard write policy.
       - The create call returns the new document id (int64), which is the flow's output.
+
+  - id: F16
+    title: Upload a document from a PDF file
+    composite: upload_document
+    purpose: >-
+      End-to-end document upload - resolve or create the file, the folder and the document, then
+      split a local PDF into page images and upload each page. The file is found by its number
+      and checked to sit in the given drawer; the folder is found in that file by its folder type
+      name. With forceCreate (the default) a missing file and a missing folder are created first.
+    surface: rest-v1
+    inputs:
+      - name: fileNumber
+        type: string
+        required: true
+        meaning: >-
+          First part of the file number (FileNumberPart1) of the file that receives the document.
+          On the file-creation path it is also the number of the new file.
+      - name: drawerCode
+        type: string
+        required: true
+        meaning: >-
+          Drawer code of the file. An existing file must sit in this drawer or the flow stops
+          with an error; on the file-creation path it names the drawer that receives the new file.
+      - name: folderTypeName
+        type: string
+        required: true
+        meaning: >-
+          Name of the folder type of the folder that receives the document. In the owner's setup
+          the folder type name is also the folder's name (its Description), so this one value
+          both finds the folder and, on the folder-creation path, types and names the new folder.
+      - name: docTypeCode
+        type: string
+        required: true
+        meaning: Document type code (a code, not a name or id) of the new document.
+      - name: identifier
+        type: string
+        required: true
+        meaning: Label for the new document; sent as its Description.
+      - name: pdfFile
+        type: string
+        required: true
+        meaning: >-
+          Local path to the PDF to upload. It is split locally into one image per page; each
+          page image becomes one page of the document, in PDF page order.
+      - name: forceCreate
+        type: boolean
+        required: false
+        default: true
+        meaning: >-
+          When true (the default), a missing file and a missing folder are created first. When
+          false, a missing file or folder is an error.
+      - name: documentDate
+        type: date
+        required: false
+        default: today
+        meaning: Business date of the document (sent as DocumentDate); defaults to today.
+      - name: createdByApplication
+        type: string
+        required: false
+        meaning: >-
+          File-creation path only. Free-text name of the creating application, recorded for
+          auditing. The API requires it, so when the file must be created and this is missing,
+          the user is asked for it (needs-input).
+    steps:
+      - op: POST /api/files/find
+        purpose: Find the file that receives the document.
+        params:
+          FileNumberPart1: $input.fileNumber
+        select: the single match; its Id is the file that receives the document
+        onError: >-
+          More than one match is an error - the flow stops with IR-4001 ("file number
+          <fileNumber> matches more than one file") rather than guessing. No match branches on
+          $input.forceCreate - when it is true the flow continues on the file-creation path
+          (steps 3 and 4); otherwise it stops with IR-4001 (ObjectNotFound, "no file has number
+          <fileNumber>") and nothing is created.
+      - op: GET /api/drawers
+        purpose: >-
+          Turn the drawer code into the drawer id - to check the found file's drawer, or as the
+          parent of the file to create.
+        params: {}
+        select: >-
+          the item whose Name (the drawer code) equals $input.drawerCode; when step 1 found a
+          file, its Id must equal $step1.DrawerId
+        onError: >-
+          No drawer with that code is an error - the flow stops with IR-4001 (ObjectNotFound, "no
+          drawer has code <drawerCode>"). A found file whose DrawerId differs from the drawer's
+          Id is also an error - the flow stops with IR-4107 (InvalidTarget, "file <fileNumber> is
+          not in drawer <drawerCode>") and nothing is created.
+      - op: GET /api/objecttypes/{standardObjectClass}
+        purpose: Turn the file type code (the drawer code) into the file type id.
+        optional: only when step 1 found no file and $input.forceCreate is true
+        params:
+          standardObjectClass: File
+        select: >-
+          the item whose code equals $input.drawerCode (drawer code and file type code are
+          usually the same in the owner's setup); its Id is the file type id. Validation needed -
+          which ObjectTypeDataResult field (Name, Description or AutomationId) holds the type
+          code is unconfirmed.
+        onError: >-
+          A code that matches no file type is an error - the flow stops with IR-4006
+          (TypeNotFound, "no file type has code <drawerCode>") and nothing is created.
+      - op: POST /api/files
+        purpose: Create the missing file.
+        optional: only when step 1 found no file and $input.forceCreate is true
+        params:
+          FileTypeId: $step3.Id
+          ParentId: $step2.Id
+          Name: empty
+          FileNumberPart1: $input.fileNumber
+          IsTemporary: false
+          CreatedByApplication: $input.createdByApplication
+        onError: >-
+          When $input.createdByApplication is missing, the user is asked for it (needs-input)
+          before anything on this path is written. A file number that does not fit the file
+          type's number format is the usual cause of a rejection.
+      - op: POST /api/folders/find
+        purpose: Find the folder, inside the file, that receives the document.
+        params:
+          FileId: $step1.Id when step 1 found the file, otherwise $step4.value (the created file)
+          Description: $input.folderTypeName
+        select: the single match; its Id is the folder that receives the document
+        onError: >-
+          More than one match is an error - the flow stops with IR-4001 ("folder
+          <folderTypeName> matches more than one folder in file <fileNumber>") rather than
+          guessing. No match branches on $input.forceCreate - when it is true the flow continues
+          on the folder-creation path (steps 6 and 7); otherwise it stops with IR-4001
+          (ObjectNotFound, "file <fileNumber> has no folder <folderTypeName>") and no document is
+          created.
+      - op: GET /api/containers/{objectId}/allowedtypes
+        purpose: Turn the folder type name into the folder type id, limited to the types the file's template allows.
+        optional: only when step 5 found no folder and $input.forceCreate is true
+        params:
+          objectId: $step1.Id when step 1 found the file, otherwise $step4.value (the created file)
+        select: >-
+          the folder type whose Name equals $input.folderTypeName; its Id is the folder type id.
+          Validation needed - the list mixes folder and document types, and ClassId is assumed
+          to tell them apart.
+        onError: >-
+          A name that matches no allowed folder type is an error - the flow stops with IR-4006
+          (TypeNotFound, "file <fileNumber> allows no folder type named <folderTypeName>") and
+          nothing more is created.
+      - op: POST /api/folders
+        purpose: Create the missing folder in the file.
+        optional: only when step 5 found no folder and $input.forceCreate is true
+        params:
+          FolderTypeId: $step6.Id
+          ParentId: $step1.Id when step 1 found the file, otherwise $step4.value (the created file)
+          Description: $input.folderTypeName
+        onError: >-
+          The file's template must allow the folder type. Validation needed - some folder types
+          may mandate attributes, which this flow does not send.
+      - op: GET /api/objecttypes/{standardObjectClass}
+        purpose: Turn the document type code into the document type id.
+        params:
+          standardObjectClass: Document
+        select: >-
+          the item whose code equals $input.docTypeCode; its Id is the document type id.
+          Validation needed - which ObjectTypeDataResult field (Name, Description or
+          AutomationId) holds the type code is unconfirmed.
+        onError: >-
+          A code that matches no document type is an error - the flow stops with IR-4006
+          (TypeNotFound, "no document type has code <docTypeCode>") and no document is created.
+      - op: POST /api/documents
+        purpose: Create the empty document in the folder.
+        params:
+          ParentId: $step5.Id when step 5 found the folder, otherwise $step7.value (the created folder)
+          DocumentTypeId: $step8.Id
+          Description: $input.identifier
+          DocumentDate: $input.documentDate, today when not given
+        onError: >-
+          The parent's template must allow the document type. Validation needed - some document
+          types may mandate attributes, which this flow does not send.
+      - op: POST /api/batches
+        purpose: Open a real capture batch for the pages.
+        params:
+          Application: WebSdk
+      - op: POST /api/pages
+        purpose: >-
+          Split the local PDF into one image per page (local processing, not an API call), then
+          upload each page image into the document within the capture batch.
+        repeat: >-
+          once per page image rendered from $input.pdfFile, in PDF page order; the split happens
+          locally before the first upload
+        params:
+          DocId: $step9.value
+          BatchId: $step10.value
+          PageCreateData: {docId: $step9.value, batchId: $step10.value}
+          image0: one page image rendered from $input.pdfFile
+        onError: >-
+          A page upload that fails midway stops the flow; the pages uploaded before it stay in
+          the document, and the flow reports which pages succeeded and which page failed. A PDF
+          that cannot be read or has no pages is an error before anything is uploaded.
+        alternatives:
+          - POST /api/v2/pages
+    outputs:
+      documentId: $step9.value
+      batchId: $step10.value
+      pageIds: $step11.Id
+    notes:
+      - The file lookup must resolve to at most one file; more than one match is an error (IR-4001). No match is an error (IR-4001) unless forceCreate is true (the default), in which case the file is created first (steps 3 and 4).
+      - Documents always live under a folder, never directly in a file. The folder is found inside the file by its description, which in the owner's setup equals the folder type name (folderTypeName); more than one match is an error (IR-4001). No match is an error (IR-4001) unless forceCreate is true, in which case the folder is created first (steps 6 and 7) with folderTypeName as both its type and its description. On a newly created file the folder is always missing, so it is created too.
+      - Validation needed - identifying the folder type by name (folderTypeName) is the owner's assumption and must be confirmed on a test server. Its id comes from the file's allowed types (GET /api/containers/{objectId}/allowedtypes), which list folder and document types together; which field (ClassId, Name) singles out a folder type by name is unconfirmed.
+      - Validation needed - Description on POST /api/folders/find is assumed to be an exact match on the folder description; the server-side semantics are unconfirmed.
+      - On the file-creation path the file type code is the drawer code (drawer code and file type code are usually the same in the owner's setup), the file Name is empty, IsTemporary is false, and createdByApplication is asked for when missing (needs-input) before anything is written. FileNumberPart2 and FileNumberPart3 are never sent.
+      - Drawers have no separate code field; the drawer code is assumed to be the drawer's Name, as in F9. When the file exists, the drawer check compares its DrawerId with the drawer's Id; a mismatch is an error (IR-4107).
+      - Validation needed - which object type field holds a document or file type code is unconfirmed; it must be checked on a test server. An unknown code is an error (IR-4006) naming the code.
+      - Validation needed - document and folder Attributes are out of scope for this flow, and some document or folder types may mandate attributes; this must be checked against a test server.
+      - Implementation note - splitting the PDF is local processing, not an API call, and the flow format has one API operation per step, so the split is folded into the page-upload step (step 11) rather than being a step of its own. Phase 2 renders each PDF page to an image, in page order, with a PDF library before the first upload.
+      - The capture batch is opened with Application WebSdk, the same default as F3.
+      - If a page upload fails midway, the document holds the pages uploaded so far (as in F3); the flow reports which pages succeeded and which failed, and phase 2 decides on cleanup.
+      - Outputs - pageIds collects the Id of each created page, in page order; pageCount is the number of pages uploaded (the number of pages in the PDF on success). The page count comes from the local split, not from an API response, so it is not a step output.
+      - Steps 4 (create file), 7 (create folder), 9 (create document), 10 (open batch) and 11 (upload pages) are writes, so the standard write policy applies - previewed under writeMode dry-run (nothing is sent), blocked under deny, sent under allow. None is destructive, so no extra confirmation is needed beyond the standard write policy.
