@@ -1,5 +1,6 @@
 """ir_explain_error and envelope uniformity across every registered tool (plan §6.4)."""
 
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -11,7 +12,17 @@ from imageright_mcp.client import MockReply, MockTransport
 from imageright_mcp.envelope import to_envelope
 from imageright_mcp.errors import get_registry
 from imageright_mcp.server import create_server
-from tests.conftest import BASE, PASSWORD, USER, mock_runtime, script_rest_login
+from tests.conftest import (
+    BASE,
+    PASSWORD,
+    USER,
+    FakeImageRight,
+    mock_runtime,
+    script_rest_login,
+)
+
+FIXTURES = Path(__file__).parent / "fixtures"
+PDF = str(FIXTURES / "composites" / "one-page.pdf")
 
 ERROR_KEYS = {"code", "name", "category", "message", "retryable", "hint", "native"}
 
@@ -35,6 +46,36 @@ BAD_CALLS: dict[str, tuple[dict[str, Any], dict[str, str]]] = {
         {"IMAGERIGHT_REST_BASE_URL": "https://ir.example.test"},
     ),
     "ir_configure": ({"settings": {"password": "hunter2-not-accepted"}}, {}),
+    # Composites: no endpoint configured, so the first lookup fails (IR-1003), unless the
+    # flow rejects its input before any request.
+    "ir_create_task": ({"workflowName": "W", "stepName": "S", "fileNumber": "F-1"}, {}),
+    "ir_search_files": ({"fileNumber": "F-1"}, {}),
+    "ir_create_file": (
+        {"drawerCode": "CLM", "description": "d", "fileType": "CLM", "createdByApplication": "t"},
+        {},
+    ),
+    "ir_update_file": ({"fileNumber": "F-1", "newDescription": "d"}, {}),
+    "ir_merge_files": ({"sourceFileNumber": "F-2", "targetFileNumber": "F-1"}, {}),
+    "ir_move_file_content": (
+        {"sourceFileNumber": "A", "targetFileNumber": "B", "targetFolderName": "C", "mode": "x"},
+        {},
+    ),
+    "ir_find_documents": ({"fileNumber": "F-1"}, {}),
+    "ir_create_document": (
+        {"fileNumber": "F-1", "folderName": "C", "docTypeCode": "INV", "description": "d"},
+        {},
+    ),
+    "ir_upload_document": (
+        {
+            "fileNumber": "F-1",
+            "drawerCode": "CLM",
+            "folderTypeName": "Correspondence",
+            "docTypeCode": "INV",
+            "identifier": "d",
+            "pdfFile": "/no/such/file.pdf",
+        },
+        {},
+    ),
 }
 GOOD_CALLS: dict[str, dict[str, Any]] = {
     "ir_get_config": {},
@@ -52,6 +93,47 @@ GOOD_CALLS: dict[str, dict[str, Any]] = {
     "ir_test_connection": {},
     "ir_session": {"action": "status"},
     "ir_configure": {"settings": {"writeMode": "allow"}},
+    # Composites run against FakeImageRight under writeMode dry-run (see live_server).
+    "ir_create_task": {"workflowName": "Claims Intake", "stepName": "Review", "fileNumber": "F-1"},
+    "ir_search_files": {},  # needs-input: no request is sent
+    "ir_create_file": {
+        "drawerCode": "CLM",
+        "description": "d",
+        "fileType": "CLM",
+        "createdByApplication": "t",
+    },
+    "ir_update_file": {"fileNumber": "F-1"},  # needs-input
+    "ir_merge_files": {"sourceFileNumber": "F-2", "targetFileNumber": "F-1"},
+    "ir_move_file_content": {
+        "sourceFileNumber": "F-1",
+        "targetFileNumber": "F-2",
+        "targetFolderName": "Claims",
+    },
+    "ir_find_documents": {"fileNumber": "F-1"},
+    "ir_create_document": {
+        "fileNumber": "F-1",
+        "folderName": "Correspondence",
+        "docTypeCode": "INV",
+        "description": "d",
+    },
+    "ir_upload_document": {
+        "fileNumber": "F-1",
+        "drawerCode": "CLM",
+        "folderTypeName": "Correspondence",
+        "docTypeCode": "INV",
+        "identifier": "d",
+        "pdfFile": PDF,
+    },
+}
+LIVE_TOOLS = {
+    "ir_test_connection",
+    "ir_create_task",
+    "ir_create_file",
+    "ir_merge_files",
+    "ir_move_file_content",
+    "ir_find_documents",
+    "ir_create_document",
+    "ir_upload_document",
 }
 # Tools that need a server for a success case run against a MockTransport.
 LIVE_ENV = {
@@ -59,11 +141,12 @@ LIVE_ENV = {
     "IMAGERIGHT_USERNAME": USER,
     "IMAGERIGHT_PASSWORD": PASSWORD,
     "IMAGERIGHT_VERSION": "24.x",
+    "IMAGERIGHT_FILE_ROOTS": str(FIXTURES),
 }
 
 
 def live_server() -> Any:
-    mock = MockTransport()
+    mock = MockTransport(handler=FakeImageRight().handler)
     script_rest_login(mock)
     mock.add("GET", "/api/health", MockReply(body=b"", headers={"Content-Type": "text/plain"}))
     mock.add(
@@ -128,7 +211,7 @@ async def test_errors_share_one_shape(name: str) -> None:
 
 @pytest.mark.parametrize("name", sorted(GOOD_CALLS))
 async def test_successes_share_one_shape(name: str) -> None:
-    payload = await envelope(name, GOOD_CALLS[name], live=name == "ir_test_connection")
+    payload = await envelope(name, GOOD_CALLS[name], live=name in LIVE_TOOLS)
     assert payload["ok"] is True, payload["error"]
     assert payload["error"] is None
     assert isinstance(payload["meta"]["warnings"], list)

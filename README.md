@@ -33,6 +33,23 @@ These talk to your server (or preview what they would send):
 | `ir_session` | Auth session status, re-login, logout (SOAP `UserLogoff`) |
 | `ir_configure` | Session-scoped override of non-secret settings. Secrets are refused; moving an endpoint to another host withholds the environment credentials |
 
+Composite tools run a whole flow from `annotations/flows.yaml` using names, codes and file numbers.
+Lookups run for real. Writes follow `writeMode`, and a preview lists every planned step. When a flow
+has to ask the user something, the tool returns `data.status: "needs-input"` with the question in
+`data.needsInput`.
+
+| Tool | Flow |
+|---|---|
+| `ir_create_task` | F1: create a workflow task on a file, or on one document in a named folder |
+| `ir_search_files` | F9: search files by number, `%` pattern, drawer, temporary / deleted state |
+| `ir_create_file` | F10: create a file in a drawer, with duplicate-number protection |
+| `ir_update_file` | F11: change a file's number and/or description, with duplicate protection |
+| `ir_merge_files` | F12: merge one file into another (destructive, so it needs confirmation) |
+| `ir_move_file_content` | F13: move or copy documents, optionally filtered by type code, into a folder of another file |
+| `ir_find_documents` | F14: list a file's documents by folder, type code and description substring |
+| `ir_create_document` | F15: create a document in a folder, optionally creating the file and folder first |
+| `ir_upload_document` | F16: split a local PDF into page images and upload them as a new document |
+
 ## Errors
 
 Every tool returns the same envelope: `{ok, data, error, meta}`. Failures carry a stable

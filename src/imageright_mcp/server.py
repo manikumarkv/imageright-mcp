@@ -14,6 +14,7 @@ from mcp.types import CallToolResult, ToolAnnotations
 
 from imageright_mcp import __version__
 from imageright_mcp.client_tools import register_client_tools
+from imageright_mcp.composites import register_composite_tools
 from imageright_mcp.config import ConfigError
 from imageright_mcp.envelope import internal_error, to_envelope
 from imageright_mcp.errors import get_registry
@@ -29,8 +30,12 @@ INSTRUCTIONS = (
     "Call ir_get_config first to see which product version and surfaces are configured. "
     "To find an API, start with ir_search_apis, then ir_describe_api; ir_list_flows shows "
     "multi-step recipes. ir_call executes one operation or capability (writes are previewed "
-    "unless writeMode allows them); ir_test_connection checks the server. Every tool returns "
-    "the same envelope; when a call fails, ir_explain_error explains its IR code. Explorer, "
+    "unless writeMode allows them); ir_test_connection checks the server. Composite tools "
+    "(ir_create_task, ir_search_files, ir_create_file, ir_update_file, ir_merge_files, "
+    "ir_move_file_content, ir_find_documents, ir_create_document, ir_upload_document) run a "
+    "whole flow from names and numbers; when one needs more from the user it returns "
+    'data.status "needs-input" with the question. Every tool returns the same envelope; '
+    "when a call fails, ir_explain_error explains its IR code. Explorer, "
     "version and error tools work offline."
 )
 
@@ -71,6 +76,7 @@ def create_server(
     register_catalog_tools(server, env, load=runtime.config)
     register_error_tools(server)
     register_client_tools(server, runtime)
+    register_composite_tools(server, runtime)
     return server
 
 
