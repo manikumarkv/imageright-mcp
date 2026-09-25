@@ -92,6 +92,20 @@ class FlowStopped(Exception):
     """A lookup came back as a preview (config ``dryRun``), so the flow cannot go on."""
 
 
+def pascal_keys(value: Any) -> Any:
+    """``value`` with every object key starting upper-case. REST servers may be configured to
+    send camelCase JSON (``id``, ``name``) instead of the model's PascalCase; the composites read
+    the PascalCase names, so a lookup must not miss just because of the server's casing."""
+    if isinstance(value, list):
+        return [pascal_keys(item) for item in value]
+    if isinstance(value, dict):
+        return {
+            (k[:1].upper() + k[1:] if isinstance(k, str) else k): pascal_keys(v)
+            for k, v in value.items()
+        }
+    return value
+
+
 def fail(code: str, message: str, hint: str | None = None, **extra: Any) -> FlowFailed:
     return FlowFailed(get_registry().error(code, message=message, hint=hint), extra)
 
@@ -126,7 +140,7 @@ class Flow:
         if isinstance(outcome.data, list):
             record["matches"] = len(outcome.data)
         self.steps.append({**record, "status": "done"})
-        return outcome.data
+        return pascal_keys(outcome.data)
 
     async def write(
         self,
@@ -158,7 +172,7 @@ class Flow:
             self.steps.append({**record, "status": "preview", "preview": _preview(outcome)})
             return placeholder
         self.steps.append({**record, "status": "done", "result": outcome.data})
-        return outcome.data
+        return pascal_keys(outcome.data)
 
     def plan(
         self,
