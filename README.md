@@ -37,7 +37,7 @@ names, creates missing parents and uploads pages, so you don't have to chain API
 2. **Configure** with `ir_configure`: your server URL and version. Credentials stay in environment variables (see [Configuration](#configuration)).
 3. **Check** with `ir_test_connection`: is the server reachable, does login work, and does the version match?
 4. **Explore** with `ir_search_apis` to find operations, then `ir_describe_api` to understand one.
-5. **Act** with `ir_call` for a single API, or with a composite tool such as `ir_upload_document` for a whole workflow.
+5. **Act**: the tools come in three sections, Explore → Client → Composite workflows. Use `ir_call` (Client) for a single API, or a composite tool such as `ir_upload_document` (Composite workflows) for a whole workflow.
 
 ## Section 1 — Explore
 
@@ -124,13 +124,11 @@ flowchart LR
 
 ## Section 2 — Client
 
-These tools talk to your ImageRight server.
+These four are the generic client: configure, connect, and call any single API.
 
 ```mermaid
 flowchart LR
-  A[ir_configure] --> B[ir_test_connection] --> C[ir_session] --> D{What do you need?}
-  D -->|One API call| E[ir_call]
-  D -->|A whole workflow| F[Composite tools]
+  A[ir_configure] --> B[ir_test_connection] --> C[ir_session] --> D[ir_call<br/>call any single API operation]
 ```
 
 **`ir_configure`**: save the URL, version, writeMode and other settings. Secrets stay in environment variables.
@@ -162,6 +160,22 @@ flowchart LR
   A[Operation ID + args] --> B[ir_call] --> C{Dry-run?}
   C -->|yes| D[Preview of the request]
   C -->|no| E[Result in a standard shape]
+```
+
+## Section 3 — Composite workflows
+
+Each composite runs a whole multi-step flow: it resolves names to IDs, creates missing parents, and asks you when it needs input.
+
+```mermaid
+flowchart LR
+  A[Pick a workflow] --> B[Composite runs every step] --> C[needs-input or confirm<br/>when required] --> D[Done]
+```
+
+**`ir_create_task`**: creates a workflow task on a file or on one document.
+
+```mermaid
+flowchart LR
+  A[Look up workflow, step,<br/>file IDs from names] --> B[If a document:<br/>find it in the folder] --> C[Create the task]
 ```
 
 **`ir_search_files`**: find files by number or a `%` pattern, by drawer, and by temporary or deleted state.
@@ -225,13 +239,6 @@ flowchart LR
 ```mermaid
 flowchart LR
   A[Find or create file,<br/>folder, document] --> B[Split PDF<br/>into page images] --> C[Upload pages<br/>in order]
-```
-
-**`ir_create_task`**: creates a workflow task on a file or on one document.
-
-```mermaid
-flowchart LR
-  A[Look up workflow, step,<br/>file IDs from names] --> B[If a document:<br/>find it in the folder] --> C[Create the task]
 ```
 
 **Safety.** Writes default to dry-run previews. Destructive operations need your confirmation. When
