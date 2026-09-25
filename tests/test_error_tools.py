@@ -49,6 +49,8 @@ BAD_CALLS: dict[str, tuple[dict[str, Any], dict[str, str]]] = {
     # Composites: no endpoint configured, so the first lookup fails (IR-1003), unless the
     # flow rejects its input before any request.
     "ir_create_task": ({"workflowName": "W", "stepName": "S", "fileNumber": "F-1"}, {}),
+    "ir_find_workflows": ({"workflowName": "W"}, {}),
+    "ir_find_steps": ({"workflowName": "W"}, {}),
     "ir_search_files": ({"fileNumber": "F-1"}, {}),
     "ir_create_file": (
         {"drawerCode": "CLM", "description": "d", "fileType": "CLM", "createdByApplication": "t"},
@@ -95,6 +97,8 @@ GOOD_CALLS: dict[str, dict[str, Any]] = {
     "ir_configure": {"settings": {"writeMode": "allow"}},
     # Composites run against FakeImageRight under writeMode dry-run (see live_server).
     "ir_create_task": {"workflowName": "Claims Intake", "stepName": "Review", "fileNumber": "F-1"},
+    "ir_find_workflows": {},
+    "ir_find_steps": {"workflowName": "Claims Intake", "stepName": "Review"},
     "ir_search_files": {},  # needs-input: no request is sent
     "ir_create_file": {
         "drawerCode": "CLM",
@@ -128,6 +132,8 @@ GOOD_CALLS: dict[str, dict[str, Any]] = {
 LIVE_TOOLS = {
     "ir_test_connection",
     "ir_create_task",
+    "ir_find_workflows",
+    "ir_find_steps",
     "ir_create_file",
     "ir_merge_files",
     "ir_move_file_content",

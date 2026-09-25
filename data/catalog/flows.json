@@ -1780,6 +1780,122 @@
       "title": "Upload a document from a PDF file",
       "versionCaveats": []
     },
+    "F17": {
+      "composite": "find_workflows",
+      "id": "F17",
+      "inputs": [
+        {
+          "meaning": "Optional display name of the workflow (its Name). Matched exactly, ignoring case and surrounding spaces. Without it every workflow the caller can see is returned.",
+          "name": "workflowName",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "notes": [
+        "The name is matched exactly after trimming and ignoring case; there is no substring or wildcard search. Call without workflowName to see every name.",
+        "Only workflows the caller has rights on are returned; a workflow hidden by rights cannot be told apart from one that does not exist.",
+        "Every step is a read; no write policy applies."
+      ],
+      "outputs": {
+        "workflows": {
+          "from": "$step1.value",
+          "type": "WorkflowData[]"
+        }
+      },
+      "purpose": "List the workflows the caller has rights on, or look one up by its display name. The results feed other composites, for example F1's workflowName or F18's workflowName.",
+      "steps": [
+        {
+          "inputsFrom": [],
+          "n": 1,
+          "onError": "Ask the user when no workflow has that name; offer the workflow names returned. A workflow the caller has no rights on is not returned, so it looks the same as a missing one.",
+          "operationId": "rest.v1.workflow.getWorkflows",
+          "output": {
+            "select": "every item whose Name equals $input.workflowName when given, otherwise all items",
+            "type": "WorkflowData[]"
+          },
+          "params": {},
+          "purpose": "List the workflows the caller has rights on.",
+          "safety": "read"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Find workflows by name",
+      "versionCaveats": []
+    },
+    "F18": {
+      "composite": "find_steps",
+      "id": "F18",
+      "inputs": [
+        {
+          "meaning": "Display name of the workflow (its Name), matched exactly, ignoring case and surrounding spaces.",
+          "name": "workflowName",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Optional display name of a step (its Name), matched the same way. Without it every production step of the workflow is returned.",
+          "name": "stepName",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "notes": [
+        "Only production steps are listed (flag Production), the same steps F1 can create tasks on; debug and deleted steps are left out.",
+        "Names are matched exactly after trimming and ignoring case; there is no substring or wildcard search. Call without stepName to see every step name.",
+        "The workflow output carries the workflow's Id, Name, FlowProgName and Status as returned by step 1.",
+        "Every step is a read; no write policy applies."
+      ],
+      "outputs": {
+        "steps": {
+          "from": "$step2.value",
+          "type": "StepData[]"
+        },
+        "workflow": {
+          "from": "$step1.Id",
+          "type": "int64"
+        }
+      },
+      "purpose": "Turn a workflow name into its id and list the workflow's production steps, or look one step up by name. The results feed other composites, for example F1's stepName.",
+      "steps": [
+        {
+          "inputsFrom": [],
+          "n": 1,
+          "onError": "Ask the user: no match means the workflow does not exist or the caller has no rights on it; offer the workflow names returned. Several workflows with that name are asked about too.",
+          "operationId": "rest.v1.workflow.getWorkflows",
+          "output": {
+            "select": "the item whose Name equals $input.workflowName",
+            "type": "WorkflowData[]"
+          },
+          "params": {},
+          "purpose": "Find the workflow.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 2,
+          "onError": "Ask the user when no step has that name; offer the step names returned. A server refusal here (for example WorkflowNotFound) stops the flow with the mapped IR error.",
+          "operationId": "rest.v1.workflow.getSteps",
+          "output": {
+            "select": "every item whose Name equals $input.stepName when given, otherwise all items",
+            "type": "StepData[]"
+          },
+          "params": {
+            "flag": "Production",
+            "flowId": "$step1.Id"
+          },
+          "purpose": "List the workflow's steps.",
+          "safety": "read"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Find the steps of a workflow",
+      "versionCaveats": []
+    },
     "F2": {
       "id": "F2",
       "inputs": [

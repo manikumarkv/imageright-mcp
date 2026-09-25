@@ -5,7 +5,6 @@ the user, except the folder, which is an error (IR-4001) when missing or ambiguo
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Any
 
 from imageright_mcp.composites.engine import Flow, Json, NeedsInput
 from imageright_mcp.composites.resolve import (
@@ -13,30 +12,17 @@ from imageright_mcp.composites.resolve import (
     GET_ALLOWED_TYPES,
     MAX_OPTIONS,
     items,
-    named,
-    names,
+    one_named,
+    production_steps,
     require_file,
     require_folder,
+    resolve_workflow,
     same,
 )
 
-GET_WORKFLOWS = "rest.v1.workflow.getWorkflows"
-GET_STEPS = "rest.v1.workflow.getSteps"
 GET_STEP_USERS = "rest.v1.workflow.getUsersToAssign"
 GET_PRIORITIES = "rest.v1.workflow.getPriorityList"
 CREATE_TASK = "rest.v1.tasks.createTask"
-
-
-def _one(data: Any, name: str, input_name: str, what: str, key: str = "Name") -> Json:
-    matches = named(data, name, key)
-    if len(matches) == 1:
-        return matches[0]
-    question = (
-        f"No {what} is named {name}. Which {what} do you mean?"
-        if not matches
-        else f"{len(matches)} {what}s are named {name}. Which one do you mean?"
-    )
-    raise NeedsInput(input_name, question, names(data, key))
 
 
 def _document_option(doc: Json) -> Json:
@@ -58,14 +44,13 @@ async def create_task(
     priority: int,
     availableDate: str | None,
 ) -> Json:
-    workflow = _one(await flow.read(1, GET_WORKFLOWS), workflowName, "workflowName", "workflow")
-    steps = await flow.read(2, GET_STEPS, {"flowId": workflow["Id"], "flag": "Production"})
-    step = _one(steps, stepName, "stepName", "step")
+    workflow = await resolve_workflow(flow, 1, workflowName)
+    step = one_named(await production_steps(flow, 2, workflow), stepName, "stepName", "step")
 
     user: Json | None = None
     if assigneeUsername:
         users = await flow.read(3, GET_STEP_USERS, {"stepId": step["Id"]})
-        user = _one(users, assigneeUsername, "assigneeUsername", "assignable user")
+        user = one_named(users, assigneeUsername, "assigneeUsername", "assignable user")
 
     allowed = await flow.read(4, GET_PRIORITIES, {"stepId": step["Id"]})
     choices = [p for p in allowed if isinstance(p, int)] if isinstance(allowed, list) else []
@@ -89,7 +74,7 @@ async def create_task(
             )
         folder = await require_folder(flow, 6, file["Id"], folderName, fileNumber)
         types = await flow.read(7, GET_ALLOWED_TYPES, {"objectId": file["Id"]})
-        doc_type = _one(types, targetDocumentType, "targetDocumentType", "document type")
+        doc_type = one_named(types, targetDocumentType, "targetDocumentType", "document type")
         found = await flow.read(
             8,
             FIND_DOCUMENTS,

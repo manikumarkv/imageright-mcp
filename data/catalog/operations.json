@@ -21789,7 +21789,8 @@
         14
       ],
       "flows": [
-        "F1"
+        "F1",
+        "F18"
       ],
       "gotchas": [],
       "id": "rest.v1.workflow.getSteps",
@@ -22044,7 +22045,9 @@
       "errors": [],
       "explanation": "First step of task creation; find the workflow by Name or FlowProgName and keep its Id.",
       "flows": [
-        "F1"
+        "F1",
+        "F17",
+        "F18"
       ],
       "gotchas": [],
       "id": "rest.v1.workflow.getWorkflows",
