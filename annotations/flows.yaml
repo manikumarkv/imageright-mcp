@@ -1029,3 +1029,153 @@ flows:
       - Deleted documents are never returned (Deleted is always sent as false).
       - Zero matching documents returns an empty list, not an error.
       - Every step is a read; no write policy applies.
+
+  - id: F15
+    title: Create a document (creating the file if needed)
+    composite: create_document
+    purpose: >-
+      Create a document inside a file; optionally create the file first when it does not exist.
+      The file is found by its number and, when a drawer code is given, checked to sit in that
+      drawer. The document type code is turned into its id before the document is created.
+    surface: rest-v1
+    inputs:
+      - name: fileNumber
+        type: string
+        required: true
+        meaning: >-
+          First part of the file number (FileNumberPart1) of the file that receives the document.
+          On the file-creation path it is also the number of the new file.
+      - name: docTypeCode
+        type: string
+        required: true
+        meaning: Document type code (a code, not a name or id) of the new document.
+      - name: description
+        type: string
+        required: true
+        meaning: Label for the new document; sent as its Description.
+      - name: drawerCode
+        type: string
+        required: false
+        meaning: >-
+          Optional drawer code. When the file exists, the file must sit in this drawer or the
+          flow stops with an error. Required on the file-creation path, where it names the drawer
+          that receives the new file.
+      - name: documentDate
+        type: date
+        required: false
+        default: today
+        meaning: Business date of the document (sent as DocumentDate); defaults to today.
+      - name: forceCreate
+        type: boolean
+        required: false
+        default: false
+        meaning: >-
+          When true and no file has the given number, the file is created first. When false (the
+          default), a missing file is an error.
+      - name: fileTypeCode
+        type: string
+        required: false
+        meaning: >-
+          File-creation path only. File type code of the new file; when left out, the drawer code
+          is used as the file type code.
+      - name: createdByApplication
+        type: string
+        required: false
+        meaning: >-
+          File-creation path only. Free-text name of the creating application, recorded for
+          auditing. The API requires it, so when the file must be created and this is missing,
+          the user is asked for it (needs-input).
+      - name: fileDescription
+        type: string
+        required: false
+        default: ""
+        meaning: File-creation path only. Label for the new file; sent as its Name.
+    steps:
+      - op: POST /api/files/find
+        purpose: Find the file that receives the document.
+        params:
+          FileNumberPart1: $input.fileNumber
+        select: the single match; its Id is the file that receives the document
+        onError: >-
+          More than one match is an error - the flow stops with IR-4001 ("file number
+          <fileNumber> matches more than one file") rather than guessing. No match branches on
+          $input.forceCreate - when it is true the flow continues on the file-creation path
+          (steps 3 and 4); otherwise it stops with IR-4001 (ObjectNotFound, "no file has number
+          <fileNumber>") and nothing is created.
+      - op: GET /api/drawers
+        purpose: >-
+          Turn the drawer code into the drawer id - to check the found file's drawer, or as the
+          parent of the file to create.
+        optional: >-
+          only when $input.drawerCode is given; on the file-creation path it is required, and a
+          missing drawer code is rejected as needs-input before any request of that path is sent
+          (a file cannot be created without a drawer)
+        params: {}
+        select: >-
+          the item whose Name (the drawer code) equals $input.drawerCode; when step 1 found a
+          file, its Id must equal $step1.DrawerId
+        onError: >-
+          No drawer with that code is an error - the flow stops with IR-4001 (ObjectNotFound, "no
+          drawer has code <drawerCode>"). A found file whose DrawerId differs from the drawer's
+          Id is also an error - the flow stops with IR-4107 (InvalidTarget, "file <fileNumber> is
+          not in drawer <drawerCode>") and no document is created.
+      - op: GET /api/objecttypes/{standardObjectClass}
+        purpose: Turn the file type code into the file type id.
+        optional: only when step 1 found no file and $input.forceCreate is true
+        params:
+          standardObjectClass: File
+        select: >-
+          the item whose code equals $input.fileTypeCode when given, otherwise $input.drawerCode
+          (drawer code and file type code are usually the same); its Id is the file type id.
+          Validation needed - which ObjectTypeDataResult field (Name, Description or
+          AutomationId) holds the type code is unconfirmed.
+        onError: >-
+          A code that matches no file type is an error - the flow stops with IR-4006
+          (TypeNotFound, "no file type has code <code>") and nothing is created.
+      - op: POST /api/files
+        purpose: Create the missing file.
+        optional: only when step 1 found no file and $input.forceCreate is true
+        params:
+          FileTypeId: $step3.Id
+          ParentId: $step2.Id
+          Name: $input.fileDescription, empty when not given
+          FileNumberPart1: $input.fileNumber
+          IsTemporary: false
+          CreatedByApplication: $input.createdByApplication
+        onError: >-
+          When $input.createdByApplication is missing, the user is asked for it (needs-input)
+          before this step; nothing is written. A file number that does not fit the file type's
+          number format is the usual cause of a rejection.
+      - op: GET /api/objecttypes/{standardObjectClass}
+        purpose: Turn the document type code into the document type id.
+        params:
+          standardObjectClass: Document
+        select: >-
+          the item whose code equals $input.docTypeCode; its Id is the document type id.
+          Validation needed - which ObjectTypeDataResult field (Name, Description or
+          AutomationId) holds the type code is unconfirmed.
+        onError: >-
+          A code that matches no document type is an error - the flow stops with IR-4006
+          (TypeNotFound, "no document type has code <docTypeCode>") and no document is created.
+      - op: POST /api/documents
+        purpose: Create the document in the file.
+        params:
+          ParentId: $step1.Id when step 1 found the file, otherwise $step4.value (the created file)
+          DocumentTypeId: $step5.Id
+          Description: $input.description
+          DocumentDate: $input.documentDate, today when not given
+        onError: >-
+          The parent's template must allow the document type. Validation needed - some document
+          types may mandate attributes, which this flow does not send.
+    outputs:
+      documentId: $step6.value
+    notes:
+      - The file lookup must resolve to at most one file; more than one match is an error (IR-4001). No match is an error (IR-4001) unless forceCreate is true, in which case the file is created first (steps 3 and 4).
+      - On the file-creation path drawerCode is required (a missing one is rejected as needs-input) and createdByApplication is asked for when missing (needs-input); both checks happen before anything is written.
+      - The file type code defaults to the drawer code, because drawer code and file type code are usually the same in the owner's setup; fileTypeCode overrides it.
+      - Drawers have no separate code field; the drawer code is assumed to be the drawer's Name, as in F9. When the file exists, the drawer check compares its DrawerId with the drawer's Id; a mismatch is an error (IR-4107).
+      - Validation needed - which object type field holds a document or file type code is unconfirmed; it must be checked on a test server. An unknown code is an error (IR-4006) naming the code.
+      - Validation needed - document Attributes are out of scope for this flow, and some document types may mandate attributes; this must be checked against a test server.
+      - The file is created with IsTemporary false. FileNumberPart2 and FileNumberPart3 are never sent.
+      - Steps 4 (create file) and 6 (create document) are writes, so the standard write policy applies - previewed under writeMode dry-run (nothing is sent), blocked under deny, sent under allow. Neither is destructive, so no extra confirmation is needed beyond the standard write policy.
+      - The create call returns the new document id (int64), which is the flow's output.

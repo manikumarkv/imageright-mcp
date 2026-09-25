@@ -306,6 +306,7 @@ async def test_list_flows() -> None:
         "F12",
         "F13",
         "F14",
+        "F15",
     ]
     assert all(f["usableInVersion"] for f in data["flows"])
     soap = await ok("ir_list_flows", {"surface": "soap"})

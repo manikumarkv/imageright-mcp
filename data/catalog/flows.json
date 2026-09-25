@@ -961,6 +961,236 @@
       "title": "Find documents in a file",
       "versionCaveats": []
     },
+    "F15": {
+      "composite": "create_document",
+      "id": "F15",
+      "inputs": [
+        {
+          "meaning": "First part of the file number (FileNumberPart1) of the file that receives the document. On the file-creation path it is also the number of the new file.",
+          "name": "fileNumber",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Document type code (a code, not a name or id) of the new document.",
+          "name": "docTypeCode",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Label for the new document; sent as its Description.",
+          "name": "description",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "meaning": "Optional drawer code. When the file exists, the file must sit in this drawer or the flow stops with an error. Required on the file-creation path, where it names the drawer that receives the new file.",
+          "name": "drawerCode",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "default": "today",
+          "meaning": "Business date of the document (sent as DocumentDate); defaults to today.",
+          "name": "documentDate",
+          "required": false,
+          "type": "date"
+        },
+        {
+          "default": false,
+          "meaning": "When true and no file has the given number, the file is created first. When false (the default), a missing file is an error.",
+          "name": "forceCreate",
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "meaning": "File-creation path only. File type code of the new file; when left out, the drawer code is used as the file type code.",
+          "name": "fileTypeCode",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "meaning": "File-creation path only. Free-text name of the creating application, recorded for auditing. The API requires it, so when the file must be created and this is missing, the user is asked for it (needs-input).",
+          "name": "createdByApplication",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "default": "",
+          "meaning": "File-creation path only. Label for the new file; sent as its Name.",
+          "name": "fileDescription",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "notes": [
+        "The file lookup must resolve to at most one file; more than one match is an error (IR-4001). No match is an error (IR-4001) unless forceCreate is true, in which case the file is created first (steps 3 and 4).",
+        "On the file-creation path drawerCode is required (a missing one is rejected as needs-input) and createdByApplication is asked for when missing (needs-input); both checks happen before anything is written.",
+        "The file type code defaults to the drawer code, because drawer code and file type code are usually the same in the owner's setup; fileTypeCode overrides it.",
+        "Drawers have no separate code field; the drawer code is assumed to be the drawer's Name, as in F9. When the file exists, the drawer check compares its DrawerId with the drawer's Id; a mismatch is an error (IR-4107).",
+        "Validation needed - which object type field holds a document or file type code is unconfirmed; it must be checked on a test server. An unknown code is an error (IR-4006) naming the code.",
+        "Validation needed - document Attributes are out of scope for this flow, and some document types may mandate attributes; this must be checked against a test server.",
+        "The file is created with IsTemporary false. FileNumberPart2 and FileNumberPart3 are never sent.",
+        "Steps 4 (create file) and 6 (create document) are writes, so the standard write policy applies - previewed under writeMode dry-run (nothing is sent), blocked under deny, sent under allow. Neither is destructive, so no extra confirmation is needed beyond the standard write policy.",
+        "The create call returns the new document id (int64), which is the flow's output."
+      ],
+      "outputs": {
+        "documentId": {
+          "from": "$step6.value",
+          "type": "int64"
+        }
+      },
+      "purpose": "Create a document inside a file; optionally create the file first when it does not exist. The file is found by its number and, when a drawer code is given, checked to sit in that drawer. The document type code is turned into its id before the document is created.",
+      "steps": [
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.fileNumber",
+              "type": "string"
+            }
+          ],
+          "n": 1,
+          "onError": "More than one match is an error - the flow stops with IR-4001 (\"file number <fileNumber> matches more than one file\") rather than guessing. No match branches on $input.forceCreate - when it is true the flow continues on the file-creation path (steps 3 and 4); otherwise it stops with IR-4001 (ObjectNotFound, \"no file has number <fileNumber>\") and nothing is created.",
+          "operationId": "rest.v1.files.findFiles",
+          "output": {
+            "select": "the single match; its Id is the file that receives the document",
+            "type": "FileDataResult[]"
+          },
+          "params": {
+            "FileNumberPart1": "$input.fileNumber"
+          },
+          "purpose": "Find the file that receives the document.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [],
+          "n": 2,
+          "onError": "No drawer with that code is an error - the flow stops with IR-4001 (ObjectNotFound, \"no drawer has code <drawerCode>\"). A found file whose DrawerId differs from the drawer's Id is also an error - the flow stops with IR-4107 (InvalidTarget, \"file <fileNumber> is not in drawer <drawerCode>\") and no document is created.",
+          "operationId": "rest.v1.drawers.getDrawers",
+          "optional": "only when $input.drawerCode is given; on the file-creation path it is required, and a missing drawer code is rejected as needs-input before any request of that path is sent (a file cannot be created without a drawer)",
+          "output": {
+            "select": "the item whose Name (the drawer code) equals $input.drawerCode; when step 1 found a file, its Id must equal $step1.DrawerId",
+            "type": "DrawerModel[]"
+          },
+          "params": {},
+          "purpose": "Turn the drawer code into the drawer id - to check the found file's drawer, or as the parent of the file to create.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [],
+          "n": 3,
+          "onError": "A code that matches no file type is an error - the flow stops with IR-4006 (TypeNotFound, \"no file type has code <code>\") and nothing is created.",
+          "operationId": "rest.v1.objecttypes.getTypesForClass",
+          "optional": "only when step 1 found no file and $input.forceCreate is true",
+          "output": {
+            "select": "the item whose code equals $input.fileTypeCode when given, otherwise $input.drawerCode (drawer code and file type code are usually the same); its Id is the file type id. Validation needed - which ObjectTypeDataResult field (Name, Description or AutomationId) holds the type code is unconfirmed.",
+            "type": "ObjectTypeDataResult[]"
+          },
+          "params": {
+            "standardObjectClass": "File"
+          },
+          "purpose": "Turn the file type code into the file type id.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.createdByApplication",
+              "type": "string"
+            },
+            {
+              "ref": "$input.fileDescription",
+              "type": "string"
+            },
+            {
+              "ref": "$input.fileNumber",
+              "type": "string"
+            },
+            {
+              "ref": "$step2.Id",
+              "type": "int64"
+            },
+            {
+              "ref": "$step3.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 4,
+          "onError": "When $input.createdByApplication is missing, the user is asked for it (needs-input) before this step; nothing is written. A file number that does not fit the file type's number format is the usual cause of a rejection.",
+          "operationId": "rest.v1.files.createFile",
+          "optional": "only when step 1 found no file and $input.forceCreate is true",
+          "output": {
+            "type": "int64"
+          },
+          "params": {
+            "CreatedByApplication": "$input.createdByApplication",
+            "FileNumberPart1": "$input.fileNumber",
+            "FileTypeId": "$step3.Id",
+            "IsTemporary": false,
+            "Name": "$input.fileDescription, empty when not given",
+            "ParentId": "$step2.Id"
+          },
+          "purpose": "Create the missing file.",
+          "safety": "write"
+        },
+        {
+          "inputsFrom": [],
+          "n": 5,
+          "onError": "A code that matches no document type is an error - the flow stops with IR-4006 (TypeNotFound, \"no document type has code <docTypeCode>\") and no document is created.",
+          "operationId": "rest.v1.objecttypes.getTypesForClass",
+          "output": {
+            "select": "the item whose code equals $input.docTypeCode; its Id is the document type id. Validation needed - which ObjectTypeDataResult field (Name, Description or AutomationId) holds the type code is unconfirmed.",
+            "type": "ObjectTypeDataResult[]"
+          },
+          "params": {
+            "standardObjectClass": "Document"
+          },
+          "purpose": "Turn the document type code into the document type id.",
+          "safety": "read"
+        },
+        {
+          "inputsFrom": [
+            {
+              "ref": "$input.description",
+              "type": "string"
+            },
+            {
+              "ref": "$input.documentDate",
+              "type": "date"
+            },
+            {
+              "ref": "$step1.Id",
+              "type": "int64"
+            },
+            {
+              "ref": "$step4.value",
+              "type": "int64"
+            },
+            {
+              "ref": "$step5.Id",
+              "type": "int64"
+            }
+          ],
+          "n": 6,
+          "onError": "The parent's template must allow the document type. Validation needed - some document types may mandate attributes, which this flow does not send.",
+          "operationId": "rest.v1.documents.createDocument",
+          "output": {
+            "type": "int64"
+          },
+          "params": {
+            "Description": "$input.description",
+            "DocumentDate": "$input.documentDate, today when not given",
+            "DocumentTypeId": "$step5.Id",
+            "ParentId": "$step1.Id when step 1 found the file, otherwise $step4.value (the created file)"
+          },
+          "purpose": "Create the document in the file.",
+          "safety": "write"
+        }
+      ],
+      "surface": "rest-v1",
+      "title": "Create a document (creating the file if needed)",
+      "versionCaveats": []
+    },
     "F2": {
       "id": "F2",
       "inputs": [
