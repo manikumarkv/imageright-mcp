@@ -8,48 +8,238 @@ Vertafore ImageRight on your product version (24.x, 25.x, or 7.2).
 > (`ir_call`, with dry-run previews) and the composite workflow tools work. Capability param mappings are
 > not yet verified against a live server; hardening and a live smoke suite follow in M7.
 
-## Tools
+## What is this?
 
-All tools below work offline: no server, no credentials.
+ImageRight has three API surfaces: REST v1, REST v2 and SOAP. Which operations each one offers
+depends on your version (24.x, 25.x or 7.2). This MCP server gives you one consistent interface
+instead. It sends each call to the right surface for the version you configured, and it collapses
+about 230 native error codes into 75 stable IR codes.
 
-| Tool | What it does |
-|---|---|
-| `ir_get_config` | Effective configuration, secrets redacted |
-| `ir_search_apis` | Plain-language search over REST v1, REST v2 and SOAP operations |
-| `ir_list_areas` | Functional areas with operation counts per surface |
-| `ir_describe_api` | One operation in detail: params, value sources, body, multipart parts, response, errors, gotchas, versions |
-| `ir_describe_type` | A schema or enum, with per-version differences |
-| `ir_list_flows` / `ir_describe_flow` | Multi-step recipes (documentation only; nothing is executed) |
-| `ir_check_availability` | Is an operation, parameter, field or enum value present in each version? |
-| `ir_compare_versions` | Diff two versions |
-| `ir_list_deprecations` | Deprecated operations and their replacements |
-| `ir_explain_error` | Explain an IR code, native REST code or name, HTTP status, or SOAP fault text |
+ImageRight stores content in five levels:
 
-These talk to your server (or preview what they would send):
+```mermaid
+flowchart LR
+  Drawer --> File --> Folder --> Document --> Page
+```
 
-| Tool | What it does |
-|---|---|
-| `ir_call` | Execute or preview one `operationId`, or a `capabilityId` routed to REST v2, REST v1 or SOAP by version and preference (`meta.route` says why). Capability results use canonical File / Folder / Document / Page / Task / Workflow / Step / User shapes |
-| `ir_test_connection` | Reachability, authentication, server-reported version vs. configured version (IR-1004), latency |
-| `ir_session` | Auth session status, re-login, logout (SOAP `UserLogoff`) |
-| `ir_configure` | Session-scoped override of non-secret settings. Secrets are refused; moving an endpoint to another host withholds the environment credentials |
+- **Drawer**: a top-level cabinet.
+- **File**: a case or policy container inside a drawer.
+- **Folder**: organizes documents inside a file. Documents always live under a folder, never directly in a file.
+- **Document**: metadata plus pages.
+- **Page**: one scanned image.
 
-Composite tools run a whole flow from `annotations/flows.yaml` using names, codes and file numbers.
-Lookups run for real. Writes follow `writeMode`, and a preview lists every planned step. When a flow
-has to ask the user something, the tool returns `data.status: "needs-input"` with the question in
-`data.needsInput`.
+A **composite tool** is one tool that runs a whole multi-step flow for you. It looks up IDs from
+names, creates missing parents and uploads pages, so you don't have to chain API calls by hand.
 
-| Tool | Flow |
-|---|---|
-| `ir_create_task` | F1: create a workflow task on a file, or on one document in a named folder |
-| `ir_search_files` | F9: search files by number, `%` pattern, drawer, temporary / deleted state |
-| `ir_create_file` | F10: create a file in a drawer, with duplicate-number protection |
-| `ir_update_file` | F11: change a file's number and/or description, with duplicate protection |
-| `ir_merge_files` | F12: merge one file into another (destructive, so it needs confirmation) |
-| `ir_move_file_content` | F13: move or copy documents, optionally filtered by type code, into a folder of another file |
-| `ir_find_documents` | F14: list a file's documents by folder, type code and description substring |
-| `ir_create_document` | F15: create a document in a folder, optionally creating the file and folder first |
-| `ir_upload_document` | F16: split a local PDF into page images and upload them as a new document |
+## Quickstart
+
+1. **Install** the server (see [Install](#install)).
+2. **Configure** with `ir_configure`: your server URL and version. Credentials stay in environment variables (see [Configuration](#configuration)).
+3. **Check** with `ir_test_connection`: is the server reachable, does login work, and does the version match?
+4. **Explore** with `ir_search_apis` to find operations, then `ir_describe_api` to understand one.
+5. **Act** with `ir_call` for a single API, or with a composite tool such as `ir_upload_document` for a whole workflow.
+
+## Section 1 — Explore
+
+These tools work offline. You don't need a server or credentials.
+
+```mermaid
+flowchart LR
+  Q[Your question] --> S[ir_search_apis] --> D[ir_describe_api] --> K[You know what to call] --> C[Section 2 — Client]
+```
+
+**`ir_search_apis`**: find the right API using plain words.
+
+```mermaid
+flowchart LR
+  A["'how do I create a folder?'"] --> B[ir_search_apis] --> C[Matching operations<br/>+ which versions have them]
+```
+
+**`ir_list_areas`**: see how the API is organized. An area is a group of operations that do
+related work. The catalog has 487 operations in 21 areas (20 on 24.x and 7.2), for example Pages
+(52 operations), Tasks (58), Drawers (11) and Notes (9). The tool lists every area with its
+operation count on each surface (REST v1, REST v2, SOAP).
+
+```mermaid
+flowchart LR
+  A[ir_list_areas] --> B[21 areas<br/>Files, Documents, Pages,<br/>Notes, Tasks, Drawers…] --> C[Counts per<br/>REST v1 / v2 / SOAP]
+```
+
+**`ir_describe_api`**: one operation, fully explained: parameters, body, response, errors, gotchas and versions.
+
+```mermaid
+flowchart LR
+  A[Operation ID] --> B[ir_describe_api] --> C[Params, body, response,<br/>errors, gotchas, versions]
+```
+
+**`ir_describe_type`**: a data shape: its fields and how they differ by version.
+
+```mermaid
+flowchart LR
+  A[Type name] --> B[ir_describe_type] --> C[Fields +<br/>per-version differences]
+```
+
+**`ir_check_availability`**: is this operation, parameter or field present in 24.x? 25.x? 7.2?
+
+```mermaid
+flowchart LR
+  A[Operation / param / field] --> B[ir_check_availability] --> C[Yes / no for<br/>24.x, 25.x, 7.2]
+```
+
+**`ir_compare_versions`**: compare two versions and see which operations were added, removed or changed.
+
+```mermaid
+flowchart LR
+  A[Two versions] --> B[ir_compare_versions] --> C[Added / removed /<br/>changed operations]
+```
+
+**`ir_list_deprecations`**: deprecated operations and what to use instead.
+
+```mermaid
+flowchart LR
+  A[ir_list_deprecations] --> B[Deprecated operations] --> C[Their replacements]
+```
+
+**`ir_explain_error`**: give it an IR code, an HTTP status or SOAP fault text, and it tells you what it means and what to do.
+
+```mermaid
+flowchart LR
+  A[IR code / HTTP status /<br/>SOAP fault text] --> B[ir_explain_error] --> C[What it means +<br/>what to do]
+```
+
+**`ir_list_flows`** / **`ir_describe_flow`**: 17 multi-step recipes (F1–F16, plus F8b). Describe
+one flow to see its steps, inputs and errors.
+
+```mermaid
+flowchart LR
+  A[ir_list_flows] --> B[Pick a flow] --> C[ir_describe_flow] --> D[Steps, inputs, errors]
+```
+
+**`ir_get_config`**: every setting and where its value came from, with secrets hidden.
+
+```mermaid
+flowchart LR
+  A[ir_get_config] --> B[Each setting + its source<br/>secrets redacted]
+```
+
+## Section 2 — Client
+
+These tools talk to your ImageRight server.
+
+```mermaid
+flowchart LR
+  A[ir_configure] --> B[ir_test_connection] --> C[ir_session] --> D{What do you need?}
+  D -->|One API call| E[ir_call]
+  D -->|A whole workflow| F[Composite tools]
+```
+
+**`ir_configure`**: save the URL, version, writeMode and other settings. Secrets stay in environment variables.
+
+```mermaid
+flowchart LR
+  A[URL, version,<br/>writeMode…] --> B[ir_configure] --> C[Settings saved<br/>secrets stay in env vars]
+```
+
+**`ir_test_connection`**: is the server reachable? Does login work? Does the server's version match the one you configured?
+
+```mermaid
+flowchart LR
+  A[ir_test_connection] --> B[Reachable?] --> C[Auth OK?] --> D[Version matches?]
+```
+
+**`ir_session`**: log in, check status, or log out.
+
+```mermaid
+flowchart LR
+  A[ir_session] --> B[login / status / logout]
+```
+
+**`ir_call`**: call any single operation by its ID. Dry-run shows you the request instead of
+sending it. Results come back in the same standard shapes whichever surface answered.
+
+```mermaid
+flowchart LR
+  A[Operation ID + args] --> B[ir_call] --> C{Dry-run?}
+  C -->|yes| D[Preview of the request]
+  C -->|no| E[Result in a standard shape]
+```
+
+**`ir_search_files`**: find files by number or a `%` pattern, by drawer, and by temporary or deleted state.
+
+```mermaid
+flowchart LR
+  A[Number or % pattern,<br/>drawer, temp/deleted] --> B[ir_search_files] --> C[Matching files]
+```
+
+**`ir_create_file`**: creates a file in a drawer, refusing a number that's already taken.
+
+```mermaid
+flowchart LR
+  A[Find drawer<br/>+ file type] --> B{Number taken?}
+  B -->|yes| C[IR-4110 error]
+  B -->|no| D[Create file]
+```
+
+**`ir_update_file`**: changes a file's number and/or description.
+
+```mermaid
+flowchart LR
+  A[Find the file] --> B{New number taken?}
+  B -->|yes| C[IR-4110 error]
+  B -->|no| D[Update number /<br/>description]
+```
+
+**`ir_merge_files`**: merges one file into another. This is destructive: the source file is gone afterwards.
+
+```mermaid
+flowchart LR
+  A[Preview] --> B[You confirm] --> C[Merge<br/>source file is gone]
+```
+
+**`ir_move_file_content`**: moves or copies documents from one file into a folder of another file.
+
+```mermaid
+flowchart LR
+  A[Find documents<br/>in source file] --> B[Move or copy each<br/>into target folder] --> C[Report per document<br/>failures listed]
+```
+
+**`ir_find_documents`**: lists a file's documents, filtered by folder, type code or part of the description.
+
+```mermaid
+flowchart LR
+  A[File + filters:<br/>folder, type code,<br/>description text] --> B[ir_find_documents] --> C[Matching documents]
+```
+
+**`ir_create_document`**: creates a document in a folder.
+
+```mermaid
+flowchart LR
+  A{File / folder<br/>exists?} -->|missing + forceCreate| B[Create it]
+  A -->|missing, no forceCreate| C[IR-4001 error]
+  A -->|exists| D[Create document<br/>in the folder]
+  B --> D
+```
+
+**`ir_upload_document`**: uploads a local PDF as a new document.
+
+```mermaid
+flowchart LR
+  A[Find or create file,<br/>folder, document] --> B[Split PDF<br/>into page images] --> C[Upload pages<br/>in order]
+```
+
+**`ir_create_task`**: creates a workflow task on a file or on one document.
+
+```mermaid
+flowchart LR
+  A[Look up workflow, step,<br/>file IDs from names] --> B[If a document:<br/>find it in the folder] --> C[Create the task]
+```
+
+**Safety.** Writes default to dry-run previews. Destructive operations need your confirmation. When
+a tool needs something from you, it returns a `needs-input` response with the question, never a
+bare error.
+
+**Errors.** Every failure carries a stable IR code, plus the server's original detail in
+`error.native` (`null` when the error happened locally). See [Errors](#errors).
 
 ## Errors
 
